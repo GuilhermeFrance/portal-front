@@ -2,6 +2,22 @@
 import { onMounted, ref } from "vue";
 import type { User } from "../interfaces/UserInterface";
 import axios from "axios";
+import UserModal from "./UserModal.vue";
+
+const isModalOpen = ref(false);
+
+function OpenModal() {
+  isModalOpen.value = true;
+}
+
+function CloseModal() {
+  isModalOpen.value = false
+}
+
+function handleUsersCreated(){
+  CloseModal()
+  fetchUser()
+}
 
 const API_URL = "http://localhost:3000/users";
 const users = ref<User[]>([]);
@@ -19,10 +35,11 @@ onMounted(fetchUser);
 
 <template>
   <section>
+    <UserModal v-if="isModalOpen" @close="CloseModal" @user-created="handleUsersCreated"/>
     <div>
       <div class="header">
-        <h2>FUNCIONARIOS:</h2>
-        <button class="btn-add">Adicionar funcionario</button>
+        <h2>FUNCIONÁRIOS:</h2>
+        <button @click="OpenModal" class="btn-add">Adicionar Funcionário</button>
       </div>
 
       <div class="card">
@@ -32,7 +49,7 @@ onMounted(fetchUser);
               <tr>
                 <th>ID</th>
                 <th>Nome</th>
-                <th>E-mail</th>
+                <th>CPF</th>
                 <th>Cargo</th>
               </tr>
             </thead>
@@ -92,8 +109,7 @@ section {
 }
 .btn-add:hover{
   background-color: #ffffff;
-  transition: 0.3s;
-  font-weight: 600;
+  transition: 0.1s;
 }
 .table {
   width: 100%;
@@ -119,20 +135,22 @@ tbody tr:nth-child(even) {
   background-color: #f9f9f9;
 }
 tbody tr:hover {
-  background-color: #e0f7fa;
-  transition: 0.4s;
+  background-color: #f2feff;
+  transition: 0.2s; 
 }
 tbody td:nth-child(1) {
-  width: 5%; /* ID */
+  width: 5%; 
 }
 tbody td:nth-child(2) {
-  width: 35%; /* Nome */
+  width: 35%; 
 }
 tbody td:nth-child(3) {
-  width: 35%; /* CPF/Email */
+  width: 35%;
+  font-weight: 300; 
 }
 tbody td:nth-child(4) {
-  width: 25%; /* Cargo */
+  width: 25%;
+  font-weight: 200; 
 }
 td {
   border-bottom: 2px solid rgba(139, 139, 139, 0.247);
