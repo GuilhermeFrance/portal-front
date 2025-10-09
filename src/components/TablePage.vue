@@ -3,6 +3,7 @@ import { onMounted, ref } from "vue";
 import type { User } from "../interfaces/UserInterface";
 import axios from "axios";
 import UserModal from "./UserModal.vue";
+import { Trash } from "lucide-vue-next";
 
 const isModalOpen = ref(false);
 
@@ -12,6 +13,19 @@ function OpenModal() {
 
 function CloseModal() {
   isModalOpen.value = false
+}
+
+async function deleteUser(userId: number) {
+  if(!confirm(`Tem certeza que deseja remover o usuário ${userId}?`)){
+    return
+  }
+  try {
+    await axios.delete(`${API_URL}/${userId}`)
+    users.value = users.value.filter(user => user.id !== userId)
+  } catch (error) {
+    alert('Erro ao excluir')
+    fetchUser()
+  }
 }
 
 function handleUsersCreated(){
@@ -35,22 +49,29 @@ onMounted(fetchUser);
 
 <template>
   <section>
-    <UserModal v-if="isModalOpen" @close="CloseModal" @user-created="handleUsersCreated"/>
+    <UserModal
+      v-if="isModalOpen"
+      @close="CloseModal"
+      @user-created="handleUsersCreated"
+    />
     <div>
       <div class="header">
         <h2>FUNCIONÁRIOS:</h2>
-        <button @click="OpenModal" class="btn-add">Adicionar Funcionário</button>
+        <button @click="OpenModal" class="btn-add">
+          Adicionar Funcionário
+        </button>
       </div>
 
       <div class="card">
         <div class="table">
-          <table v-if="users.length">
+          <table v-if="users.length" id="users">
             <thead>
               <tr>
                 <th>ID</th>
                 <th>Nome</th>
                 <th>CPF</th>
                 <th>Cargo</th>
+                <tH></tH>
               </tr>
             </thead>
             <tbody>
@@ -59,6 +80,7 @@ onMounted(fetchUser);
                 <td>{{ user.name }}</td>
                 <td>{{ user.cpf }}</td>
                 <td>{{ user.role ? user.role.name : "N/A" }}</td>
+                <td @click="deleteUser(user.id)" ><Trash class="delete-i" alt="excluir funcionário" /></td>
               </tr>
             </tbody>
           </table>
@@ -87,7 +109,7 @@ section {
   box-shadow: 1px 10px 10px rgb(179, 179, 179);
 }
 
-.header{
+.header {
   display: flex;
   flex-direction: row;
   width: 900px;
@@ -95,19 +117,19 @@ section {
   margin-bottom: 10px;
 }
 
-.btn-add{
+.btn-add {
   width: 160px;
   border-radius: 10px;
   background-color: #f9f9f9;
   border: none;
   font-size: 14px;
   box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.24);
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   padding: 6px;
   cursor: pointer;
   font-weight: 500;
 }
-.btn-add:hover{
+.btn-add:hover {
   background-color: #ffffff;
   transition: 0.1s;
 }
@@ -117,14 +139,20 @@ section {
   display: flex;
   justify-content: center;
 }
-
+.delete-i {
+  margin-top: 10px;
+  color: rgb(250, 81, 81);
+  height: 20px;
+  width: 20px;
+  cursor: pointer;
+}
 table {
   width: 100%;
   border-collapse: collapse;
 }
 th,
 td {
-  padding: 12px 15px;
+  padding: 10px 15px;
   text-align: left; /* Alinha o texto à esquerda nas células */
 }
 
@@ -136,21 +164,21 @@ tbody tr:nth-child(even) {
 }
 tbody tr:hover {
   background-color: #f2feff;
-  transition: 0.2s; 
+  transition: 0.2s;
 }
 tbody td:nth-child(1) {
-  width: 5%; 
+  width: 5%;
 }
 tbody td:nth-child(2) {
-  width: 35%; 
+  width: 35%;
 }
 tbody td:nth-child(3) {
   width: 35%;
-  font-weight: 300; 
+  font-weight: 300;
 }
 tbody td:nth-child(4) {
   width: 25%;
-  font-weight: 200; 
+  font-weight: 200;
 }
 td {
   border-bottom: 2px solid rgba(139, 139, 139, 0.247);

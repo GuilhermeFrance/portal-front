@@ -98,7 +98,7 @@ onMounted(fetchRole);
           <label for="input">Email:</label>
           <input
             class="user-input"
-            placeholder="usuario@gmail.com"
+            placeholder="Digite o seu email.."
             type="email"
             name=""
             id=""
@@ -137,9 +137,12 @@ onMounted(fetchRole);
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 
-div{
-  font-family: "Inter", sans-serif;
+*{
+  font-family: 'Inter', sans-serif;
 }
+
+
+
 .modal-background {
   display: flex;
   position: fixed;
@@ -196,8 +199,9 @@ footer {
 }
 
 .closeModal:hover {
+  color: white;
   background-color: rgb(243, 96, 96);
-  transition: 0.5s;
+  transition: 0.3s;
 }
 
 .input-box {
