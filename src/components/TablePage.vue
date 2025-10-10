@@ -4,42 +4,60 @@ import type { User } from "../interfaces/UserInterface";
 import axios from "axios";
 import UserModal from "./UserModal.vue";
 import { Trash } from "lucide-vue-next";
+import { UserPen } from "lucide-vue-next";
 
 const isModalOpen = ref(false);
+const API_URL = "http://localhost:3000/users";
+const users = ref<User[]>([]);
+const currentPage = ref(1);
+const itemsPerPage = ref(7);
+const totalItems = ref(0);
+const totalPages = ref(0);
 
 function OpenModal() {
   isModalOpen.value = true;
 }
 
 function CloseModal() {
-  isModalOpen.value = false
+  isModalOpen.value = false;
 }
 
 async function deleteUser(userId: number) {
-  if(!confirm(`Tem certeza que deseja remover o usuário ${userId}?`)){
-    return
+  if (!confirm(`Tem certeza que deseja remover o usuário ${userId}?`)) {
+    return;
   }
   try {
-    await axios.delete(`${API_URL}/${userId}`)
-    users.value = users.value.filter(user => user.id !== userId)
+    await axios.delete(`${API_URL}/${userId}`);
+    users.value = users.value.filter((user) => user.id !== userId);
   } catch (error) {
-    alert('Erro ao excluir')
-    fetchUser()
+    alert("Erro ao excluir");
+    fetchUser();
   }
 }
 
-function handleUsersCreated(){
-  CloseModal()
-  fetchUser()
+function handleUsersCreated() {
+  CloseModal();
+  fetchUser();
 }
 
-const API_URL = "http://localhost:3000/users";
-const users = ref<User[]>([]);
+function goToPage(page: number) {
+    if (page >= 1 && page <= totalPages.value) {
+        currentPage.value = page;
+        fetchUser(); // Busca os novos dados
+    }
+}
 
 async function fetchUser() {
   try {
-    const response = await axios.get<User[]>(API_URL);
-    users.value = response.data;
+    const response = await axios.get(`${API_URL}`, {
+      params: {
+        page: currentPage.value,
+        limit: itemsPerPage.value,
+      },
+    });
+    users.value = response.data.data;
+    totalItems.value = response.data.total;
+    totalPages.value = response.data.lastPage;
   } catch (err) {
     console.log("Erro ao carregar os dados");
   }
@@ -80,9 +98,21 @@ onMounted(fetchUser);
                 <td>{{ user.name }}</td>
                 <td>{{ user.cpf }}</td>
                 <td>{{ user.role ? user.role.name : "N/A" }}</td>
-                <td @click="deleteUser(user.id)" ><Trash class="delete-i" alt="excluir funcionário" /></td>
+                <td>
+                  <div class="icons">
+                    <Trash
+                      class="delete-i"
+                      alt="excluir funcionário"
+                      @click="deleteUser(user.id)"
+                    />
+                    <UserPen class="edit-i" />
+                  </div>
+                </td>
               </tr>
             </tbody>
+            <tfoot>
+                  PAGES
+                </tfoot>
           </table>
         </div>
       </div>
@@ -141,10 +171,20 @@ section {
 }
 .delete-i {
   margin-top: 10px;
-  color: rgb(250, 81, 81);
+  color: rgb(194, 0, 0);
   height: 20px;
   width: 20px;
   cursor: pointer;
+}
+.edit-i {
+  margin-top: 10px;
+  color: rgb(0, 15, 83);
+  width: 20px;
+  cursor: pointer;
+}
+.icons {
+  display: flex;
+  gap: 4px;
 }
 table {
   width: 100%;
@@ -152,7 +192,7 @@ table {
 }
 th,
 td {
-  padding: 10px 15px;
+  padding: 10px 20px;
   text-align: left; /* Alinha o texto à esquerda nas células */
 }
 
