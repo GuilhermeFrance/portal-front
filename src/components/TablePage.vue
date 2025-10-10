@@ -3,14 +3,15 @@ import { onMounted, ref } from "vue";
 import type { User } from "../interfaces/UserInterface";
 import axios from "axios";
 import UserModal from "./UserModal.vue";
-import { Trash } from "lucide-vue-next";
-import { UserPen } from "lucide-vue-next";
+import UserModaEdit from "./UserModalEdit.vue";
+import { Trash, UserPen, ChevronRight, ChevronLeft } from "lucide-vue-next";
 
 const isModalOpen = ref(false);
+const isModalEditOpen = ref(false);
 const API_URL = "http://localhost:3000/users";
 const users = ref<User[]>([]);
 const currentPage = ref(1);
-const itemsPerPage = ref(7);
+const itemsPerPage = ref(8);
 const totalItems = ref(0);
 const totalPages = ref(0);
 
@@ -20,6 +21,13 @@ function OpenModal() {
 
 function CloseModal() {
   isModalOpen.value = false;
+}
+
+function OpenModalEdit(){
+  isModalEditOpen.value = true;
+}
+function CloseEditModal() {
+  isModalEditOpen.value = false;
 }
 
 async function deleteUser(userId: number) {
@@ -41,10 +49,10 @@ function handleUsersCreated() {
 }
 
 function goToPage(page: number) {
-    if (page >= 1 && page <= totalPages.value) {
-        currentPage.value = page;
-        fetchUser(); // Busca os novos dados
-    }
+  if (page >= 1 && page <= totalPages.value) {
+    currentPage.value = page;
+    fetchUser(); // Busca os novos dados
+  }
 }
 
 async function fetchUser() {
@@ -71,6 +79,9 @@ onMounted(fetchUser);
       v-if="isModalOpen"
       @close="CloseModal"
       @user-created="handleUsersCreated"
+    />
+    <UserModalEdit
+      v-if="isModalEditOpen"
     />
     <div>
       <div class="header">
@@ -105,15 +116,38 @@ onMounted(fetchUser);
                       alt="excluir funcionário"
                       @click="deleteUser(user.id)"
                     />
-                    <UserPen class="edit-i" />
+                    <UserPen class="edit-i" @click="OpenModalEdit"/>
                   </div>
                 </td>
               </tr>
             </tbody>
-            <tfoot>
-                  PAGES
-                </tfoot>
           </table>
+        </div>
+      </div>
+
+      <div class="tfoot-div" v-if="totalPages > 1">
+        <div class="pagination-info">
+          <span style="font-weight: 200">
+            Pagina <span style="font-weight: 400">{{ currentPage }}</span> de
+            <span>{{ totalPages }}</span></span
+          >
+          <span>
+            <span style="font-weight: 400">({{ totalItems }} resultados)</span>
+          </span>
+        </div>
+        <div class="pagination-btns">
+          <button
+            @click="goToPage(currentPage - 1)"
+            :disabled="currentPage === 1"
+          >
+            <ChevronLeft />
+          </button>
+          <button
+            @click="goToPage(currentPage + 1)"
+            :disabled="currentPage === totalPages"
+          >
+            <ChevronRight />
+          </button>
         </div>
       </div>
     </div>
@@ -135,7 +169,7 @@ section {
   height: 500px;
   width: 900px;
   background-color: white;
-  border-radius: 20px;
+  border-radius: 20px 20px 0px 0px;
   box-shadow: 1px 10px 10px rgb(179, 179, 179);
 }
 
@@ -163,6 +197,18 @@ section {
   background-color: #ffffff;
   transition: 0.1s;
 }
+.pagination-btns {
+  display: flex;
+  gap: 3px;
+  margin: 10px;
+}
+.pagination-info {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  width: 250px;
+  margin-left: 20px;
+}
 .table {
   width: 100%;
   margin-top: 20px;
@@ -185,6 +231,24 @@ section {
 .icons {
   display: flex;
   gap: 4px;
+}
+.tfoot-div button {
+  border: 1px solid rgba(128, 128, 128, 0.226);
+  border-radius: 4px;
+  cursor: pointer;
+}
+.tfoot-div {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 880px;
+  padding: 10px;
+  background-color: white;
+  height: 40px;
+  border-radius: 0px 0px 10px 10px;
+  box-shadow: 1px 10px 10px rgb(179, 179, 179);
+  border-top: 1px solid rgba(128, 128, 128, 0.199);
 }
 table {
   width: 100%;
