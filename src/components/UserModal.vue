@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch, type PropType } from "vue";
 import type { Role } from "../interfaces/RoleInterface";
 import axios from "axios";
 import type { NewUserDTO } from "../interfaces/NewUserDto";
+import type { User } from "../interfaces/UserInterface";
 
 const API_USERS_URL = "http://localhost:3000/users";
 
@@ -13,18 +14,19 @@ const newUser = ref<NewUserDTO>({
   roleId: null,
 });
 
-const emit = defineEmits(["close", "user-created"]);
+const emit = defineEmits(["close", "user-created", "user-updated"]);
 
 const API_URL = "http://localhost:3000/roles";
 const roles = ref<Role[]>([]);
 const formError = ref<string | null>(null);
 
-function handleRoleChange(e: Event){
-  const target = e.target as HTMLSelectElement
 
-  const newRoleId = parseInt(target.value, 10)
+function handleRoleChange(e: Event) {
+  const target = e.target as HTMLSelectElement;
 
-  newUser.value.roleId = newRoleId
+  const newRoleId = parseInt(target.value, 10);
+
+  newUser.value.roleId = newRoleId;
 }
 
 async function fetchRole() {
@@ -56,8 +58,8 @@ async function handleSubmit() {
   try {
     const response = await axios.post(API_USERS_URL, newUser.value);
     console.log("Funcionário criado com sucesso:", response.data);
-    console.log("Tentativa de E-mail:", newUser.value.email)
-    emit("user-created")
+    console.log("Tentativa de E-mail:", newUser.value.email);
+    emit("user-created");
     handleClose();
   } catch (err) {
     console.error("Erro na criação do funcionário", err);
@@ -70,7 +72,6 @@ async function handleSubmit() {
       ? backEndMessage.join(", ")
       : backEndMessage;
   }
- 
 }
 
 onMounted(fetchRole);
@@ -117,9 +118,14 @@ onMounted(fetchRole);
             required
           />
           <label for="input">Cargo:</label>
-          <select id="cargo" :value="newUser.roleId" @change="handleRoleChange" required> 
+          <select
+            id="cargo"
+            :value="newUser.roleId"
+            @change="handleRoleChange"
+            required
+          >
             <option value="null" disabled>Selecione um cargo</option>
-            <option v-for="role in roles" :key="role.id" :value="role.id" >
+            <option v-for="role in roles" :key="role.id" :value="role.id">
               {{ role.name }}
             </option>
           </select>
@@ -137,11 +143,9 @@ onMounted(fetchRole);
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 
-*{
-  font-family: 'Inter', sans-serif;
+* {
+  font-family: "Inter", sans-serif;
 }
-
-
 
 .modal-background {
   display: flex;
@@ -165,7 +169,6 @@ header {
 }
 
 .modal-content {
-
   padding: 20px;
   display: flex;
   flex-direction: column;
@@ -281,7 +284,7 @@ input[type="number"] {
 select {
   height: 44px;
   border-radius: 8px;
-  background-color: rgba(0, 255, 255, 0.068);
+  background-color: rgba(255, 255, 255, 0.068);
   font-size: 15px;
 }
 </style>

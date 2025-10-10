@@ -4,12 +4,14 @@ import type { User } from "../interfaces/UserInterface";
 import axios from "axios";
 import UserModal from "./UserModal.vue";
 import UserModaEdit from "./UserModalEdit.vue";
-import { Trash, UserPen, ChevronRight, ChevronLeft } from "lucide-vue-next";
+import { Trash, UserPen, ChevronRight, ChevronLeft, UserPlus } from "lucide-vue-next";
+
 
 const isModalOpen = ref(false);
 const isModalEditOpen = ref(false);
 const API_URL = "http://localhost:3000/users";
 const users = ref<User[]>([]);
+const userToEdit = ref<User | null>(null)
 const currentPage = ref(1);
 const itemsPerPage = ref(8);
 const totalItems = ref(0);
@@ -23,11 +25,16 @@ function CloseModal() {
   isModalOpen.value = false;
 }
 
-function OpenModalEdit(){
+function OpenModalEdit(user: User){
+  userToEdit.value = user
   isModalEditOpen.value = true;
 }
 function CloseEditModal() {
   isModalEditOpen.value = false;
+}
+function handleUserUpdated() {
+    CloseModal();
+    fetchUser(); // Recarrega os dados para mostrar as mudanças
 }
 
 async function deleteUser(userId: number) {
@@ -87,12 +94,12 @@ onMounted(fetchUser);
       <div class="header">
         <h2>FUNCIONÁRIOS:</h2>
         <button @click="OpenModal" class="btn-add">
-          Adicionar Funcionário
+          <UserPlus/>Adicionar 
         </button>
       </div>
 
       <div class="card">
-        <div class="table">
+        <div class="table" v-if="users.length >= 1">
           <table v-if="users.length" id="users">
             <thead>
               <tr>
@@ -111,22 +118,25 @@ onMounted(fetchUser);
                 <td>{{ user.role ? user.role.name : "N/A" }}</td>
                 <td>
                   <div class="icons">
-                    <Trash
+                   
+                    <UserPen class="edit-i" @click="OpenModalEdit(user)" title="editar usuario"/>
+                     <Trash
                       class="delete-i"
                       alt="excluir funcionário"
                       @click="deleteUser(user.id)"
                     />
-                    <UserPen class="edit-i" @click="OpenModalEdit"/>
                   </div>
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
+        <div style="display: flex; justify-content: center;
+        align-items: center; align-content: center; margin-top: 250px; font-size: 20px; font-weight: 200;" v-else> Nenhum registro econtrado. </div>
       </div>
 
-      <div class="tfoot-div" v-if="totalPages > 1">
-        <div class="pagination-info">
+      <div class="tfoot-div">
+        <div class="pagination-info" v-if="users.length >= 1">
           <span style="font-weight: 200">
             Pagina <span style="font-weight: 400">{{ currentPage }}</span> de
             <span>{{ totalPages }}</span></span
@@ -135,7 +145,7 @@ onMounted(fetchUser);
             <span style="font-weight: 400">({{ totalItems }} resultados)</span>
           </span>
         </div>
-        <div class="pagination-btns">
+        <div class="pagination-btns" v-if="users.length >= 1">
           <button
             @click="goToPage(currentPage - 1)"
             :disabled="currentPage === 1"
@@ -182,11 +192,19 @@ section {
 }
 
 .btn-add {
-  width: 160px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 150px;
+  height: 50px;
   border-radius: 10px;
-  background-color: #f9f9f9;
+  font-weight: bolder;
+  color: white;
+  background-color: #0ac7e0;
   border: none;
-  font-size: 14px;
+  font-size: 15px;
   box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.24);
   font-family: "Inter", sans-serif;
   padding: 6px;
@@ -194,8 +212,8 @@ section {
   font-weight: 500;
 }
 .btn-add:hover {
-  background-color: #ffffff;
-  transition: 0.1s;
+  background-color: #0999ac;
+  transition: 0.3s;
 }
 .pagination-btns {
   display: flex;
