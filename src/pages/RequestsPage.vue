@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import RequestsTable from '../components/RequestsTable.vue';
 import TablePage from '../components/TablePage.vue';
 
 
@@ -6,7 +7,7 @@ import TablePage from '../components/TablePage.vue';
 
 <template>
 <div>
-    <h1>teste</h1>
+    <RequestsTable/>
 </div>
 </template>
 

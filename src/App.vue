@@ -3,6 +3,7 @@
 import SideBar from './components/SideBar.vue';
 import EmployeePage from './pages/EmployeePage.vue';
 import TablePage from './components/TablePage.vue';
+import { RouterView } from 'vue-router';
 
 
 
@@ -11,7 +12,9 @@ import TablePage from './components/TablePage.vue';
 <template>
   <main>
     <SideBar/>
-    <TablePage/>
+    <div class="main-content">
+    <RouterView/>
+    </div>
   </main>
 </template>
 
@@ -19,10 +22,11 @@ import TablePage from './components/TablePage.vue';
 main{
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
+  justify-content: space-around;
   align-items: center;
   align-content: center;
   gap: 300px;
+  margin-top: 150px;
 }
 .main-content{
   margin-left: 300px;
