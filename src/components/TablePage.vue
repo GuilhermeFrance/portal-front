@@ -3,7 +3,7 @@ import { onMounted, ref } from "vue";
 import type { User } from "../interfaces/UserInterface";
 import axios from "axios";
 import UserModal from "./UserModal.vue";
-import UserModaEdit from "./UserModalEdit.vue";
+
 import { Trash, UserPen, ChevronRight, ChevronLeft, UserPlus } from "lucide-vue-next";
 
 
@@ -87,9 +87,7 @@ onMounted(fetchUser);
       @close="CloseModal"
       @user-created="handleUsersCreated"
     />
-    <UserModalEdit
-      v-if="isModalEditOpen"
-    />
+   
     <div>
       <div class="header">
         <h2>FUNCIONÁRIOS:</h2>
@@ -107,7 +105,7 @@ onMounted(fetchUser);
                 <th>Nome</th>
                 <th>CPF</th>
                 <th>Cargo</th>
-                <tH></tH>
+                <th></th>
               </tr>
             </thead>
             <tbody>

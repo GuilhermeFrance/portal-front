@@ -5,8 +5,14 @@ import TablePage from '../components/TablePage.vue';
 </script>
 
 <template>
-    <TablePage/>
+    
+    <TablePage class="content"/>
+   
 </template>
 
 <style scoped>
+
+.content{
+    padding-top: 70px;
+}
 </style>

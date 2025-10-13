@@ -1,11 +1,11 @@
 <script setup lang="ts">
 
-
+import HomePg from '../components/HomePg.vue';
 
 </script>
 
 <template>
-<div><h1>home</h1></div>
+    <HomePg/>
 </template>
 
 <style scoped>

@@ -7,9 +7,12 @@ import TablePage from '../components/TablePage.vue';
 
 <template>
 <div>
-    <RequestsTable/>
+    <RequestsTable class="content"/>
 </div>
 </template>
 
 <style scoped>
+.content{
+    padding-top: 70px;
+}
 </style>

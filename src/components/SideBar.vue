@@ -1,10 +1,11 @@
-<script>
+<script setup lang="ts">
+import { UserRound } from "lucide-vue-next";
 import { RouterLink } from "vue-router";
 </script>
 
 <template>
   <div class="side-bar">
-    <div>
+    <div class="side-items">
       <div class="navigation-side-bar">
         <RouterLink to="/" class="side-item"
           >Home
@@ -19,12 +20,19 @@ import { RouterLink } from "vue-router";
           <div class="on-side"></div
         ></RouterLink>
       </div>
+      <div>
+        <RouterLink to="/profile" class="user-style">
+          <UserRound class="lucide-icon" />
+          User
+        </RouterLink>
+      </div>
     </div>
   </div>
 </template>
 
 <style>
 .side-bar {
+  display: flex;
   background-color: white;
   height: 100vh;
   width: 300px;
@@ -34,11 +42,57 @@ import { RouterLink } from "vue-router";
   left: 0;
   z-index: 10;
 }
+.side-items {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
 .navigation-side-bar {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   margin-top: 30px;
+}
+.user-link {
+  display: flex;
+  text-decoration: none;
+  gap: 10px;
+  flex-direction: row;
+  text-decoration: dotted;
+  align-items: center;
+  height: 30px;
+  border: 1px solid rgb(255, 255, 255);
+  padding: 10px;
+  padding-left: 30px;
+  padding-right: 0px;
+  transition: 0.3s;
+  width: 268px;
+  color: black;
+}
+.user-link:hover {
+  background-color: rgb(238, 238, 238);
+  cursor: pointer;
+  color: rgb(10, 135, 207);
+}
+.user-style {
+  display: flex;
+  font-weight: 500;
+  color: black;
+  align-items: center;
+  padding-left: 30px;
+  height: 50px;
+  text-decoration: none;
+  gap: 10px;
+}
+.user-style:hover {
+  background-color: rgb(238, 238, 238);
+  cursor: pointer;
+  color: rgb(10, 135, 207);
+  transition: 0.3s;
+}
+.user-style.router-link-exact-active {
+  color: rgb(16, 180, 221);
+  font-weight: 600;
 }
 .side-item {
   display: flex;
@@ -64,7 +118,6 @@ import { RouterLink } from "vue-router";
 .side-item.router-link-exact-active {
   color: rgb(16, 180, 221);
   font-weight: 700;
-
 }
 .side-item.router-link-exact-active .on-side {
   height: 50px;
