@@ -1,36 +1,57 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import EmployeePage from '../pages/EmployeePage.vue'
-import TablePage from '../pages/TablePage.vue'
-import RequestPage from '../pages/RequestsPage.vue'
-import ProfilePage from '../pages/ProfilePage.vue'
-import HomePage from '../pages/HomePage.vue'
+import { createRouter, createWebHistory } from "vue-router";
+import EmployeePage from "../pages/EmployeePage.vue";
+import RequestPage from "../pages/RequestsPage.vue";
+import ProfilePage from "../pages/ProfilePage.vue";
+import HomePage from "../pages/HomePage.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
-      name: 'home',
-      component: HomePage 
-    },
-     {
-      path: '/solicitacoes',
-      name: 'solicitacoes',
-      component: RequestPage 
+      path: "/",
+      name: "home",
+      component: HomePage,
+      meta: {
+        title: "Página Inicial",
+      },
     },
     {
-      path: '/funcionarios',
-      name: 'funcionarios',
-      component: EmployeePage 
+      path: "/solicitacoes",
+      name: "solicitacoes",
+      component: RequestPage,
+      meta: {
+        title: "Solicitações",
+      },
     },
     {
-      path: '/profile',
-      name: 'profile',
-      component: ProfilePage 
+      path: "/funcionarios",
+      name: "funcionarios",
+      component: EmployeePage,
+      meta: {
+        title: "Funcionários",
+      },
     },
-    
-    
-  ]
-})
+    {
+      path: "/profile",
+      name: "profile",
+      component: ProfilePage,
+      meta: {
+        title: "Perfil",
+      },
+    },
+  ],
 
-export default router
+});
+
+   router.beforeEach((to, from, next) => {
+    const title = to.meta.title as string;
+    if(title){
+      document.title = title
+    }else {
+      document.title = 'Portal'
+    }
+    next()
+
+    })
+
+export default router;

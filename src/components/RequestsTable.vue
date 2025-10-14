@@ -47,17 +47,26 @@ function formatTime(dateTimeString: string | Date | undefined): string {
     if (isNaN(date.getTime())) {
       return "data invalida";
     }
-
-    const datePart = date.toLocaleDateString("pt-BR");
+    const dateparte = date.toLocaleDateString("pt-BR")
     const timePart = date.toLocaleDateString("pt-BR", {
       hour: "2-digit",
       minute: "2-digit",
     });
 
-    return `${timePart}`;
+    return `${dateparte}`;
   } catch (e) {
     return "Erro de formatação";
   }
+}
+
+function limitDescription(text: string, maxLength: number): string{
+  if(!text){
+    return ''
+  }
+  if(text.length <= maxLength){
+    return text
+  }
+  return text.substring(0, maxLength)+ '...'
 }
 
 async function fetchRequest() {
@@ -76,7 +85,7 @@ async function fetchRequest() {
   }
 }
 async function deleteRequest(requestId: number) {
-  if (!confirm(`Tem certeza que deseja remover o usuário ${requestId}?`)) {
+  if (!confirm(`Tem certeza que deseja remover a solicitação ${requestId}?`)) {
     return;
   }
   try {
@@ -126,7 +135,7 @@ onMounted(fetchRequest);
               <tr v-for="request in requests" :key="request.id">
                 <td>{{ request.id }}</td>
                 <td>{{ request.name }}</td>
-                <td>{{ request.description }}</td>
+                <td>{{limitDescription(request.description, 29) }}</td>
                 <td>{{ request.adress }}</td>
                 <td><span class="status-pill" :class="{
                   'isOpen': request.status === 'ABERTO',
@@ -138,7 +147,7 @@ onMounted(fetchRequest);
                 <td>{{ formatTime(request.createdAt) }}</td>
                 <td>
                   <div class="icons">
-                    <UserPen class="edit-i" title="editar usuario" />
+                   
                     <Trash
                       class="delete-i"
                       alt="excluir funcionário"
@@ -265,11 +274,17 @@ section {
   justify-content: center;
 }
 .delete-i {
-  margin-top: 10px;
+  margin-top: 0px;
   color: rgb(194, 0, 0);
   height: 20px;
   width: 20px;
   cursor: pointer;
+  padding: 4px;
+  
+}
+.delete-i:hover{
+  color:  rgb(241, 0, 0);
+  transition: 0,3s;
 }
 .edit-i {
   margin-top: 10px;
@@ -279,6 +294,7 @@ section {
 }
 .icons {
   display: flex;
+
   gap: 4px;
 }
 .tfoot-div button {
@@ -326,10 +342,12 @@ tbody td:nth-child(1) {
 }
 tbody td:nth-child(2) {
   width: 35%;
+  
 }
 tbody td:nth-child(3) {
   width: 35%;
-  font-weight: 300;
+  font-weight: 500;
+  color: rgb(145, 145, 145);
 }
 tbody td:nth-child(4) {
   width: 25%;
