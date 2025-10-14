@@ -5,8 +5,11 @@ import HomePg from '../components/HomePg.vue';
 </script>
 
 <template>
-    <HomePg/>
+    <HomePg class="content"/>
 </template>
 
 <style scoped>
+.content{
+    padding-top: 74px;
+}
 </style>

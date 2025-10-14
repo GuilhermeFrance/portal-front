@@ -11,6 +11,7 @@ import {
   UserPlus,
 } from "lucide-vue-next";
 
+const isLoading = ref(true);
 const isModalOpen = ref(false);
 const API_URL = "http://localhost:3000/requests";
 const requests = ref<Request[]>([]);
@@ -47,7 +48,7 @@ function formatTime(dateTimeString: string | Date | undefined): string {
     if (isNaN(date.getTime())) {
       return "data invalida";
     }
-    const dateparte = date.toLocaleDateString("pt-BR")
+    const dateparte = date.toLocaleDateString("pt-BR");
     const timePart = date.toLocaleDateString("pt-BR", {
       hour: "2-digit",
       minute: "2-digit",
@@ -59,17 +60,18 @@ function formatTime(dateTimeString: string | Date | undefined): string {
   }
 }
 
-function limitDescription(text: string, maxLength: number): string{
-  if(!text){
-    return ''
+function limitDescription(text: string, maxLength: number): string {
+  if (!text) {
+    return "";
   }
-  if(text.length <= maxLength){
-    return text
+  if (text.length <= maxLength) {
+    return text;
   }
-  return text.substring(0, maxLength)+ '...'
+  return text.substring(0, maxLength) + "...";
 }
 
 async function fetchRequest() {
+  isLoading.value = true;
   try {
     const response = await axios.get(`${API_URL}`, {
       params: {
@@ -82,6 +84,8 @@ async function fetchRequest() {
     totalPages.value = response.data.lastPage;
   } catch (err) {
     console.log("Erro ao carregar os dados");
+  } finally {
+    isLoading.value = false;
   }
 }
 async function deleteRequest(requestId: number) {
@@ -111,95 +115,110 @@ onMounted(fetchRequest);
     <div>
       <div class="header">
         <h2>Solititações:</h2>
-        <button @click="OpenModal" class="btn-add">
-          <UserPlus />Adicionar
-        </button>
       </div>
 
       <div class="card">
-        <div class="table" v-if="requests.length >= 1">
-          <table v-if="requests.length" id="users">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Nome</th>
-                <th>Descrição</th>
-                <th>Endereço</th>
-                <th>STATUS</th>
-                <th>Serviço</th>
-                <th>Data</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="request in requests" :key="request.id">
-                <td>{{ request.id }}</td>
-                <td>{{ request.name }}</td>
-                <td>{{limitDescription(request.description, 29) }}</td>
-                <td>{{ request.adress }}</td>
-                <td><span class="status-pill" :class="{
-                  'isOpen': request.status === 'ABERTO',
-                  'Processing': request.status === 'EM_ANDAMENTO',
-                  'Conclused': request.status === 'CONCLUIDO',
-                  'Rejected': request.status === 'REJEITADO',
-                }"> {{ request.status }} </span></td>
-                <td>{{ request.type ? request.type.name : "N/A" }}</td>
-                <td>{{ formatTime(request.createdAt) }}</td>
-                <td>
-                  <div class="icons">
-                   
-                    <Trash
-                      class="delete-i"
-                      alt="excluir funcionário"
-                      @click="deleteRequest(request.id)"
-                    />
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div
-          style="
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            align-content: center;
-            margin-top: 250px;
-            font-size: 20px;
-            font-weight: 200;
-          "
-          v-else
-        >
-          Nenhum registro econtrado.
-        </div>
-      </div>
+        <div class="content-wrapper">
+          <div v-if="isLoading" class="loading-overlay">
+            <v-progress-circular
+              indeterminate
+              color="primary"
+              size="44"
+            ></v-progress-circular>
+          </div>
+          <div class="table" v-if="requests.length >= 1">
+            <table v-if="requests.length" id="users">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nome</th>
+                  <th>Descrição</th>
+                  <th>Endereço</th>
+                  <th>STATUS</th>
+                  <th>Serviço</th>
+                  <th>Data</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="request in requests" :key="request.id">
+                  <td>{{ request.id }}</td>
+                  <td>{{ request.name }}</td>
+                  <td>{{ limitDescription(request.description, 29) }}</td>
+                  <td>{{ limitDescription(request.adress, 20) }}</td>
+                  <td>
+                    <span
+                      class="status-pill"
+                      :class="{
+                        isOpen: request.status === 'ABERTO',
+                        Processing: request.status === 'PROCESSANDO',
+                        Conclused: request.status === 'CONCLUIDO',
+                        Rejected: request.status === 'REJEITADO',
+                      }"
+                    >
+                      {{ request.status }}
+                    </span>
+                  </td>
+                  <td>{{ request.type ? request.type.name : "N/A" }}</td>
+                  <td>{{ formatTime(request.createdAt) }}</td>
+                  <td>
+                    <div class="icons">
+                      <Trash
+                        class="delete-i"
+                        alt="excluir funcionário"
+                        @click="deleteRequest(request.id)"
+                      />
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div
+            style="
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              align-content: center;
+              margin-top: 250px;
+              font-size: 20px;
+              font-weight: 200;
+            "
+            v-else
+          >
+            Nenhum registro econtrado.
+          </div>
+        
 
-      <div class="tfoot-div">
-        <div class="pagination-info" v-if="requests.length >= 1">
-          <span style="font-weight: 200">
-            Pagina <span style="font-weight: 400">{{ currentPage }}</span> de
-            <span>{{ totalPages }}</span></span
-          >
-          <span>
-            <span style="font-weight: 400">({{ totalItems }} resultados)</span>
-          </span>
-        </div>
-        <div class="pagination-btns" v-if="requests.length >= 1">
-          <button
-            @click="goToPage(currentPage - 1)"
-            :disabled="currentPage === 1"
-          >
-            <ChevronLeft />
-          </button>
-          <button
-            @click="goToPage(currentPage + 1)"
-            :disabled="currentPage === totalPages"
-          >
-            <ChevronRight />
-          </button>
+        <div class="tfoot-div">
+          <div class="pagination-info" v-if="requests.length >= 1">
+            <span style="font-weight: 200">
+              Pagina <span style="font-weight: 400">{{ currentPage }}</span> de
+              <span>{{ totalPages }}</span></span
+            >
+            <span>
+              <span style="font-weight: 400"
+                >({{ totalItems }} resultados)</span
+              >
+            </span>
+          </div>
+          <div class="pagination-btns" v-if="requests.length >= 1">
+            <button
+              @click="goToPage(currentPage - 1)"
+              :disabled="currentPage === 1"
+            >
+              <ChevronLeft />
+            </button>
+            <button
+              @click="goToPage(currentPage + 1)"
+              :disabled="currentPage === totalPages"
+            >
+              <ChevronRight />
+            </button>
+          </div>
         </div>
       </div>
+    </div>
     </div>
   </section>
 </template>
@@ -230,7 +249,26 @@ section {
   justify-content: space-between;
   margin-bottom: 10px;
 }
-
+.content-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+}
+.loading-overlay {
+  position: absolute;
+  height: 500px;
+  width: 1300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 20px 20px 20px 20px;
+  background-color: rgba(255, 255, 255);
+  box-shadow: 1px 10px 10px rgb(179, 179, 179);
+  z-index: 10;
+}
 .btn-add {
   display: flex;
   flex-direction: row;
@@ -242,7 +280,7 @@ section {
   border-radius: 10px;
   font-weight: bolder;
   color: white;
-  background-color: #0ac7e0;
+  background-color: #0079ff;
   border: none;
   font-size: 15px;
   box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.24);
@@ -252,7 +290,7 @@ section {
   font-weight: 500;
 }
 .btn-add:hover {
-  background-color: #0999ac;
+  background-color: #1b61f7;
   transition: 0.3s;
 }
 .pagination-btns {
@@ -280,11 +318,10 @@ section {
   width: 20px;
   cursor: pointer;
   padding: 4px;
-  
 }
-.delete-i:hover{
-  color:  rgb(241, 0, 0);
-  transition: 0,3s;
+.delete-i:hover {
+  color: rgb(241, 0, 0);
+  transition: 0, 3s;
 }
 .edit-i {
   margin-top: 10px;
@@ -296,6 +333,10 @@ section {
   display: flex;
 
   gap: 4px;
+}
+.status-pill{
+  font-weight: 500;
+  font-size: 15px;
 }
 .tfoot-div button {
   border: 1px solid rgba(128, 128, 128, 0.226);
@@ -326,14 +367,14 @@ td {
 }
 
 thead th {
-  border-bottom: 2px solid #27a9ff75;
+  border-bottom: 1px solid #00000049;
 }
 
 tbody tr:nth-child(even) {
   background-color: #f9f9f9;
 }
 tbody tr:hover {
-  background-color: #f2feff;
+  background-color: #f1f1f167;
   transition: 0.2s;
   cursor: pointer;
 }
@@ -342,7 +383,6 @@ tbody td:nth-child(1) {
 }
 tbody td:nth-child(2) {
   width: 35%;
-  
 }
 tbody td:nth-child(3) {
   width: 35%;
@@ -380,12 +420,12 @@ h2 {
   color: rgb(255, 153, 0);
 }
 .Processing {
-  color: rgb(0, 158, 92);
+  color: rgb(0, 140, 233);
 }
 .Conclused {
   color: green;
 }
 .Rejected {
-  color: red;
+  color: rgb(189, 0, 0);
 }
 </style>

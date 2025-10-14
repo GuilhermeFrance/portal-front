@@ -1,21 +1,28 @@
-T<script setup lang="ts">
+T
+<script setup lang="ts">
 import { onMounted, ref } from "vue";
 import type { User } from "../interfaces/UserInterface";
 import axios from "axios";
 import UserModal from "./UserModal.vue";
 
-import { Trash, UserPen, ChevronRight, ChevronLeft, UserPlus } from "lucide-vue-next";
-
+import {
+  Trash,
+  UserPen,
+  ChevronRight,
+  ChevronLeft,
+  UserPlus,
+} from "lucide-vue-next";
 
 const isModalOpen = ref(false);
 const isModalEditOpen = ref(false);
 const API_URL = "http://localhost:3000/users";
 const users = ref<User[]>([]);
-const userToEdit = ref<User | null>(null)
+const userToEdit = ref<User | null>(null);
 const currentPage = ref(1);
 const itemsPerPage = ref(8);
 const totalItems = ref(0);
 const totalPages = ref(0);
+const isLoading = ref(true);
 
 function OpenModal() {
   isModalOpen.value = true;
@@ -25,16 +32,16 @@ function CloseModal() {
   isModalOpen.value = false;
 }
 
-function OpenModalEdit(user: User){
-  userToEdit.value = user
+function OpenModalEdit(user: User) {
+  userToEdit.value = user;
   isModalEditOpen.value = true;
 }
 function CloseEditModal() {
   isModalEditOpen.value = false;
 }
 function handleUserUpdated() {
-    CloseModal();
-    fetchUser(); // Recarrega os dados para mostrar as mudanças
+  CloseModal();
+  fetchUser(); // Recarrega os dados para mostrar as mudanças
 }
 
 async function deleteUser(userId: number) {
@@ -47,6 +54,7 @@ async function deleteUser(userId: number) {
   } catch (error) {
     alert("Erro ao excluir");
     fetchUser();
+  } finally {
   }
 }
 
@@ -63,6 +71,7 @@ function goToPage(page: number) {
 }
 
 async function fetchUser() {
+  isLoading.value = true;
   try {
     const response = await axios.get(`${API_URL}`, {
       params: {
@@ -75,6 +84,8 @@ async function fetchUser() {
     totalPages.value = response.data.lastPage;
   } catch (err) {
     console.log("Erro ao carregar os dados");
+  } finally {
+    isLoading.value = false;
   }
 }
 onMounted(fetchUser);
@@ -87,16 +98,24 @@ onMounted(fetchUser);
       @close="CloseModal"
       @user-created="handleUsersCreated"
     />
-   
+
     <div>
       <div class="header">
         <h2>FUNCIONÁRIOS:</h2>
         <button @click="OpenModal" class="btn-add">
-          <UserPlus/>Adicionar 
+          <UserPlus />Adicionar
         </button>
       </div>
-
+    
       <div class="card">
+        <div v-if="isLoading" class="loading-overlay">
+          <v-progress-circular
+            indeterminate
+            color="primary"
+            size="44"
+          ></v-progress-circular>
+        </div>
+        <div class="content-wrapper" v-else>
         <div class="table" v-if="users.length >= 1">
           <table v-if="users.length" id="users">
             <thead>
@@ -116,9 +135,12 @@ onMounted(fetchUser);
                 <td>{{ user.role ? user.role.name : "N/A" }}</td>
                 <td>
                   <div class="icons">
-                   
-                    <UserPen class="edit-i" @click="OpenModalEdit(user)" title="editar usuario"/>
-                     <Trash
+                    <UserPen
+                      class="edit-i"
+                      @click="OpenModalEdit(user)"
+                      title="editar usuario"
+                    />
+                    <Trash
                       class="delete-i"
                       alt="excluir funcionário"
                       @click="deleteUser(user.id)"
@@ -129,8 +151,20 @@ onMounted(fetchUser);
             </tbody>
           </table>
         </div>
-        <div style="display: flex; justify-content: center;
-        align-items: center; align-content: center; margin-top: 250px; font-size: 20px; font-weight: 200;" v-else> Nenhum registro econtrado. </div>
+        <div
+          style="
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            align-content: center;
+            margin-top: 250px;
+            font-size: 20px;
+            font-weight: 200;
+          "
+          v-else
+        >
+          Nenhum registro econtrado.
+        
       </div>
 
       <div class="tfoot-div">
@@ -156,8 +190,10 @@ onMounted(fetchUser);
           >
             <ChevronRight />
           </button>
+          </div>
         </div>
       </div>
+    </div>
     </div>
   </section>
 </template>
@@ -169,10 +205,32 @@ section {
   align-items: center;
   align-content: center;
 }
+.content-wrapper{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+ width: 100%;
+ height: 100%;
 
+}
+.loading-overlay {
+  position: absolute;
+  height: 500px;
+  width: 900px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 20px 20px 20px 20px;
+  background-color: rgba(255, 255, 255); 
+  box-shadow: 1px 10px 10px rgb(179, 179, 179);
+  z-index: 10;
+}
 .card {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: space-between;
+
   align-items: flex-start;
   height: 500px;
   width: 900px;
@@ -200,7 +258,7 @@ section {
   border-radius: 10px;
   font-weight: bolder;
   color: white;
-  background-color: #0ac7e0;
+  background-color: #0079ff;
   border: none;
   font-size: 15px;
   box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.24);
@@ -210,7 +268,7 @@ section {
   font-weight: 500;
 }
 .btn-add:hover {
-  background-color: #0999ac;
+  background-color: #1b61f7;
   transition: 0.3s;
 }
 .pagination-btns {
@@ -277,13 +335,13 @@ td {
 }
 
 thead th {
-  border-bottom: 2px solid #27a9ff75;
+  border-bottom: 2px solid #00000049;
 }
 tbody tr:nth-child(even) {
   background-color: #f9f9f9;
 }
 tbody tr:hover {
-  background-color: #f2feff;
+  background-color: #f1f1f167;
   transition: 0.2s;
 }
 tbody td:nth-child(1) {

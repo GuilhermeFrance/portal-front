@@ -8,7 +8,7 @@ import { RouterLink } from "vue-router";
     <div class="side-items">
       <div class="navigation-side-bar">
         <RouterLink to="/" class="side-item"
-          >Home
+          >Início
           <div class="on-side"></div
         ></RouterLink>
         <RouterLink to="/solicitacoes" class="side-item"
@@ -23,7 +23,7 @@ import { RouterLink } from "vue-router";
       <div>
         <RouterLink to="/profile" class="user-style">
           <UserRound class="lucide-icon" />
-          User
+          Perfil
         </RouterLink>
       </div>
     </div>
@@ -72,7 +72,7 @@ import { RouterLink } from "vue-router";
 .user-link:hover {
   background-color: rgb(238, 238, 238);
   cursor: pointer;
-  color: rgb(10, 135, 207);
+  color:#0079FF;
 }
 .user-style {
   display: flex;
@@ -87,11 +87,11 @@ import { RouterLink } from "vue-router";
 .user-style:hover {
   background-color: rgb(238, 238, 238);
   cursor: pointer;
-  color: rgb(10, 135, 207);
+  color: #0079FF;
   transition: 0.3s;
 }
 .user-style.router-link-exact-active {
-  color: rgb(16, 180, 221);
+  color: #0079FF;
   font-weight: 600;
 }
 .side-item {
@@ -113,16 +113,16 @@ import { RouterLink } from "vue-router";
 .side-item:hover {
   background-color: rgb(238, 238, 238);
   cursor: pointer;
-  color: rgb(10, 135, 207);
+  color: #0079FF;
 }
 .side-item.router-link-exact-active {
-  color: rgb(16, 180, 221);
+  color: #0079FF;
   font-weight: 700;
 }
 .side-item.router-link-exact-active .on-side {
   height: 50px;
   width: 5px;
-  background-color: rgb(16, 180, 221);
+  background-color: #0079FF;
   transition: 0.5s;
 }
 .on-side:hover {

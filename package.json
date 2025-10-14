@@ -12,7 +12,8 @@
     "axios": "^1.12.2",
     "lucide": "^0.545.0",
     "vue": "^3.5.22",
-    "vue-router": "^4.5.1"
+    "vue-router": "^4.5.1",
+    "vuetify": "^3.10.5"
   },
   "devDependencies": {
     "@types/node": "^24.6.0",

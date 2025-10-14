@@ -3,6 +3,7 @@ import EmployeePage from "../pages/EmployeePage.vue";
 import RequestPage from "../pages/RequestsPage.vue";
 import ProfilePage from "../pages/ProfilePage.vue";
 import HomePage from "../pages/HomePage.vue";
+import FormPage from "../pages/FormPage.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -38,6 +39,16 @@ const router = createRouter({
       meta: {
         title: "Perfil",
       },
+      
+    },
+    {
+      path: "/solicite",
+      name: "form-request",
+      component: FormPage,
+      meta: {
+        title: "Faça uma solicitação",
+      },
+      
     },
   ],
 

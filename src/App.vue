@@ -26,7 +26,6 @@ main{
 }
 .main-content{
   grid-column: 2;
-  padding: 20px;
   min-height: 100hve;
 }
 </style>
