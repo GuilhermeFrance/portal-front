@@ -114,7 +114,7 @@ onMounted(fetchRequest);
       v-if="isModalOpen"
       :initialRequest="requestToEdit"
       @close="CloseModal"
-      @request-created="handleRequestUpdated"
+      @request-updated="handleRequestUpdated"
     />
     <div>
       <div class="header">
@@ -148,7 +148,7 @@ onMounted(fetchRequest);
                 <tr v-for="request in requests" :key="request.id" @click="OpenModalEdit(request)">
                   <td>{{ request.id }}</td>
                   <td>{{ request.name }}</td>
-                  <td>{{ limitDescription(request.description, 29) }}</td>
+                  <td>{{ limitDescription(request.description, 23) }}</td>
                   <td>{{ limitDescription(request.adress, 20) }}</td>
                   <td>
                     <span
@@ -170,7 +170,7 @@ onMounted(fetchRequest);
                       <Trash
                         class="delete-i"
                         alt="excluir funcionário"
-                        @click="deleteRequest(request.id)"
+                        @click.stop="deleteRequest(request.id)"
                       />
                     </div>
                   </td>

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { onMounted, ref, } from "vue";
+import { onMounted, ref } from "vue";
 import type { Role } from "../interfaces/RoleInterface";
 import axios from "axios";
 import type { NewUserDTO } from "../interfaces/NewUserDto";
-import type { User } from "../interfaces/UserInterface";
+import { X } from "lucide-vue-next";
 
 const API_USERS_URL = "http://localhost:3000/users";
 
@@ -19,7 +19,6 @@ const emit = defineEmits(["close", "user-created", "user-updated"]);
 const API_URL = "http://localhost:3000/roles";
 const roles = ref<Role[]>([]);
 const formError = ref<string | null>(null);
-
 
 function handleRoleChange(e: Event) {
   const target = e.target as HTMLSelectElement;
@@ -82,7 +81,7 @@ onMounted(fetchRole);
     <div class="modal-content">
       <header>
         <h3>Novo funcionário</h3>
-        <button class="closeModal" @click="handleClose">X</button>
+        <button class="closeModal" @click="handleClose"><X /></button>
       </header>
       <div class="input-box">
         <form @submit.prevent="handleSubmit">
@@ -202,8 +201,7 @@ footer {
 }
 
 .closeModal:hover {
-  color: white;
-  background-color: rgb(243, 96, 96);
+  color: rgb(97, 97, 97);
   transition: 0.3s;
 }
 

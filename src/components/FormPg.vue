@@ -100,7 +100,7 @@ onMounted(fetchRequest)
           </div>
        
           <div class="form-item">
-            <label for="input">Título:</label>
+            <label for="input">Serviço:</label>
             <select
               name=""
               id="cargo"
@@ -108,7 +108,7 @@ onMounted(fetchRequest)
               @change="handleRoleChange"
               required
             >
-              <option value="null" disabled>Selecione um cargo</option>
+              <option value="null" disabled>Selecione o tipo de serviço</option>
               <option v-for="type in types" :key="type.id" :value="type.id">
                 {{ type.name }}
               </option>
