@@ -21,7 +21,7 @@ import { RouterLink } from "vue-router";
         ></RouterLink>
       </div>
       <div>
-        <RouterLink to="/profile" class="user-style">
+        <RouterLink to="/perfil" class="user-style">
           <UserRound class="lucide-icon" />
           Perfil
         </RouterLink>

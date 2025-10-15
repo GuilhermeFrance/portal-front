@@ -15,6 +15,8 @@ import {
 
 <template>
   <section>
+    <div class="home-page"> 
+      <img src="../assets/Design sem nome (3).png" class="logo" alt="">
     <div class="home-card">
       <div class="home">
         <div class="link-list">
@@ -134,7 +136,7 @@ import {
             <div class="card-link">
               <div class="icon-request">
                 <RouterLink
-                  to="/solicitacoes"
+                  to="/perfil"
                   style="text-decoration: none; color: black"
                 >
                   <div class="card-router">
@@ -179,7 +181,7 @@ import {
 
           <div class="card-link">
             <div class="icon-request">
-              <RouterLink
+              <a s href="https://www.pmvc.ba.gov.br/" target="_blank"
                 to="/funcionarios"
                 style="text-decoration: none; color: black"
               >
@@ -195,7 +197,7 @@ import {
                     </p>
                   </div>
                 </div>
-              </RouterLink>
+              </a>
             </div>
           </div>
           <div class="link-list">
@@ -221,6 +223,7 @@ import {
         </div>
       </div>
     </div>
+    </div>
   </section>
 </template>
 
@@ -232,6 +235,15 @@ section {
   align-items: center;
   align-content: center;
   padding-top: 50px;
+}
+.logo{
+  width: 40%;
+}
+.home-page{
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
 }
 .home {
   display: flex;
@@ -260,7 +272,7 @@ section {
   justify-content: flex-start;
   padding: 40px;
   width: 1100px;
-  height: 640px;
+  height: 450px;
   background-color: #fcfcfc;
   border-radius: 20px;
   box-shadow: 2px 2px 10px 2px rgba(0, 0, 0, 0.158);

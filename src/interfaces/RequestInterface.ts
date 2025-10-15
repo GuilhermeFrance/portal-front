@@ -5,6 +5,7 @@ export interface Request {
     name: string;
     description: string;
     adress: string;
+    typeId: number | null;
     type: Type | null ;
     status: string;
     createdAt: Date

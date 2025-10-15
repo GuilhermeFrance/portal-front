@@ -1,38 +1,57 @@
 <script setup lang="ts">
-import { onMounted, ref, } from "vue";
+import { onMounted, ref, watch, type PropType } from "vue";
 import type { Role } from "../interfaces/RoleInterface";
 import axios from "axios";
 import type { NewUserDTO } from "../interfaces/NewUserDto";
 import type { User } from "../interfaces/UserInterface";
+import type { Type } from "../interfaces/TypeRequest";
+import type { UpdateRequestDto } from "../interfaces/UpdateRequestDto";
+import type { Request } from "../interfaces/RequestInterface";
+
 
 const API_USERS_URL = "http://localhost:3000/users";
 
-const newUser = ref<NewUserDTO>({
-  name: "",
-  email: "",
-  cpf: "",
-  roleId: null,
+const props = defineProps({
+  initialRequest: {
+    type: Object as PropType<Request | null>,
+    required: true,
+  },
 });
 
-const emit = defineEmits(["close", "user-created", "user-updated"]);
+const editedRequest = ref<UpdateRequestDto>({
+  name: "",
+  description: "",
+  adress: "",
+  typeId: null,
+  status: "ABERTO"
+});
 
-const API_URL = "http://localhost:3000/roles";
-const roles = ref<Role[]>([]);
+const emit = defineEmits(["close", "request-updated"]);
+
+const API_TYPES_URL = "http://localhost:3000/v1/types";
+const API_REQUESTS_URL = "http://localhost:3000/requests";
+
+const types = ref<Type[]>([]);
 const formError = ref<string | null>(null);
 
+watch(() => props.initialRequest, (newVal) => {
+  if(newVal){
+  editedRequest.value = {
+    name: newVal.name,
+    description: newVal.description,
+    adress: newVal.adress,
+    typeId: newVal.typeId || null,
+    status: newVal.status
 
-function handleRoleChange(e: Event) {
-  const target = e.target as HTMLSelectElement;
+    }
+  }
+}, { immediate: true });
 
-  const newRoleId = parseInt(target.value, 10);
 
-  newUser.value.roleId = newRoleId;
-}
-
-async function fetchRole() {
+async function fetchType() {
   try {
-    const response = await axios.get<Role[]>(API_URL);
-    roles.value = response.data;
+    const response = await axios.get<Type[]>(API_TYPES_URL);
+    types.value = response.data;
   } catch (err) {
     console.log("Erro ao carregar os dados");
   }
@@ -40,95 +59,39 @@ async function fetchRole() {
 function handleClose() {
   emit("close");
 }
-async function handleSubmit() {
-  if (
-    !newUser.value.name ||
-    !newUser.value.email ||
-    !newUser.value.cpf ||
-    !newUser.value.roleId
-  ) {
-    formError.value = "Preencha todos os campos obrigatórios";
-    return;
-  }
-  const cleanedCpf = newUser.value.cpf.replace(/[^\d]/g, "");
-  if (cleanedCpf.length !== 11) {
-    formError.value = "CPF deve ter 11 dígitos.";
-    return;
-  }
-  try {
-    const response = await axios.post(API_USERS_URL, newUser.value);
-    console.log("Funcionário criado com sucesso:", response.data);
-    console.log("Tentativa de E-mail:", newUser.value.email);
-    emit("user-created");
-    handleClose();
-  } catch (err) {
-    console.error("Erro na criação do funcionário", err);
-    const backEndMessage =
-      axios.isAxiosError(err) && err.response?.data?.message
-        ? err.response.data.message
-        : "Falha ao salvar. Verifique o sevidor.";
 
-    formError.value = Array.isArray(backEndMessage)
-      ? backEndMessage.join(", ")
-      : backEndMessage;
+async function handleSubmit() {
+  formError.value = null
+
+  const requestId = props.initialRequest?.id
+
+  if(!requestId){
+    formError.value = "Erro: ID da solicitacao nao encontrado para edicao"
+    return
+  }
+
+  try {
+    await axios.patch(`${API_REQUESTS_URL}/${requestId}`, editedRequest.value)
+    console.log('Solicitacao editada com sucesso')
+    emit('request-updated')
+  } catch (error) {
+    formError.value = "Falha na atualização. Verifique os dados.";
   }
 }
-
-onMounted(fetchRole);
+  
+onMounted(fetchType);
 </script>
 
 <template>
   <div class="modal-background" @click.self="handleClose">
     <div class="modal-content">
       <header>
-        <h3>Novo funcionário</h3>
+        <h3>Solicitacao {{ initialRequest?.id }}</h3>
         <button class="closeModal" @click="handleClose">X</button>
       </header>
       <div class="input-box">
         <form @submit.prevent="handleSubmit">
-          <label for="input">Nome:</label>
-          <input
-            class="user-input"
-            placeholder="Nome Completo"
-            type="text"
-            name=""
-            id=""
-            v-model="newUser.name"
-            required
-          />
-          <label for="input">Email:</label>
-          <input
-            class="user-input"
-            placeholder="Digite o seu email.."
-            type="email"
-            name=""
-            id=""
-            v-model="newUser.email"
-            required
-          />
-          <label for="input">CPF:</label>
-          <input
-            class="user-input"
-            placeholder="CPF sem '.' ou '-'"
-            type="text"
-            inputmode="numeric"
-            name=""
-            id=""
-            v-model="newUser.cpf"
-            required
-          />
-          <label for="input">Cargo:</label>
-          <select
-            id="cargo"
-            :value="newUser.roleId"
-            @change="handleRoleChange"
-            required
-          >
-            <option value="null" disabled>Selecione um cargo</option>
-            <option v-for="role in roles" :key="role.id" :value="role.id">
-              {{ role.name }}
-            </option>
-          </select>
+          
 
           <footer>
             <button type="submit" class="btn-save">Salvar</button>

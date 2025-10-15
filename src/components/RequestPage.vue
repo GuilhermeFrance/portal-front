@@ -58,7 +58,7 @@ function handleUsersCreated() {
 function goToPage(page: number) {
   if (page >= 1 && page <= totalPages.value) {
     currentPage.value = page;
-    fetchUser(); // Busca os novos dados
+    fetchUser(); 
   }
 }
 

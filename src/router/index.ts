@@ -33,7 +33,7 @@ const router = createRouter({
       },
     },
     {
-      path: "/profile",
+      path: "/perfil",
       name: "profile",
       component: ProfilePage,
       meta: {

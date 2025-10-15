@@ -5,11 +5,10 @@ import axios from "axios";
 import UserModal from "./UserModal.vue";
 import {
   Trash,
-  UserPen,
   ChevronRight,
   ChevronLeft,
-  UserPlus,
 } from "lucide-vue-next";
+import RequestModal from "./RequestModal.vue";
 
 const isLoading = ref(true);
 const isModalOpen = ref(false);
@@ -19,16 +18,20 @@ const currentPage = ref(1);
 const itemsPerPage = ref(8);
 const totalItems = ref(0);
 const totalPages = ref(0);
+const requestToEdit = ref<Request | null>(null)
 
-function OpenModal() {
+
+function OpenModalEdit(request: Request) {
+  requestToEdit.value = request
   isModalOpen.value = true;
 }
 
 function CloseModal() {
+  requestToEdit.value = null
   isModalOpen.value = false;
 }
 
-function handleRequestCreated() {
+function handleRequestUpdated() {
   CloseModal();
   fetchRequest();
 }
@@ -36,7 +39,7 @@ function handleRequestCreated() {
 function goToPage(page: number) {
   if (page >= 1 && page <= totalPages.value) {
     currentPage.value = page;
-    fetchRequest(); // Busca os novos dados
+    fetchRequest();
   }
 }
 
@@ -107,10 +110,11 @@ onMounted(fetchRequest);
 
 <template>
   <section>
-    <UserModal
+    <RequestModal
       v-if="isModalOpen"
+      :initialRequest="requestToEdit"
       @close="CloseModal"
-      @request-created="handleRequestCreated"
+      @request-created="handleRequestUpdated"
     />
     <div>
       <div class="header">
@@ -141,7 +145,7 @@ onMounted(fetchRequest);
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="request in requests" :key="request.id">
+                <tr v-for="request in requests" :key="request.id" @click="OpenModalEdit(request)">
                   <td>{{ request.id }}</td>
                   <td>{{ request.name }}</td>
                   <td>{{ limitDescription(request.description, 29) }}</td>
@@ -188,37 +192,37 @@ onMounted(fetchRequest);
           >
             Nenhum registro econtrado.
           </div>
-        
 
-        <div class="tfoot-div">
-          <div class="pagination-info" v-if="requests.length >= 1">
-            <span style="font-weight: 200">
-              Pagina <span style="font-weight: 400">{{ currentPage }}</span> de
-              <span>{{ totalPages }}</span></span
-            >
-            <span>
-              <span style="font-weight: 400"
-                >({{ totalItems }} resultados)</span
+          <div class="tfoot-div">
+            <div class="pagination-info" v-if="requests.length >= 1">
+              <span style="font-weight: 200">
+                Pagina
+                <span style="font-weight: 400">{{ currentPage }}</span> de
+                <span>{{ totalPages }}</span></span
               >
-            </span>
-          </div>
-          <div class="pagination-btns" v-if="requests.length >= 1">
-            <button
-              @click="goToPage(currentPage - 1)"
-              :disabled="currentPage === 1"
-            >
-              <ChevronLeft />
-            </button>
-            <button
-              @click="goToPage(currentPage + 1)"
-              :disabled="currentPage === totalPages"
-            >
-              <ChevronRight />
-            </button>
+              <span>
+                <span style="font-weight: 400"
+                  >({{ totalItems }} resultados)</span
+                >
+              </span>
+            </div>
+            <div class="pagination-btns" v-if="requests.length >= 1">
+              <button
+                @click="goToPage(currentPage - 1)"
+                :disabled="currentPage === 1"
+              >
+                <ChevronLeft />
+              </button>
+              <button
+                @click="goToPage(currentPage + 1)"
+                :disabled="currentPage === totalPages"
+              >
+                <ChevronRight />
+              </button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
     </div>
   </section>
 </template>
@@ -334,7 +338,7 @@ section {
 
   gap: 4px;
 }
-.status-pill{
+.status-pill {
   font-weight: 500;
   font-size: 15px;
 }
