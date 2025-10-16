@@ -173,13 +173,13 @@ section {
 }
 
 .card {
-  display: flex;
+  display: none;
   justify-content: center;
   align-items: flex-start;
   height: 500px;
   width: 900px;
   background-color: white;
-  border-radius: 20px 20px 0px 0px;
+  border-radius: 20px 20px 10px 10px;
   box-shadow: 1px 10px 10px rgb(179, 179, 179);
 }
 

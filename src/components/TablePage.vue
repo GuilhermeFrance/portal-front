@@ -32,6 +32,13 @@ function CloseModal() {
   isModalOpen.value = false;
 }
 
+function formatCpf(cpfValue: string): string {
+  if (!cpfValue) {
+    return "N/A";
+  }
+  const cleanedCpf = cpfValue.replace(/[^\d]/g, "").substring(0, 11);
+  return cleanedCpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+}
 function OpenModalEdit(user: User) {
   userToEdit.value = user;
   isModalEditOpen.value = true;
@@ -106,7 +113,7 @@ onMounted(fetchUser);
           <UserPlus />Adicionar
         </button>
       </div>
-    
+
       <div class="card">
         <div v-if="isLoading" class="loading-overlay">
           <v-progress-circular
@@ -116,84 +123,86 @@ onMounted(fetchUser);
           ></v-progress-circular>
         </div>
         <div class="content-wrapper" v-else>
-        <div class="table" v-if="users.length >= 1">
-          <table v-if="users.length" id="users">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Nome</th>
-                <th>CPF</th>
-                <th>Cargo</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="user in users" :key="user.id">
-                <td>{{ user.id }}</td>
-                <td>{{ user.name }}</td>
-                <td>{{ user.cpf }}</td>
-                <td>{{ user.role ? user.role.name : "N/A" }}</td>
-                <td>
-                  <div class="icons">
-                    <UserPen
-                      class="edit-i"
-                      @click="OpenModalEdit(user)"
-                      title="editar usuario"
-                    />
-                    <Trash
-                      class="delete-i"
-                      alt="excluir funcionário"
-                      @click="deleteUser(user.id)"
-                    />
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div
-          style="
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            align-content: center;
-            margin-top: 250px;
-            font-size: 20px;
-            font-weight: 200;
-          "
-          v-else
-        >
-          Nenhum registro econtrado.
-        
-      </div>
+          <div class="table" v-if="users.length >= 1">
+            <table v-if="users.length" id="users">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nome</th>
+                  <th>CPF</th>
+                  <th>Cargo</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="user in users" :key="user.id">
+                  <td>{{ user.id }}</td>
+                  <td>{{ user.name }}</td>
+                  <td>{{ formatCpf(user.cpf) }}</td>
+                  <td>{{ user.role ? user.role.name : "N/A" }}</td>
+                  <td>
+                    <div class="icons">
+                      <UserPen
+                        class="edit-i"
+                        @click="OpenModalEdit(user)"
+                        title="editar usuario"
+                      />
+                      <Trash
+                        class="delete-i"
+                        alt="excluir funcionário"
+                        @click="deleteUser(user.id)"
+                      />
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div
+            style="
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              align-content: center;
+              margin-top: 250px;
+              font-size: 20px;
+              font-weight: 200;
+            "
+            v-else
+          >
+            Nenhum registro econtrado.
+          </div>
 
-      <div class="tfoot-div">
-        <div class="pagination-info" v-if="users.length >= 1">
-          <span style="font-weight: 200">
-            Pagina <span style="font-weight: 400">{{ currentPage }}</span> de
-            <span>{{ totalPages }}</span></span
-          >
-          <span>
-            <span style="font-weight: 400">({{ totalItems }} resultados)</span>
-          </span>
-        </div>
-        <div class="pagination-btns" v-if="users.length >= 1">
-          <button
-            @click="goToPage(currentPage - 1)"
-            :disabled="currentPage === 1"
-          >
-            <ChevronLeft />
-          </button>
-          <button
-            @click="goToPage(currentPage + 1)"
-            :disabled="currentPage === totalPages"
-          >
-            <ChevronRight />
-          </button>
+          <div class="tfoot-div">
+            <div class="pagination-info" v-if="users.length >= 1">
+              <span style="font-weight: 200">
+                Pagina
+                <span style="font-weight: 400">{{ currentPage }}</span> de
+                <span>{{ totalPages }}</span></span
+              >
+              <span>
+                <span style="font-weight: 400"
+                  >({{ totalItems }} resultados)</span
+                >
+              </span>
+            </div>
+            <div class="pagination-btns" v-if="users.length >= 1">
+              <button
+                @click="goToPage(currentPage - 1)"
+                :disabled="currentPage === 1"
+              >
+                <ChevronLeft />
+              </button>
+              <button
+                @click="goToPage(currentPage + 1)"
+                :disabled="currentPage === totalPages"
+              >
+                <ChevronRight />
+              </button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
     </div>
   </section>
 </template>
@@ -205,24 +214,23 @@ section {
   align-items: center;
   align-content: center;
 }
-.content-wrapper{
+.content-wrapper {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
- width: 100%;
- height: 100%;
-
+  width: 100%;
+  height: 100%;
 }
 .loading-overlay {
   position: absolute;
-  height: 500px;
-  width: 900px;
+  height: 480px;
+  width: 1040px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   border-radius: 20px 20px 20px 20px;
-  background-color: rgba(255, 255, 255); 
+  background-color: rgba(255, 255, 255);
   box-shadow: 1px 10px 10px rgb(179, 179, 179);
   z-index: 10;
 }
@@ -232,17 +240,17 @@ section {
   justify-content: space-between;
 
   align-items: flex-start;
-  height: 500px;
-  width: 900px;
+  height: 480px;
+  width: 1040px;
   background-color: white;
-  border-radius: 20px 20px 0px 0px;
+  border-radius: 10px 10px 10px 10px;
   box-shadow: 1px 10px 10px rgb(179, 179, 179);
 }
 
 .header {
   display: flex;
   flex-direction: row;
-  width: 900px;
+  width: 1040px;
   justify-content: space-between;
   margin-bottom: 10px;
 }
@@ -316,7 +324,7 @@ section {
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  width: 880px;
+  width: 1020px;
   padding: 10px;
   background-color: white;
   height: 40px;
@@ -330,7 +338,7 @@ table {
 }
 th,
 td {
-  padding: 10px 20px;
+  padding: 5px 20px;
   text-align: left; /* Alinha o texto à esquerda nas células */
 }
 

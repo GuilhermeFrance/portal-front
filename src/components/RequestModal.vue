@@ -171,7 +171,7 @@ header {
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  width: 840px;
+  width: 940px;
   margin-bottom: 20px;
 }
 label{
@@ -197,7 +197,7 @@ label{
   flex-direction: column;
   gap: 14px;
   justify-content: center;
-  width: 840px;
+  width: 940px;
 }
 .info-box-desc {
   font-weight: 300;

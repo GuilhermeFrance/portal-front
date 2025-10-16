@@ -242,7 +242,7 @@ section {
   height: 500px;
   width: 1300px;
   background-color: white;
-  border-radius: 20px 20px 0px 0px;
+  border-radius: 10px 10px 10px 10px;
   box-shadow: 1px 10px 10px rgb(179, 179, 179);
 }
 
