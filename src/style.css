@@ -13,3 +13,12 @@ body {
   justify-content: center;  
 
 }
+#nprogress .bar {
+  background: #0079ff !important; /* Sua cor preferida (ex: azul marinho) */
+  height: 4px !important;
+}
+
+/* Mudar a cor da sombra (trail) */
+#nprogress .peg {
+  box-shadow: 0 0 10px #0079ff, 0 0 5px #0079ff !important;
+}

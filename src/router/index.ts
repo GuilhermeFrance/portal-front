@@ -4,65 +4,83 @@ import RequestPage from "../pages/RequestsPage.vue";
 import ProfilePage from "../pages/ProfilePage.vue";
 import HomePage from "../pages/HomePage.vue";
 import FormPage from "../pages/FormPage.vue";
+import NProgress from "nprogress";
+import LoginPage from "../pages/LoginPage.vue";
+import DashBoardLayout from "../components/DashBoardLayout.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
+      path: "/login",
+      name: "Login",
+      component: LoginPage,
+      meta: {
+        title: "Faça Login ou Cadastre-se",
+      },
+    },
+    {
       path: "/",
-      name: "home",
-      component: HomePage,
-      meta: {
-        title: "Página Inicial",
-      },
+      redirect: { name: "Login" },
     },
     {
-      path: "/solicitacoes",
-      name: "solicitacoes",
-      component: RequestPage,
+      path: "/app",
+      name: "AppLayout",
+      component: DashBoardLayout,
       meta: {
-        title: "Solicitações",
+        title: "Faça Login ou Cadastre-se",
       },
-    },
-    {
-      path: "/funcionarios",
-      name: "funcionarios",
-      component: EmployeePage,
-      meta: {
-        title: "Funcionários",
-      },
-    },
-    {
-      path: "/perfil",
-      name: "profile",
-      component: ProfilePage,
-      meta: {
-        title: "Perfil",
-      },
-      
-    },
-    {
-      path: "/solicite",
-      name: "form-request",
-      component: FormPage,
-      meta: {
-        title: "Faça uma solicitação",
-      },
-      
+      children: [
+        {
+          path: "/inicio",
+          name: "home",
+          component: HomePage,
+          meta: {
+            title: "Página Inicial",
+          },
+        },
+        {
+          path: "/solicitacoes",
+          name: "solicitacoes",
+          component: RequestPage,
+          meta: {
+            title: "Solicitações",
+          },
+        },
+        {
+          path: "/funcionarios",
+          name: "funcionarios",
+          component: EmployeePage,
+          meta: {
+            title: "Funcionários",
+          },
+        },
+        {
+          path: "/perfil",
+          name: "profile",
+          component: ProfilePage,
+          meta: {
+            title: "Perfil",
+          },
+        },
+        {
+          path: "/solicite",
+          name: "form-request",
+          component: FormPage,
+          meta: {
+            title: "Faça uma solicitação",
+          },
+        },
+      ],
     },
   ],
-
 });
 
-   router.beforeEach((to, from, next) => {
-    const title = to.meta.title as string;
-    if(title){
-      document.title = title
-    }else {
-      document.title = 'Portal'
-    }
-    next()
+router.beforeEach((to, from, next) => {
+  const title = to.meta.title as string;
+  document.title = title ? title : "Portal";
 
-    })
+  next();
+});
 
 export default router;

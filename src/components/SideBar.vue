@@ -7,7 +7,7 @@ import { RouterLink } from "vue-router";
   <div class="side-bar">
     <div class="side-items">
       <div class="navigation-side-bar">
-        <RouterLink to="/" class="side-item"
+        <RouterLink to="/inicio" class="side-item"
           >Início
           <div class="on-side"></div
         ></RouterLink>

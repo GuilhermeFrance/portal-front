@@ -1,35 +1,51 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
-import type { Role } from "../interfaces/RoleInterface";
+import { onMounted, ref, watch, type PropType } from "vue";
 import axios from "axios";
-import type { NewUserDTO } from "../interfaces/NewUserDto";
+import type { Type } from "../interfaces/TypeRequest";
+import type { UpdateRequestDto } from "../interfaces/UpdateRequestDto";
+import { X } from "lucide-vue-next";
+import type { User } from "../interfaces/UserInterface";
+import type { UpdateUserDto } from "../interfaces/UpdateUserDto";
+import type { Role } from "../interfaces/RoleInterface";
 
-const API_USERS_URL = "http://localhost:3000/users";
+const props = defineProps({
+  initialUser: {
+    type: Object as PropType<User | null>,
+    required: true,
+  },
+});
 
-const newUser = ref<NewUserDTO>({
+const editedRequest = ref<UpdateUserDto>({
   name: "",
   email: "",
-  cpf: "",
   roleId: null,
 });
 
-const emit = defineEmits(["close", "user-created"]);
+const emit = defineEmits(["close", "user-updated"]);
 
-const API_URL = "http://localhost:3000/roles";
+const API_ROLES_URL = "http://localhost:3000/roles";
+const API_USER_URL = "http://localhost:3000/users";
+
 const roles = ref<Role[]>([]);
 const formError = ref<string | null>(null);
 
-function handleRoleChange(e: Event){
-  const target = e.target as HTMLSelectElement
-
-  const newRoleId = parseInt(target.value, 10)
-
-  newUser.value.roleId = newRoleId
-}
+watch(
+  () => props.initialUser,
+  (newVal) => {
+    if (newVal) {
+      editedRequest.value = {
+        name: newVal.name,
+        email: newVal.email,
+        roleId: newVal.roleId,
+      };
+    }
+  },
+  { immediate: true }
+);
 
 async function fetchRole() {
   try {
-    const response = await axios.get<Role[]>(API_URL);
+    const response = await axios.get<Type[]>(API_ROLES_URL);
     roles.value = response.data;
   } catch (err) {
     console.log("Erro ao carregar os dados");
@@ -38,41 +54,50 @@ async function fetchRole() {
 function handleClose() {
   emit("close");
 }
-async function handleSubmit() {
-  if (
-    !newUser.value.name ||
-    !newUser.value.email ||
-    !newUser.value.cpf ||
-    !newUser.value.roleId
-  ) {
-    formError.value = "Preencha todos os campos obrigatórios";
-    return;
-  }
-  const cleanedCpf = newUser.value.cpf.replace(/[^\d]/g, "");
-  if (cleanedCpf.length !== 11) {
-    formError.value = "CPF deve ter 11 dígitos.";
-    return;
+function formatDate(dateTimeString: string | Date | undefined): string{
+  if(!dateTimeString){
+    return 'N/A'
   }
   try {
-    const response = await axios.post(API_USERS_URL, newUser.value);
-    console.log("Funcionário criado com sucesso:", response.data);
-    console.log("Tentativa de E-mail:", newUser.value.email)
-    emit("user-created")
-    handleClose();
-  } catch (err) {
-    console.error("Erro na criação do funcionário", err);
-    const backEndMessage =
-      axios.isAxiosError(err) && err.response?.data?.message
-        ? err.response.data.message
-        : "Falha ao salvar. Verifique o sevidor.";
-
-    formError.value = Array.isArray(backEndMessage)
-      ? backEndMessage.join(", ")
-      : backEndMessage;
+    const date = new Date(dateTimeString)
+    if(isNaN(date.getTime())){
+      return 'Data inválida'
+    }
+    const datePart = date.toLocaleDateString('PT-BR')
+    return `${datePart}`
+    }
+   catch (e) {
+    return "Erro de formatatação"
   }
- 
+}
+async function handleSubmit() {
+  console.log("Estou funcionando")
+  formError.value = null;
+
+  const userId = props.initialUser?.id;
+
+  if (!userId) {
+    formError.value = "Erro: ID da solicitacao nao encontrado para edicao";
+    return;
+  }
+
+  try {
+    await axios.patch(`${API_USER_URL}/${userId}`, editedRequest.value);
+    console.log("Solicitacao editada com sucesso");
+    emit("user-updated");
+  } catch (error) {
+    formError.value = "Falha na atualização. Verifique os dados.";
+
+  }
 }
 
+function handleRoleChange(e: Event) {
+  const target = e.target as HTMLSelectElement;
+
+  const newRoleId = parseInt(target.value, 10);
+
+  editedRequest.value.roleId = newRoleId;
+}
 onMounted(fetchRole);
 </script>
 
@@ -80,56 +105,59 @@ onMounted(fetchRole);
   <div class="modal-background" @click.self="handleClose">
     <div class="modal-content">
       <header>
-        <h3>Novo funcionário</h3>
-        <button class="closeModal" @click="handleClose">X</button>
+        <h3>Solicitacao {{ initialUser?.id }}</h3>
+        <button class="closeModal" @click="handleClose"><X /></button>
       </header>
-      <div class="input-box">
-        <form @submit.prevent="handleSubmit">
-          <label for="input">Nome:</label>
-          <input
-            class="user-input"
-            placeholder="Nome Completo"
-            type="text"
-            name=""
-            id=""
-            v-model="newUser.name"
-            required
-          />
-          <label for="input">Email:</label>
-          <input
-            class="user-input"
-            placeholder="Digite o seu email.."
-            type="email"
-            name=""
-            id=""
-            v-model="newUser.email"
-            required
-          />
-          <label for="input">CPF:</label>
-          <input
-            class="user-input"
-            placeholder="CPF sem '.' ou '-'"
-            type="text"
-            inputmode="numeric"
-            name=""
-            id=""
-            v-model="newUser.cpf"
-            required
-          />
-          <label for="input">Cargo:</label>
-          <select id="cargo" :value="newUser.roleId" @change="handleRoleChange" required> 
-            <option value="null" disabled>Selecione um cargo</option>
-            <option v-for="role in roles" :key="role.id" :value="role.id" >
-              {{ role.name }}
-            </option>
-          </select>
-
-          <footer>
-            <button type="submit" class="btn-save">Salvar</button>
-            <button @click="handleClose" class="btn-cancel">Cancelar</button>
-          </footer>
-        </form>
-      </div>
+      <form @submit.prevent="handleSubmit">
+        <div class="infos-box">
+          <div class="infos">
+            <label for="input"> Nome: </label>
+            <input
+              id="name"
+              class="info-box"
+              type="text"
+              v-model="editedRequest.name"
+            />
+          </div>
+          <div class="infos">
+            <label for="input"> Email: </label>
+            <input
+              id="email"
+              class="info-box"
+              type="email"
+              v-model="editedRequest.email"
+            />
+          </div>
+          
+          <div class="infos">
+            <label for="select">Cargo:</label>
+            <select
+              name=""
+              id="cargo"
+              :value="editedRequest.roleId"
+              @change="handleRoleChange"
+              required
+            >
+              <option value="null" disabled>Selecione um cargo</option>
+              <option v-for="role in roles" :key="role.id" :value="role.id">
+                {{ role.name }}
+              </option>
+            </select>
+          </div>
+          <div class="infos">
+            <label for="span"> Registrado em: </label>
+            <span class="info-box">{{ formatDate(initialUser?.createdAt) }}</span>
+          </div>
+          <div class="infos">
+            <label for="span"> Última alteração: </label>
+            <span class="info-box">{{ formatDate(initialUser?.updatedAt) }}</span>
+          </div>
+        </div>     
+        <footer>
+          <button type="submit" class="btn-save">Salvar</button>
+          <button @click="handleClose" class="btn-cancel">Cancelar</button>
+        </footer>
+      </form>
     </div>
   </div>
 </template>
@@ -137,11 +165,9 @@ onMounted(fetchRole);
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 
-*{
-  font-family: 'Inter', sans-serif;
+* {
+  font-family: "Inter", sans-serif;
 }
-
-
 
 .modal-background {
   display: flex;
@@ -161,19 +187,54 @@ header {
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  width: 500px;
+  width: 940px;
+  margin-bottom: 20px;
 }
-
+label {
+  font-size: 17px;
+}
+.infos {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.info-box {
+  font-size: 15px;
+  font-weight: 400;
+  background-color: rgba(221, 221, 221, 0.315);
+  height: 30px;
+  border: 1px solid rgba(0, 0, 0, 0.322);
+  display: flex;
+  align-items: flex-end;
+  padding: 6px;
+  border-radius: 8px;
+}
+.infos-box {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  justify-content: center;
+  width: 940px;
+}
+.info-box-desc {
+  font-weight: 300;
+  border: 1px solid rgba(0, 0, 0, 0.322);
+  background-color: rgba(221, 221, 221, 0.315);
+  height: 80px;
+  display: flex;
+  align-items: flex-start;
+  padding: 6px;
+  border-radius: 8px;
+}
 .modal-content {
-
   padding: 20px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
   background-color: white;
-  height: 470px;
-  width: 550px;
+  height: 640px;
+  width: 1000px;
   border-radius: 20px;
 }
 
@@ -199,8 +260,7 @@ footer {
 }
 
 .closeModal:hover {
-  color: white;
-  background-color: rgb(243, 96, 96);
+  color: rgb(97, 97, 97);
   transition: 0.3s;
 }
 
@@ -231,16 +291,15 @@ footer button {
 .btn-save {
   font-weight: 800;
   color: white;
-  background-image: linear-gradient(
-    rgba(22, 169, 206, 0.678),
-    rgba(29, 204, 195, 0.616)
-  );
-
+  background-image: linear-gradient(rgb(11, 41, 212), rgb(9, 45, 206));
   border: none;
 }
 
 .btn-save:hover {
-  background-image: linear-gradient(rgb(22, 169, 206), rgb(29, 204, 195));
+  background-image: linear-gradient(
+    rgba(36, 13, 241, 0.678),
+    rgba(0, 15, 231, 0.904)
+  );
   transition: 0.8s;
 }
 
@@ -281,7 +340,7 @@ input[type="number"] {
 select {
   height: 44px;
   border-radius: 8px;
-  background-color: rgba(0, 255, 255, 0.068);
+  background-color: rgba(255, 255, 255, 0.068);
   font-size: 15px;
 }
 </style>

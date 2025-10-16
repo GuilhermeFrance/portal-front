@@ -1,15 +1,20 @@
 <script setup lang="ts">
 
+import { computed } from 'vue';
 import SideBar from './components/SideBar.vue';
-import { RouterView } from 'vue-router';
+import { RouterView, useRoute } from 'vue-router';
 
+const route = useRoute()
 
+const showSideBar = computed(() => {
+  return route.name !=='Login'
+})
 
 </script>
 
 <template>
-  <main>
-    <SideBar/>
+  <main :class="{'has-sidebar': showSideBar}">
+    <SideBar v-if="showSideBar"/>
     <div class="main-content">
     <RouterView/>
     </div>
@@ -18,14 +23,21 @@ import { RouterView } from 'vue-router';
 
 <style scoped>
 main{
-  display: grid;
-  grid-template-columns: 300px 1fr;
   min-height: 100vh;
   margin: 0;
   padding: 0;
 }
+
+.has-sidebar{
+  display: grid;
+  grid-template-columns: 300px 1fr;
+}
+.has-sidebar .main-content {
+    grid-column: 2;
+}
 .main-content{
   grid-column: 2;
-  min-height: 100hve;
+  min-height: 100vh;
 }
+
 </style>

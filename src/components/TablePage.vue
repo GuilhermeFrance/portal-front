@@ -12,6 +12,7 @@ import {
   ChevronLeft,
   UserPlus,
 } from "lucide-vue-next";
+import UserModalEdit from "./UserModalEdit.vue";
 
 const isModalOpen = ref(false);
 const isModalEditOpen = ref(false);
@@ -47,7 +48,7 @@ function CloseEditModal() {
   isModalEditOpen.value = false;
 }
 function handleUserUpdated() {
-  CloseModal();
+  CloseEditModal();
   fetchUser(); // Recarrega os dados para mostrar as mudanças
 }
 
@@ -65,10 +66,7 @@ async function deleteUser(userId: number) {
   }
 }
 
-function handleUsersCreated() {
-  CloseModal();
-  fetchUser();
-}
+
 
 function goToPage(page: number) {
   if (page >= 1 && page <= totalPages.value) {
@@ -103,9 +101,13 @@ onMounted(fetchUser);
     <UserModal
       v-if="isModalOpen"
       @close="CloseModal"
-      @user-created="handleUsersCreated"
+      @user-created="handleUserUpdated"
     />
-
+    <UserModalEdit
+    v-if="isModalEditOpen"
+    :initialUser="userToEdit"
+    @close="CloseEditModal"
+    @user-updated="handleUserUpdated"/>
     <div>
       <div class="header">
         <h2>FUNCIONÁRIOS:</h2>
@@ -298,17 +300,25 @@ section {
   justify-content: center;
 }
 .delete-i {
-  margin-top: 10px;
+  margin-top: 5px;
   color: rgb(194, 0, 0);
   height: 20px;
   width: 20px;
   cursor: pointer;
+  transition: 0.2s;
 }
 .edit-i {
-  margin-top: 10px;
+  margin-top: 5px;
   color: rgb(0, 15, 83);
   width: 20px;
   cursor: pointer;
+  transition: 0.2s;
+}
+.delete-i:hover{
+  color: red;
+}
+.edit-i:hover{
+  color: rgb(1, 5, 204);
 }
 .icons {
   display: flex;
