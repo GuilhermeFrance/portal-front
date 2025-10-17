@@ -4,7 +4,7 @@
   <section>
     <div class="main">
       <div class="side">
-     
+        <img src="../assets/codes.png" alt="" style="width: 760px; height: 1000px; opacity: 15%;">
       </div>
       <div class="login">
         <div class="input-box">
@@ -86,7 +86,7 @@ input::placeholder{
   align-items: center;
   width: 40%;
   height: 100vh;
-  background: linear-gradient(rgb(42, 77, 233), rgb(0, 164, 240));
+  background: linear-gradient( #4d40fe,#00C4CC);
 }
 .logos{
   display: flex;

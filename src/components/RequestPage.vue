@@ -13,7 +13,7 @@ const API_URL = "http://localhost:3000/users";
 const users = ref<User[]>([]);
 const userToEdit = ref<User | null>(null)
 const currentPage = ref(1);
-const itemsPerPage = ref(8);
+const itemsPerPage = ref(10);
 const totalItems = ref(0);
 const totalPages = ref(0);
 
@@ -176,7 +176,7 @@ section {
   display: none;
   justify-content: center;
   align-items: flex-start;
-  height: 500px;
+  height: 600px;
   width: 900px;
   background-color: white;
   border-radius: 20px 20px 10px 10px;

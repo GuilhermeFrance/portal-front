@@ -20,7 +20,7 @@ const API_URL = "http://localhost:3000/users";
 const users = ref<User[]>([]);
 const userToEdit = ref<User | null>(null);
 const currentPage = ref(1);
-const itemsPerPage = ref(8);
+const itemsPerPage = ref(9);
 const totalItems = ref(0);
 const totalPages = ref(0);
 const isLoading = ref(true);
@@ -66,8 +66,6 @@ async function deleteUser(userId: number) {
   }
 }
 
-
-
 function goToPage(page: number) {
   if (page >= 1 && page <= totalPages.value) {
     currentPage.value = page;
@@ -104,10 +102,11 @@ onMounted(fetchUser);
       @user-created="handleUserUpdated"
     />
     <UserModalEdit
-    v-if="isModalEditOpen"
-    :initialUser="userToEdit"
-    @close="CloseEditModal"
-    @user-updated="handleUserUpdated"/>
+      v-if="isModalEditOpen"
+      :initialUser="userToEdit"
+      @close="CloseEditModal"
+      @user-updated="handleUserUpdated"
+    />
     <div>
       <div class="header">
         <h2>FUNCIONÁRIOS:</h2>
@@ -231,9 +230,9 @@ section {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border-radius: 20px 20px 20px 20px;
+  border-radius: 10px 10px 10px 10px;
   background-color: rgba(255, 255, 255);
-  box-shadow: 1px 10px 10px rgb(179, 179, 179);
+
   z-index: 10;
 }
 .card {
@@ -314,10 +313,10 @@ section {
   cursor: pointer;
   transition: 0.2s;
 }
-.delete-i:hover{
+.delete-i:hover {
   color: red;
 }
-.edit-i:hover{
+.edit-i:hover {
   color: rgb(1, 5, 204);
 }
 .icons {

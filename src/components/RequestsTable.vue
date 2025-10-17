@@ -15,7 +15,7 @@ const isModalOpen = ref(false);
 const API_URL = "http://localhost:3000/requests";
 const requests = ref<Request[]>([]);
 const currentPage = ref(1);
-const itemsPerPage = ref(8);
+const itemsPerPage = ref(10);
 const totalItems = ref(0);
 const totalPages = ref(0);
 const requestToEdit = ref<Request | null>(null)
@@ -99,7 +99,9 @@ async function deleteRequest(requestId: number) {
     await axios.delete(`${API_URL}/${requestId}`);
     requests.value = requests.value.filter(
       (request) => request.id !== requestId
+      
     );
+     fetchRequest();
   } catch (error) {
     alert("Erro ao excluir");
     fetchRequest();
@@ -147,9 +149,9 @@ onMounted(fetchRequest);
               <tbody>
                 <tr v-for="request in requests" :key="request.id" @click="OpenModalEdit(request)">
                   <td>{{ request.id }}</td>
-                  <td>{{ request.name }}</td>
+                  <td>{{ limitDescription(request.name, 24) }}</td>
                   <td>{{ limitDescription(request.description, 23) }}</td>
-                  <td>{{ limitDescription(request.adress, 20) }}</td>
+                  <td>{{ limitDescription(request.adress, 19) }}</td>
                   <td>
                     <span
                       class="status-pill"
@@ -240,6 +242,7 @@ section {
   justify-content: center;
   align-items: flex-start;
   height: 500px;
+  max-height: 600px;
   width: 1300px;
   background-color: white;
   border-radius: 10px 10px 10px 10px;
@@ -262,15 +265,15 @@ section {
 }
 .loading-overlay {
   position: absolute;
-  height: 500px;
+  height: 510px;
   width: 1300px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border-radius: 20px 20px 20px 20px;
+  border-radius: 10px 10px 10px 10px;
   background-color: rgba(255, 255, 255);
-  box-shadow: 1px 10px 10px rgb(179, 179, 179);
+ 
   z-index: 10;
 }
 .btn-add {
