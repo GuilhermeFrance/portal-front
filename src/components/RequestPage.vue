@@ -6,7 +6,6 @@ import UserModal from "./UserModal.vue";
 import UserModaEdit from "./UserModalEdit.vue";
 import { Trash, UserPen, ChevronRight, ChevronLeft, UserPlus } from "lucide-vue-next";
 
-
 const isModalOpen = ref(false);
 const isModalEditOpen = ref(false);
 const API_URL = "http://localhost:3000/users";

@@ -12,7 +12,7 @@ import RequestModal from "./RequestModal.vue";
 
 const isLoading = ref(true);
 const isModalOpen = ref(false);
-const API_URL = "http://localhost:3000/requests";
+const API_URL = "http://localhost:3000/requests/all";
 const requests = ref<Request[]>([]);
 const currentPage = ref(1);
 const itemsPerPage = ref(10);

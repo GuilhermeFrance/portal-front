@@ -86,7 +86,7 @@ input::placeholder{
   align-items: center;
   width: 40%;
   height: 100vh;
-  background: linear-gradient( #4d40fe,#00C4CC);
+  background: linear-gradient( #00C4CC,#4d40fe);
 }
 .logos{
   display: flex;
