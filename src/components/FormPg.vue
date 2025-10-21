@@ -148,6 +148,7 @@ onMounted(fetchRequest)
 section {
   display: flex;
   justify-content: center;
+  height: 100vh;
 }
 form {
   display: flex;

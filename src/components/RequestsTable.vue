@@ -3,31 +3,27 @@ import { onMounted, ref } from "vue";
 import type { Request } from "../interfaces/RequestInterface";
 import axios from "axios";
 import UserModal from "./UserModal.vue";
-import {
-  Trash,
-  ChevronRight,
-  ChevronLeft,
-} from "lucide-vue-next";
+import { Trash, ChevronRight, ChevronLeft } from "lucide-vue-next";
 import RequestModal from "./RequestModal.vue";
 
 const isLoading = ref(true);
 const isModalOpen = ref(false);
 const API_URL = "http://localhost:3000/requests/all";
+const API_STATUS_URL = "http://localhost:3000/status/all";
 const requests = ref<Request[]>([]);
 const currentPage = ref(1);
 const itemsPerPage = ref(10);
 const totalItems = ref(0);
 const totalPages = ref(0);
-const requestToEdit = ref<Request | null>(null)
-
+const requestToEdit = ref<Request | null>(null);
 
 function OpenModalEdit(request: Request) {
-  requestToEdit.value = request
+  requestToEdit.value = request;
   isModalOpen.value = true;
 }
 
 function CloseModal() {
-  requestToEdit.value = null
+  requestToEdit.value = null;
   isModalOpen.value = false;
 }
 
@@ -85,12 +81,14 @@ async function fetchRequest() {
     requests.value = response.data.data;
     totalItems.value = response.data.total;
     totalPages.value = response.data.lastPage;
+    console.log(response.data.data[0])
   } catch (err) {
     console.log("Erro ao carregar os dados");
   } finally {
     isLoading.value = false;
   }
 }
+
 async function deleteRequest(requestId: number) {
   if (!confirm(`Tem certeza que deseja remover a solicitação ${requestId}?`)) {
     return;
@@ -99,9 +97,8 @@ async function deleteRequest(requestId: number) {
     await axios.delete(`${API_URL}/${requestId}`);
     requests.value = requests.value.filter(
       (request) => request.id !== requestId
-      
     );
-     fetchRequest();
+    fetchRequest();
   } catch (error) {
     alert("Erro ao excluir");
     fetchRequest();
@@ -147,7 +144,11 @@ onMounted(fetchRequest);
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="request in requests" :key="request.id" @click="OpenModalEdit(request)">
+                <tr
+                  v-for="request in requests"
+                  :key="request.id"
+                  @click="OpenModalEdit(request)"
+                >
                   <td>{{ request.id }}</td>
                   <td>{{ limitDescription(request.name, 24) }}</td>
                   <td>{{ limitDescription(request.description, 23) }}</td>
@@ -156,13 +157,13 @@ onMounted(fetchRequest);
                     <span
                       class="status-pill"
                       :class="{
-                        isOpen: request.status === 'ABERTO',
-                        Processing: request.status === 'PROCESSANDO',
-                        Conclused: request.status === 'CONCLUIDO',
-                        Rejected: request.status === 'REJEITADO',
+                        isOpen: request.status?.key === 'aberto',
+                        Processing: request.status?.key === 'processando',
+                        Conclused: request.status?.key === 'concluido',
+                        Rejected: request.status?.key === 'rejeitado'
                       }"
                     >
-                      {{ request.status }}
+                      {{ request.status? request.status.name : "N/A" }}
                     </span>
                   </td>
                   <td>{{ request.type ? request.type.name : "N/A" }}</td>
@@ -273,7 +274,7 @@ section {
   align-items: center;
   border-radius: 10px 10px 10px 10px;
   background-color: rgba(255, 255, 255);
- 
+
   z-index: 10;
 }
 .btn-add {
@@ -436,3 +437,4 @@ h2 {
   color: rgb(189, 0, 0);
 }
 </style>
+

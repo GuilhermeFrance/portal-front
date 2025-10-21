@@ -18,6 +18,7 @@ section{
     height: 96.3%;
 }
 .content{
-    padding-top: 70px;
+    padding-top: 150px;
+    padding-bottom: 160px;
 }
 </style>
