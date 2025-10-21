@@ -4,9 +4,9 @@ import RequestPage from "../pages/RequestsPage.vue";
 import ProfilePage from "../pages/ProfilePage.vue";
 import HomePage from "../pages/HomePage.vue";
 import FormPage from "../pages/FormPage.vue";
-import NProgress from "nprogress";
 import LoginPage from "../pages/LoginPage.vue";
 import DashBoardLayout from "../components/DashBoardLayout.vue";
+import RegisterPage from "../pages/RegisterPage.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -17,6 +17,14 @@ const router = createRouter({
       component: LoginPage,
       meta: {
         title: "Faça Login ou Cadastre-se",
+      },
+    },
+     {
+      path: "/signup",
+      name: "Register",
+      component: RegisterPage,
+      meta: {
+        title: "Cadastre-se",
       },
     },
     {
