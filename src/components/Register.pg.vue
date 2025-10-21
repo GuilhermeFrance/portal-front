@@ -1,40 +1,85 @@
 <script setup lang="ts">
+import { Dices } from "lucide-vue-next";
+import { ref } from "vue";
+import type { NewClientDto } from "../interfaces/NewClientDto";
+import axios from "axios";
+import { useRouter } from "vue-router";
 
-import { Dices } from 'lucide-vue-next';
+const router = useRouter()
+
+const NewClient = ref<NewClientDto>({
+  name: "",
+  cpf: "",
+  email: "",
+  password: "",
+});
+
+const API_CLIENT_URL = "http://localhost:3000/register";
+
+const formError = ref<string | null>(null);
+
+async function handleSubmit() {
+  if(!NewClient.value.name ||
+  !NewClient.value.cpf  ||
+  !NewClient.value.email||
+  !NewClient.value.password) {
+    return formError.value = "Preencha todos os campos obrigatórios"
+  }
+  const cleanedCpf = NewClient.value.cpf.replace(/[^\d]/g, "");
+  if (cleanedCpf.length !== 11) {
+    formError.value = "CPF deve ter 11 dígitos.";
+    return;
+  }
+  try {
+  await axios.post(API_CLIENT_URL, NewClient.value)
+  console.log("Cliente criado com sucesso!")
+  router.push("/login")
+  } catch (error) {
+  console.log("Erro na criação do funcionário")
+  }
+}
+
 </script>
 
 <template>
   <section>
     <div class="card-register">
       <div class="header">
-        <span class="title"> <Dices/> Criar uma nova conta</span>
+        <span class="title"> <Dices /> Criar uma nova conta</span>
         <span class="subtitle">é rápido e fácil.</span>
       </div>
       <div class="register-inputs">
-        <form action="">
+        <form @submit.prevent="handleSubmit">
           <div class="register-input">
             <label for="input">Nome:</label>
-            <input placeholder="Insira seu nome completo" type="text" />
+            <input placeholder="Insira seu nome completo" type="text" v-model="NewClient.name" />
           </div>
           <div class="register-input">
             <label for="input">CPF:</label>
-            <input placeholder="Insira seu CPF (somente números)" type="text" />
+            <input placeholder="Insira seu CPF (somente números)" type="text" v-model="NewClient.cpf"/>
           </div>
           <div class="register-input">
             <label for="input">Email:</label>
-            <input placeholder="Insira seu email" type="text" />
+            <input placeholder="Insira seu email" type="text" v-model="NewClient.email" />
           </div>
           <div class="register-input">
             <label for="input">Senha:</label>
             <div class="input-sub">
-            <input placeholder="Nova senha" type="text" />
-            <p class="subtitleinp">(A senha deve conter no mínimo uma letra maiúscula e um caractere especial)</p>
+              <input placeholder="Nova senha" type="password" v-model="NewClient.password"/>
+              <p class="subtitleinp">
+                (A senha deve conter no mínimo uma letra maiúscula e um
+                caractere especial)
+              </p>
             </div>
           </div>
           <footer>
             <div>
-              <span href="">Já possui uma conta?</span>
-              <RouterLink to="/login" class="link" style="text-decoration: none; color: blue;">
+              <span href="" style="font-weight: 300">Já possui uma conta?</span>
+              <RouterLink
+                to="/login"
+                class="link"
+                style="text-decoration: none; color: blue; font-weight: 500"
+              >
                 Entrar
               </RouterLink>
             </div>
@@ -81,9 +126,9 @@ input {
   font-family: "Inter", sans-serif;
 }
 
-input::placeholder{
-    font-weight: 300;
-    opacity: 60%;
+input::placeholder {
+  font-weight: 300;
+  opacity: 60%;
 }
 
 footer {
@@ -116,16 +161,16 @@ footer {
   flex-direction: column;
   gap: 24px;
 }
-.input-sub{
-    display: flex;
-    flex-direction: column;
-    width: 800px;
+.input-sub {
+  display: flex;
+  flex-direction: column;
+  width: 800px;
 }
-.subtitleinp{
-    color: rgb(165, 165, 165);
-    margin-top: 2px;
-    font-weight: 300;
-    font-size: 14px;
+.subtitleinp {
+  color: rgb(165, 165, 165);
+  margin-top: 2px;
+  font-weight: 300;
+  font-size: 14px;
 }
 .send-btn {
   background-color: #3633ff;

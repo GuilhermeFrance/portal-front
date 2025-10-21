@@ -29,8 +29,8 @@
               <button class="login-btn">Entrar</button>
             </div>
             <div class="signup-field">
-              <span href="">Não tem cadastro? </span>
-              <a class="signup" href="">Cadastre-se</a>
+              <span href="" style="font-weight: 300;">Não tem cadastro? </span>
+              <RouterLink class="signup" to="/signup">Cadastre-se</RouterLink>
             </div>
           </div>
         </div>
@@ -151,6 +151,7 @@ input::placeholder{
   text-decoration: none;
   color: rgb(42, 77, 233);
   transition: 0.2s;
+  font-weight: 500;
 }
 .signup:hover {
   text-decoration: underline;
