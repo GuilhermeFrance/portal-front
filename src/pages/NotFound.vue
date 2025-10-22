@@ -1,11 +1,13 @@
 <script setup lang="ts">
+import NotFound from '../components/NotFound.vue';
+
 
 
 
 </script>
 
 <template>
-<div><h1>notfound</h1></div>
+<NotFound/>
 </template>
 
 <style scoped>
