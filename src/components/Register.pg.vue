@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Dices } from "lucide-vue-next";
+import { Dices, Eye, EyeOff } from "lucide-vue-next";
 import { ref } from "vue";
 import type { NewClientDto } from "../interfaces/NewClientDto";
 import axios from "axios";
@@ -13,6 +13,12 @@ const NewClient = ref<NewClientDto>({
   email: "",
   password: "",
 });
+
+const isPasswordVisible = ref(false)
+
+function handlePasswordVisible(){
+  isPasswordVisible.value = !isPasswordVisible.value
+}
 
 const API_CLIENT_URL = "http://localhost:3000/register";
 
@@ -65,7 +71,13 @@ async function handleSubmit() {
           <div class="register-input">
             <label for="input">Senha:</label>
             <div class="input-sub">
-              <input placeholder="Nova senha" type="password" v-model="NewClient.password"/>
+              <div class="password-wrapper">
+              <input placeholder="Nova senha" :type=" isPasswordVisible ? 'text' : 'password'" v-model="NewClient.password"/>
+              <span class="toggle-password" @click="handlePasswordVisible" >
+            <Eye   v-if="isPasswordVisible"/>
+            <EyeOff v-else/>
+            </span>
+            </div>
               <p class="subtitleinp">
                 (A senha deve conter no mínimo uma letra maiúscula e um
                 caractere especial)
@@ -171,6 +183,31 @@ footer {
   margin-top: 2px;
   font-weight: 300;
   font-size: 14px;
+}
+.password-wrapper{
+  position: relative; /* FUNDAMENTAL: Ponto de referência para o ícone */
+  display: flex;
+  align-items: center;
+  width: 800px;
+}
+.password-wrapper input {
+    
+    padding-right: 40px; 
+    width: 800px; 
+}
+.toggle-password {
+  position: absolute;
+  right: 10px; /* Afasta 10px da direita do wrapper */
+  cursor: pointer;
+  color: #777;
+  display: flex; /* Para alinhar o ícone Lucide/SVG */
+  height: 100%;
+  align-items: center;
+  user-select: none; /* Impede que o usuário selecione o ícone */
+}
+
+.toggle-password:hover {
+  color: #333;
 }
 .send-btn {
   background-color: #3633ff;

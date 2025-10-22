@@ -1,10 +1,53 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { ref } from "vue";
+import type { LoginDto } from "../interfaces/LoginDto";
+import { Eye, EyeClosed } from "lucide-vue-next";
+import axios from "axios";
+
+const NewLogin = ref<LoginDto>({
+  email: "",
+  password: "",
+});
+const formError = ref<string | null>(null);
+const API_LOGIN_URL = "http://localhost:3000/login";
+
+const isPasswordVisible = ref(false);
+
+function handlePasswordVisible() {
+  isPasswordVisible.value = !isPasswordVisible.value;
+}
+
+async function handleSubmit() {
+  if (!NewLogin.value.email || !NewLogin.value.password) {
+    return "Preencha todos os campos obrigatorios";
+  }
+  try {
+    const response = await axios.post(API_LOGIN_URL, NewLogin.value);
+    console.log(response, "Login feito com sucesso!");
+  } catch (error) {
+    console.error("Erro na criação do funcionário", error);
+    const backEndMessage =
+      axios.isAxiosError(error) && error.response?.data?.message
+        ? error.response.data.message
+        : "Falha ao salvar. Verifique o sevidor.";
+
+    formError.value = Array.isArray(backEndMessage)
+      ? backEndMessage.join(", ")
+      : backEndMessage;
+    console.log("Erro ao fazer login");
+  }
+}
+</script>
 
 <template>
   <section>
     <div class="main">
       <div class="side">
-        <img src="../assets/codes.png" alt="" style="width: 760px; height: 1000px; opacity: 15%;">
+        <img
+          src="../assets/codes.png"
+          alt=""
+          style="width: 760px; height: 1000px; opacity: 15%"
+        />
       </div>
       <div class="login">
         <div class="input-box">
@@ -14,29 +57,44 @@
             alt=""
           />
           <div class="input-area">
-            <div class="input">
-              <label for="input">Email:</label>
-              <input type="text" placeholder="Insira o seu e-mail" />
-            </div>
-            <div class="input">
-              <label for="input">Senha:</label>
-              <input type="password" placeholder="Insira a sua senha" />
-            </div>
-            <div class="forgot">
-              <a class="forgot-link" href="">Esqueci a senha</a>
-            </div>
-            <div class="login-btns">
-              <button class="login-btn">Entrar</button>
-            </div>
+            <form @submit.prevent="handleSubmit">
+              <div class="input">
+                <label for="input">Email:</label>
+                <input
+                  type="text"
+                  placeholder="Insira o seu e-mail"
+                  v-model="NewLogin.email"
+                />
+              </div>
+              <div class="input">
+                <label for="input">Senha:</label>
+                <div class="password-wrapper">
+                  <input
+                    :type="isPasswordVisible ? 'text' : 'password'"
+                    placeholder="Insira a sua senha"
+                    v-model="NewLogin.password"
+                    id="password"
+                  />
+                  <span class="toggle-password" @click="handlePasswordVisible">
+                    <Eye class="icon" v-if="isPasswordVisible" />
+                    <EyeClosed class="icon" v-else />
+                  </span>
+                </div>
+              </div>
+              <div class="forgot">
+                <a class="forgot-link" href="">Esqueci a senha</a>
+              </div>
+              <div class="login-btns">
+                <button class="login-btn" type="submit">Entrar</button>
+              </div>
+            </form>
             <div class="signup-field">
-              <span href="" style="font-weight: 300;">Não tem cadastro? </span>
+              <span href="" style="font-weight: 300">Não tem cadastro? </span>
               <RouterLink class="signup" to="/signup">Cadastre-se</RouterLink>
             </div>
           </div>
         </div>
-        
       </div>
-        
     </div>
   </section>
 </template>
@@ -57,8 +115,13 @@ input {
 input:focus {
   background-color: aliceblue;
 }
-input::placeholder{
+input::placeholder {
   color: rgb(196, 196, 196);
+}
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 .main {
   display: flex;
@@ -86,13 +149,12 @@ input::placeholder{
   align-items: center;
   width: 40%;
   height: 100vh;
-  background: linear-gradient( #00C4CC,#4d40fe);
+  background: linear-gradient(#00c4cc, #4d40fe);
 }
-.logos{
+.logos {
   display: flex;
   justify-content: center;
   width: 600px;
-
 }
 .input {
   display: flex;
@@ -117,6 +179,33 @@ input::placeholder{
   flex-direction: column;
   gap: 10px;
 }
+.password-wrapper {
+  position: relative;
+  display: flex;
+  width: 400px;
+  align-items: center;
+}
+.password-wrapper input {
+  width: 100%;
+  align-items: center;
+}
+.toggle-password {
+  position: absolute;
+  right: 6px;
+  cursor: pointer;
+  color: #777;
+  display: flex;
+  height: 100%;
+  align-items: center;
+  user-select: none;
+  transition: 0.4s;
+}
+.toggle-password:hover {
+  color: black;
+}
+.icon {
+  width: 90%;
+}
 .login-btns {
   display: flex;
   justify-content: center;
@@ -128,14 +217,14 @@ input::placeholder{
   border-radius: 6px;
   font-size: 16px;
   color: white;
-  background-color: #3358EC;
-  border: 2px solid #3358EC;
+  background-color: #3358ec;
+  border: 2px solid #3358ec;
   transition: 0.4s;
   cursor: pointer;
 }
 
-.login-btn:hover{
-   border: 2px solid #4b6fff
+.login-btn:hover {
+  border: 2px solid #4b6fff;
 }
 
 .signup-field {

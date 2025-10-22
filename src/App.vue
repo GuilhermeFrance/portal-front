@@ -7,7 +7,7 @@ import { RouterView, useRoute } from 'vue-router';
 const route = useRoute()
 
 
-const PagesNoSide = ['Register', 'Login']
+const PagesNoSide = ['Register', 'Login', 'NotFound']
 const showSideBar = computed(() => {
   const currentRouteNAme = (route.name ?? '') as string;
 

@@ -7,6 +7,7 @@ import FormPage from "../pages/FormPage.vue";
 import LoginPage from "../pages/LoginPage.vue";
 import DashBoardLayout from "../components/DashBoardLayout.vue";
 import RegisterPage from "../pages/RegisterPage.vue";
+import NotFound from "../pages/NotFound.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -19,7 +20,7 @@ const router = createRouter({
         title: "Faça Login ou Cadastre-se",
       },
     },
-     {
+    {
       path: "/signup",
       name: "Register",
       component: RegisterPage,
@@ -78,6 +79,14 @@ const router = createRouter({
           meta: {
             title: "Faça uma solicitação",
           },
+        },
+        {
+          path: "/:pathMatch(.*)*", 
+          name: "NotFound",
+          component: NotFound,
+          meta: {
+            title: "404 - Pagina nao encontrada"
+          }
         },
       ],
     },
