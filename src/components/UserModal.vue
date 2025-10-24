@@ -16,7 +16,7 @@ const newUser = ref<NewUserDTO>({
 
 const emit = defineEmits(["close", "user-created", "user-updated"]);
 
-const API_URL = "http://localhost:3000/roles";
+const API_URL = "http://localhost:3000/allroles";
 const roles = ref<Role[]>([]);
 const formError = ref<string | null>(null);
 

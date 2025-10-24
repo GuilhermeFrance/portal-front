@@ -150,8 +150,8 @@ onMounted(fetchRequest);
                   @click="OpenModalEdit(request)"
                 >
                   <td>{{ request.id }}</td>
-                  <td>{{ limitDescription(request.name, 24) }}</td>
-                  <td>{{ limitDescription(request.description, 23) }}</td>
+                  <td>{{ limitDescription(request.name, 18) }}  </td>
+                  <td> -   {{limitDescription(request.description, 40)}}</td>
                   <td>{{ limitDescription(request.adress, 19) }}</td>
                   <td>
                     <span
@@ -387,15 +387,17 @@ tbody tr:hover {
   cursor: pointer;
 }
 tbody td:nth-child(1) {
-  width: 5%;
+  width: 2%;
 }
 tbody td:nth-child(2) {
-  width: 35%;
+  width: 25%;
+  padding-right: 0px;
 }
 tbody td:nth-child(3) {
-  width: 35%;
+  width: 45%;
   font-weight: 500;
   color: rgb(145, 145, 145);
+  padding-left: 0px;
 }
 tbody td:nth-child(4) {
   width: 25%;
@@ -403,19 +405,19 @@ tbody td:nth-child(4) {
 }
 tbody td:nth-child(5) {
   color: green;
-  width: 25%;
+  width: 15%;
   font-weight: 600;
 }
 tbody td:nth-child(6) {
-  width: 25%;
+  width: 15%;
   font-weight: 200;
 }
 tbody td:nth-child(7) {
-  width: 40%;
+  width: 10%;
   font-weight: 200;
 }
 tbody td:nth-child(8) {
-  width: 40%;
+  width: 10%;
   font-weight: 200;
 }
 td {

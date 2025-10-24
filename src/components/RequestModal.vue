@@ -126,7 +126,7 @@ onMounted(fetchType);
             @change="handleStatuschange"
             required
           >
-            <option value="null" disabled>Selecione um cargo</option>
+            <option value="null" disabled>Status da solicitação</option>
             <option
               v-for="statusOpt in statusOptions"
               :key="statusOpt"
