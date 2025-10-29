@@ -104,9 +104,14 @@ export const useAuthStore = defineStore("auth", () => {
   if(token.value) {
     try {
         await getCurrentUser()
+        if(!currentUser.value){
+            console.warn("Token presente mas não foi possívek recuperar dados do usuário")
+        }
+    }catch(error) {
+        console.error("Erro ao incializar autenticação", error)
     }
   
-  }
+  }}
 
   return {
     clientLogin,

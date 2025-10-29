@@ -26,7 +26,7 @@ function formatString(text: string | undefined, maxLength: number){
         <div class="profile-image"></div>
         <div class="profile-header">
           <div class="header-row">
-            <span style="font-size: 20px">{{ formatString(authStore.currentUser?.name, 17) }}</span>
+            <span style="font-size: 20px">Olá, {{ formatString(authStore.currentUser?.name, 17) }}</span>
             <button class="edit-btn"><pencil class="icon" /> Editar</button>
           </div>
           <div

@@ -8,6 +8,7 @@ import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 
 import { createPinia } from "pinia";
+import { useAuthStore } from "./auth/stores/auth";
 
 const pinia = createPinia()
 
@@ -18,7 +19,12 @@ const vuetify = createVuetify({
 
 const app = createApp(App);
 
+
+
 app.use(pinia)
 app.use(vuetify)
 app.use(router);
 app.mount("#app");
+
+const authStore = useAuthStore();
+authStore.initializeAuth();
