@@ -7,6 +7,16 @@ import {
   ClipboardClock,
   ClipboardClockIcon,
 } from "lucide-vue-next";
+import { useAuthStore } from "../auth/stores/auth";
+
+const authStore = useAuthStore();
+function formatString(text: string | undefined, maxLength: number){
+  if(!text) return "";
+  if(text.length <= maxLength){
+    return text;
+  }
+  return text.substring(0, maxLength);
+}
 </script>
 
 <template>
@@ -16,7 +26,7 @@ import {
         <div class="profile-image"></div>
         <div class="profile-header">
           <div class="header-row">
-            <span style="font-size: 20px">Guilherme France</span>
+            <span style="font-size: 20px">{{ formatString(authStore.currentUser?.name, 17) }}</span>
             <button class="edit-btn"><pencil class="icon" /> Editar</button>
           </div>
           <div

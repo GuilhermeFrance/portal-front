@@ -8,6 +8,7 @@ import LoginPage from "../pages/LoginPage.vue";
 import DashBoardLayout from "../components/DashBoardLayout.vue";
 import RegisterPage from "../pages/RegisterPage.vue";
 import NotFound from "../pages/NotFound.vue";
+import { useAuthStore } from "../auth/stores/auth";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -37,6 +38,7 @@ const router = createRouter({
       name: "AppLayout",
       component: DashBoardLayout,
       meta: {
+        requiresAuth: true,
         title: "Faça Login ou Cadastre-se",
       },
       children: [
@@ -93,11 +95,22 @@ const router = createRouter({
   ],
 });
 
-router.beforeEach((to, from, next) => {
+
+
+router.beforeEach((to) => {
   const title = to.meta.title as string;
   document.title = title ? title : "Portal";
+  
+  const authStore = useAuthStore();
+  if(to.name != "Login" && to.name != "Register" && to.meta.requiresAuth && !authStore.isAuthenticated) {
+    return {name: "Login", query: {redirect: to.fullPath}}
+  }
 
-  next();
+  if(authStore.isAuthenticated && to.name === "Login") {
+    const redirect = (to.query.redirect as string) ?? {name: "home"}
+    return redirect
+  }
+  
 });
 
 export default router;

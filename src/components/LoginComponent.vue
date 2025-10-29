@@ -1,41 +1,36 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import type { LoginDto } from "../interfaces/LoginDto";
 import { Eye, EyeClosed } from "lucide-vue-next";
-import axios from "axios";
+import { useAuthStore } from "../auth/stores/auth";
+import { useRoute, useRouter } from "vue-router";
 
-const NewLogin = ref<LoginDto>({
-  email: "",
-  password: "",
-});
-const formError = ref<string | null>(null);
-const API_LOGIN_URL = "http://localhost:3000/login";
 
+const authStore = useAuthStore();
+const router = useRouter();
+const route = useRoute();
+const formError = ref<string | null>(null)
 const isPasswordVisible = ref(false);
 
 function handlePasswordVisible() {
   isPasswordVisible.value = !isPasswordVisible.value;
 }
 
-async function handleSubmit() {
-  if (!NewLogin.value.email || !NewLogin.value.password) {
-    return "Preencha todos os campos obrigatorios";
+async function handleSubmit(){
+  if(!authStore.clientLogin.email || !authStore.clientLogin.password){
+    formError.value = "Preencha todos os campos obrigatórios"
   }
   try {
-    const response = await axios.post(API_LOGIN_URL, NewLogin.value);
-    console.log(response, "Login feito com sucesso!");
+    await authStore.handleSubmitLogin()
+    redirect();
   } catch (error) {
-    console.error("Erro na criação do funcionário", error);
-    const backEndMessage =
-      axios.isAxiosError(error) && error.response?.data?.message
-        ? error.response.data.message
-        : "Falha ao salvar. Verifique o sevidor.";
-
-    formError.value = Array.isArray(backEndMessage)
-      ? backEndMessage.join(", ")
-      : backEndMessage;
-    console.log("Erro ao fazer login");
+    console.log("Erro!")
   }
+}
+
+async function redirect() {
+  const q = route.query.redirect as string;
+  const r = typeof q === "string" && q.startsWith("/")? q : "/";
+  await router.replace(r);
 }
 </script>
 
@@ -63,7 +58,7 @@ async function handleSubmit() {
                 <input
                   type="text"
                   placeholder="Insira o seu e-mail"
-                  v-model="NewLogin.email"
+                  v-model="authStore.clientLogin.email"
                 />
               </div>
               <div class="input">
@@ -72,7 +67,7 @@ async function handleSubmit() {
                   <input
                     :type="isPasswordVisible ? 'text' : 'password'"
                     placeholder="Insira a sua senha"
-                    v-model="NewLogin.password"
+                    v-model="authStore.clientLogin.password"
                     id="password"
                   />
                   <span class="toggle-password" @click="handlePasswordVisible">

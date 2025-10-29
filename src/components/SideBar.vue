@@ -1,6 +1,22 @@
 <script setup lang="ts">
-import { UserRound } from "lucide-vue-next";
+import { UserRound, LogOut } from "lucide-vue-next";
 import { RouterLink } from "vue-router";
+import { useAuthStore } from "../auth/stores/auth";
+
+const authStore = useAuthStore();
+async function handleLogout(){
+  authStore.logout()
+}
+
+function formatString(text: string | undefined, maxLength: number){
+  if(!text){
+    return ""
+  }
+  if(text.length <= maxLength){
+    return text;
+  }
+  return text.substring(0, maxLength);
+}
 </script>
 
 <template>
@@ -20,11 +36,16 @@ import { RouterLink } from "vue-router";
           <div class="on-side"></div
         ></RouterLink>
       </div>
-      <div>
-        <RouterLink to="/perfil" class="user-style">
+      <div class="side-item-last">
+        
+        <RouterLink to="/perfil" class="user-style-last">
           <UserRound class="lucide-icon" />
-          Perfil
+          <span>{{ formatString(authStore.currentUser?.name, 17) }}</span>
+          
         </RouterLink>
+        <LogOut @click.stop="handleLogout"/>
+        
+  
       </div>
     </div>
   </div>
@@ -46,6 +67,25 @@ import { RouterLink } from "vue-router";
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+}
+.side-item-last{
+   display: flex;
+  color: black;
+  text-decoration: none;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  height: 30px;
+  border: 1px solid rgb(255, 255, 255);
+  padding: 10px;
+  padding-left: 0px;
+  padding-right: 0px;
+  transition: 0.3s;
+  width: 296px;
+}
+.side-item-last:hover{
+  cursor: pointer;
+  background-color: rgb(238, 238, 238);
 }
 .navigation-side-bar {
   display: flex;
@@ -72,6 +112,30 @@ import { RouterLink } from "vue-router";
 .user-link:hover {
   background-color: rgb(238, 238, 238);
   cursor: pointer;
+  color:#0079FF;
+}
+.user-style-last{
+  display: flex;
+  font-weight: 500;
+  color: black;
+  align-items: center;
+  padding-left: 30px;
+  height: 50px;
+  text-decoration: none;
+  gap: 10px;
+}
+.side-item-last:hover .user-style-last span{
+  
+  color:#0079FF;
+}
+.side-item-last:hover .user-style-last .lucide-icon{
+  
+  color:#0079FF;
+}
+.user-style-last.router-link-exact-active .lucide-icon {
+  color:#0079FF;
+}
+.user-style-last.router-link-exact-active {
   color:#0079FF;
 }
 .user-style {
