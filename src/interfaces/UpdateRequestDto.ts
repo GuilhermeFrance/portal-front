@@ -5,6 +5,6 @@ export interface UpdateRequestDto {
         description: string;
         adress: string;
         typeId: number | null;
-        status: string;
+        statusKey: string;
       
 }

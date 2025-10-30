@@ -20,17 +20,18 @@ const editedRequest = ref<UpdateRequestDto>({
   description: "",
   adress: "",
   typeId: null,
-  status: "ABERTO",
+  statusKey: "aberto",
 });
 
 const emit = defineEmits(["close", "request-updated"]);
 
 const API_TYPES_URL = "http://localhost:3000/v1/types";
-const API_REQUESTS_URL = "http://localhost:3000/requests";
+const API_REQUESTS_URL = "http://localhost:3000/requests"
+const API_STATUS_URL = "http://localhost:3000/status/all";
 
 const types = ref<Type[]>([]);
 const formError = ref<string | null>(null);
-const statusOptions = ["ABERTO", "PROCESSANDO", "CONCLUÍDO", "REJEITADO"];
+const statusOptions = ref<{ key: string; name: string }[]>([]);
 watch(
   () => props.initialRequest,
   (newVal) => {
@@ -40,7 +41,7 @@ watch(
         description: newVal.description,
         adress: newVal.adress,
         typeId: newVal.typeId || null,
-        status: newVal.status,
+        statusKey: newVal.statusKey,
       };
     }
   },
@@ -53,6 +54,19 @@ async function fetchType() {
     types.value = response.data;
   } catch (err) {
     console.log("Erro ao carregar os dados");
+  }
+}
+async function fetchStatus(){
+  try{
+    const res = await axios.get(API_STATUS_URL)
+  statusOptions.value = res.data;
+  }catch (e) {
+    console.log("Erro")
+     statusOptions.value = [
+      { key: "aberto", name: "ABERTO" },
+      { key: "processando", name: "PROCESSANDO" },
+      { key: "concluido", name: "CONCLUÍDO" },
+      { key: "rejeitado", name: "REJEITADO" },]
   }
 }
 function handleClose() {
@@ -70,7 +84,7 @@ async function handleSubmit() {
   }
 
   const updatePayload = {
-    status: editedRequest.value.status,
+    status: editedRequest.value.statusKey,
   };
   try {
     await axios.patch(`${API_REQUESTS_URL}/${requestId}`, updatePayload);
@@ -86,9 +100,12 @@ function handleStatuschange(e: Event) {
 
   const newStatus = target.value;
 
-  editedRequest.value.status = newStatus;
+  editedRequest.value.statusKey = newStatus;
 }
-onMounted(fetchType);
+onMounted(() => {
+  fetchType
+  fetchStatus
+  });
 </script>
 
 <template>
@@ -122,7 +139,7 @@ onMounted(fetchType);
           <select
             name=""
             id="cargo"
-            :value="editedRequest.status"
+            :value="editedRequest.statusKey"
             @change="handleStatuschange"
             required
           >
