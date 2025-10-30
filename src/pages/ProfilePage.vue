@@ -8,8 +8,26 @@ import {
   ClipboardClockIcon,
 } from "lucide-vue-next";
 import { useAuthStore } from "../auth/stores/auth";
+import { getTime } from "vuetify/lib/labs/VCalendar/util/timestamp.mjs";
 
 const authStore = useAuthStore();
+
+function formatTime(dateStringTime: string | Date | undefined): string{
+  if(!dateStringTime){
+    return 'N/A'
+  }
+  try{
+    const date = new Date(dateStringTime);
+    if (isNaN(date.getTime())){
+      return 'Data inválida'
+    }
+    const datePart = date.toLocaleDateString("pt-BR")
+    return datePart
+  }catch (e) {
+    return 'Data inválida'
+  }
+}
+
 function formatString(text: string | undefined, maxLength: number){
   if(!text) return "";
   if(text.length <= maxLength){
@@ -42,7 +60,7 @@ function formatString(text: string | undefined, maxLength: number){
           >
             <div class="header-row-email">
               <span style="display: flex; align-items: center; gap: 10px">
-                <Inbox size="18" /> guilhermefrance9@gmail.com</span
+                <Inbox size="18" /> {{ authStore.currentUser?.email }}</span
               >
               <span style="display: flex; align-items: center; gap: 10px">
                 <MapPin size="18" /> Via Local O, 13, Vila Serrana I</span
@@ -53,7 +71,7 @@ function formatString(text: string | undefined, maxLength: number){
                 <Phone size="18" /> 77 98865-3938</span
               >
               <span style="display: flex; align-items: center; gap: 10px">
-                <ClipboardClockIcon size="18" /> entrou em 13/10/25</span
+                <ClipboardClockIcon size="18" /> entrou em {{formatTime(authStore.currentUser?.createdAt)}}</span
               >
             </div>
           </div>
@@ -84,7 +102,7 @@ function formatString(text: string | undefined, maxLength: number){
               <div class="info-title"><span>Email</span></div>
               <div class="name-info" style="width: 790px">
                 <div class="info-card" style="width: 790px">
-                  guilhermefrance9@gmail.com
+                  {{ authStore.currentUser?.email }}
                 </div>
               </div>
             </div>

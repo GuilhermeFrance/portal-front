@@ -47,6 +47,7 @@ const router = createRouter({
           name: "home",
           component: HomePage,
           meta: {
+            requiresAuth: true,
             title: "Página Inicial",
           },
         },
@@ -55,6 +56,7 @@ const router = createRouter({
           name: "solicitacoes",
           component: RequestPage,
           meta: {
+            requiresAuth: true,
             title: "Solicitações",
           },
         },
@@ -63,6 +65,7 @@ const router = createRouter({
           name: "funcionarios",
           component: EmployeePage,
           meta: {
+            requiresAuth: true,
             title: "Funcionários",
           },
         },
@@ -71,6 +74,7 @@ const router = createRouter({
           name: "profile",
           component: ProfilePage,
           meta: {
+            requiresAuth: true,
             title: "Perfil",
           },
         },
@@ -79,6 +83,7 @@ const router = createRouter({
           name: "form-request",
           component: FormPage,
           meta: {
+            requiresAuth: true,
             title: "Faça uma solicitação",
           },
         },
@@ -97,20 +102,20 @@ const router = createRouter({
 
 
 
-router.beforeEach((to) => {
+router.beforeEach(async (to) => {
   const title = to.meta.title as string;
   document.title = title ? title : "Portal";
   
   const authStore = useAuthStore();
-  if(to.name != "Login" && to.name != "Register" && to.meta.requiresAuth && !authStore.isAuthenticated) {
-    return {name: "Login", query: {redirect: to.fullPath}}
+  await authStore.initializeAuth();
+  const requiresAuth = to.meta.requiresAuth === true;
+  if(requiresAuth && !authStore.token){
+    return {name: 'Login', query: {redirect: to.fullPath}}
   }
-
-  if(authStore.isAuthenticated && to.name === "Login") {
-    const redirect = (to.query.redirect as string) ?? {name: "home"}
-    return redirect
+  if(authStore.token && to.name === 'Login'){
+    const redirect = (to.query.redirect as string) ?? { name: 'home'}
+    return redirect;
   }
-  
 });
 
 export default router;

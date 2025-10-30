@@ -5,4 +5,5 @@ export interface ClientModel {
   cpf?: string;
   password: string;
   badgesKey?: string;
+  createdAt?: Date;
 }
