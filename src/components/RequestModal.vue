@@ -123,7 +123,7 @@ onMounted(() => {
         </div>
         <div class="infos">
           <label for="span"> Serviço: </label>
-          <span class="info-box">{{ initialRequest?.type.name }}</span>
+          <span class="info-box">{{ initialRequest!.type!.name }}</span>
         </div>
         <div class="infos">
           <label for="span"> Descrição: </label>
@@ -329,9 +329,7 @@ input::-webkit-inner-spin-button {
   margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
 }
 
-input[type="number"] {
-  -moz-appearance: textfield; /* Firefox */
-}
+
 
 select {
   height: 44px;

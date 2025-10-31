@@ -4,14 +4,11 @@ import type { Request } from "../interfaces/RequestInterface";
 import axios from "axios";
 import { Trash, ChevronRight, ChevronLeft } from "lucide-vue-next";
 import RequestModal from "./RequestModal.vue";
-import type { Status } from "../interfaces/Status";
 
 const isLoading = ref(false);
 const isModalOpen = ref(false);
 const API_URL = "http://localhost:3000/requests/all";
-const API_STATUS_URL = "http://localhost:3000/status/all";
 const requests = ref<Request[]>([]);
-const statusr = ref<Status | null>(null);
 const currentPage = ref(1);
 const itemsPerPage = ref(10);
 const totalItems = ref(0);
@@ -49,10 +46,6 @@ function formatTime(dateTimeString: string | Date | undefined): string {
       return "data invalida";
     }
     const dateparte = date.toLocaleDateString("pt-BR");
-    const timePart = date.toLocaleDateString("pt-BR", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
 
     return `${dateparte}`;
   } catch (e) {
@@ -68,13 +61,6 @@ function limitDescription(text: string, maxLength: number): string {
     return text;
   }
   return text.substring(0, maxLength) + "...";
-}
-
-async function fetchStatus() {
-  try {
-    const response = await axios.get(API_STATUS_URL);
-    statusr.value = response.data;
-  } catch (error) {}
 }
 
 async function fetchRequest() {

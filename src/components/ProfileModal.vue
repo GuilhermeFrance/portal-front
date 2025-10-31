@@ -4,7 +4,7 @@ import axios from "axios";
 import type { UpdateProfileDto } from "../interfaces/UpdateProfileDto";
 import { X } from "lucide-vue-next";
 import type { ClientModel } from "../auth/models/ClientModel";
-import { useAuthStore } from "../auth/stores/auth";
+
 
 const props = defineProps({
   initialProfile: {
@@ -56,6 +56,7 @@ async function handleSubmit() {
   formError.value = null;
 
   const clientId = props.initialProfile?.id;
+  console.log(clientId)
 
   if (!clientId) {
     formError.value = "Erro: ID da solicitacao nao encontrado para edicao";
@@ -274,9 +275,6 @@ input::-webkit-inner-spin-button {
   margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
 }
 
-input[type="number"] {
-  -moz-appearance: textfield; /* Firefox */
-}
 
 select {
   height: 44px;

@@ -19,14 +19,14 @@ export const useAuthStore = defineStore("auth", () => {
   const API_URL_CURRIENT = "http://localhost:3000/clients";
 
   function parseJWt(token: string | null) {
-    if (!token || typeof token !== 'string') return null;
+    if (!token || typeof token !== "string") return null;
     try {
-      const base64 = token.split('.')[1];
+      const base64 = token.split(".")[1];
       const jsonPayload = decodeURIComponent(
         atob(base64!.replace(/-/g, "+").replace(/_/g, "/"))
-          .split('')
+          .split("")
           .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
-          .join('')
+          .join("")
       );
       return JSON.parse(jsonPayload);
     } catch (e) {
@@ -44,6 +44,7 @@ export const useAuthStore = defineStore("auth", () => {
 
   async function handleSubmitLogin() {
     if (!clientLogin.value.email || !clientLogin.value.password) {
+      console.log("Preencha todos os campos obrigatórios");
       return (alert.value = "Preencha todos os campos obrigatórios");
     }
     try {
@@ -85,28 +86,32 @@ export const useAuthStore = defineStore("auth", () => {
       currentUser.value = null;
       return;
     }
-    const userEmail = clientLogin.value.email || localStorage.getItem('user_email');
+    const userEmail =
+      clientLogin.value.email || localStorage.getItem("user_email");
 
-    if(!userEmail){
-      console.warn('Email não encontrado para buscar dados do usuário')
+    if (!userEmail) {
+      console.warn("Email não encontrado para buscar dados do usuário");
       currentUser.value = null;
     }
 
     try {
-      if(token.value && !axios.defaults.headers.common["Autorization"]) {
-        axios.defaults.headers.common["Authorization"] = `Bearer ${token.value}`
+      if (token.value && !axios.defaults.headers.common["Autorization"]) {
+        axios.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${token.value}`;
       }
-      const response = await axios.get(`${API_URL_CURRIENT}/${userEmail}`)
+      const response = await axios.get(`${API_URL_CURRIENT}/${userEmail}`);
       currentUser.value = response.data;
-    } catch (error: any){
-      console.log('Erro ao buscar dados do usuário.', error)
+    } catch (error: any) {
+      console.log("Erro ao buscar dados do usuário.", error);
       const status = error?.response?.status;
-    if (status === 401 || status === 403) {
-      console.warn('Token inválido/expirado. Executando logout.');
-      await logout();
-      return;
+      if (status === 401 || status === 403) {
+        console.warn("Token inválido/expirado. Executando logout.");
+        await logout();
+        return;
+      }
     }
-  }}
+  }
 
   async function logout() {
     try {
@@ -130,29 +135,29 @@ export const useAuthStore = defineStore("auth", () => {
     }
   }
   async function initializeAuth() {
-    token.value = token.value || localStorage.getItem('auth_token');
-  
-  if(!token.value){
-    return;
-  }
-  axios.defaults.headers.common["Authorization"] = `Bearer ${token.value}`
-  if(isTokenExpired(token.value)){
-    console.info("Token expirado, faça login novamente");
-    await logout();
-    return;
-  }
-   try {
-    await getCurrentUser();
-    if (!currentUser.value) {
-      console.warn('Token presente mas não foi possível recuperar dados do usuário (mantendo sessão até expirar).');
+    token.value = token.value || localStorage.getItem("auth_token");
+
+    if (!token.value) {
+      return;
     }
-  } catch (error) {
-    console.error('Erro ao inicializar autenticação', error);
-  }
+    axios.defaults.headers.common["Authorization"] = `Bearer ${token.value}`;
+    if (isTokenExpired(token.value)) {
+      console.info("Token expirado, faça login novamente");
+      await logout();
+      return;
+    }
+    try {
+      await getCurrentUser();
+      if (!currentUser.value) {
+        console.warn(
+          "Token presente mas não foi possível recuperar dados do usuário (mantendo sessão até expirar)."
+        );
+      }
+    } catch (error) {
+      console.error("Erro ao inicializar autenticação", error);
+    }
   }
 
-
-  
   return {
     clientLogin,
     currentUser,

@@ -25,6 +25,7 @@ const totalItems = ref(0);
 const totalPages = ref(0);
 const isLoading = ref(true);
 
+
 function OpenModal() {
   isModalOpen.value = true;
 }
