@@ -12,13 +12,18 @@ export const useAuthStore = defineStore("auth", () => {
   });
   const currentUser = ref<ClientModel | null>(null);
   const token = ref<string | null>(localStorage.getItem("auth_token"));
+  const decodedPayload = ref<any | null>(null)
   const isLoading = ref(false);
-
   const isAuthenticated = computed(() => !!currentUser.value);
+  const isAuth = computed(() => !!token.value)
   const API_URL_CLIENT = "http://localhost:3000/login";
   const API_URL_CURRIENT = "http://localhost:3000/clients";
 
-  function parseJWt(token: string | null) {
+  const userBadgeKey = computed(() => {
+    return decodedPayload.value?.badges ?? null; 
+  })
+
+  function parseJwt(token: string | null) {
     if (!token || typeof token !== "string") return null;
     try {
       const base64 = token.split(".")[1];
@@ -35,8 +40,22 @@ export const useAuthStore = defineStore("auth", () => {
     }
   }
 
+  function hasBadge(badge: string){
+    const b = userBadgeKey.value;
+    if(!b) return false;
+    if(Array.isArray(b)) return b.includes(badge);
+    if(typeof b === 'string') return b === badge;
+    if(typeof b === 'object' && b.key) return b.key === badge;
+    return false
+  }
+
+  const isManager = computed(() =>  hasBadge('manager'))
+  const isAdmin = computed(() =>  hasBadge('admin'))
+  
+
+
   function isTokenExpired(tokenValue: string | null) {
-    const payload = parseJWt(tokenValue);
+    const payload = parseJwt(tokenValue);
     if (!payload || !payload.exp) return true;
     const now = Math.floor(Date.now() / 1000);
     return payload.exp < now;
@@ -58,7 +77,7 @@ export const useAuthStore = defineStore("auth", () => {
       localStorage.setItem("user_email", clientLogin.value.email);
       axios.defaults.headers.common["Authorization"] = `Bearer ${token.value}`;
       await getCurrentUser();
-
+      decodedPayload.value = parseJwt(token.value)
       console.log(response);
 
       await router.push({ name: "home" });
@@ -95,7 +114,7 @@ export const useAuthStore = defineStore("auth", () => {
     }
 
     try {
-      if (token.value && !axios.defaults.headers.common["Autorization"]) {
+      if (token.value && !axios.defaults.headers.common["Authorization"]) {
         axios.defaults.headers.common[
           "Authorization"
         ] = `Bearer ${token.value}`;
@@ -140,12 +159,17 @@ export const useAuthStore = defineStore("auth", () => {
     if (!token.value) {
       return;
     }
+      decodedPayload.value = parseJwt(token.value)
     axios.defaults.headers.common["Authorization"] = `Bearer ${token.value}`;
+    console.log(decodedPayload.value)
     if (isTokenExpired(token.value)) {
       console.info("Token expirado, faça login novamente");
       await logout();
       return;
     }
+
+  
+
     try {
       await getCurrentUser();
       if (!currentUser.value) {
@@ -169,5 +193,10 @@ export const useAuthStore = defineStore("auth", () => {
     logout,
     initializeAuth,
     getCurrentUser,
+    isManager,
+    isAdmin,
+    userBadgeKey,
+    hasBadge,
+    decodedPayload,
   };
 });

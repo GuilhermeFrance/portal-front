@@ -6,6 +6,7 @@ import type { UpdateRequestDto } from "../interfaces/UpdateRequestDto";
 import type { Request } from "../interfaces/RequestInterface";
 import { X } from "lucide-vue-next";
 import type { Status } from "../interfaces/Status";
+import { useAuthStore } from "../auth/stores/auth";
 
 const props = defineProps({
   initialRequest: {
@@ -27,7 +28,7 @@ const emit = defineEmits(["close", "request-updated"]);
 const API_TYPES_URL = "http://localhost:3000/v1/types";
 const API_REQUESTS_URL = "http://localhost:3000/requests";
 const API_STATUS_URL = "http://localhost:3000/status/all";
-
+const authStore = useAuthStore();
 const types = ref<Type[]>([]);
 const formError = ref<string | null>(null);
 const statusOptions = ref<Status[] | null>([]);
@@ -106,7 +107,7 @@ onMounted(() => {
 
 <template>
   <div class="modal-background" @click.self="handleClose">
-    <div class="modal-content">
+    <div :class="{' modal-content-admin': authStore.hasBadge('admin'), 'modal-content': authStore.hasBadge('requester')}">
       <header>
         <h3>Solicitacao {{ initialRequest?.id }}</h3>
         <button class="closeModal" @click="handleClose"><X /></button>
@@ -129,8 +130,9 @@ onMounted(() => {
           <label for="span"> Descrição: </label>
           <span class="info-box-desc">{{ initialRequest?.description }}</span>
         </div>
-
-        <form @submit.prevent="handleSubmit">
+        <div class="badge-binding">
+        
+        <form @submit.prevent="handleSubmit" v-if="authStore.hasBadge('admin')">
           <label for="select">Status:</label>
           <select
             name="status"
@@ -154,6 +156,11 @@ onMounted(() => {
             <button @click="handleClose" class="btn-cancel">Cancelar</button>
           </footer>
         </form>
+        <div class="infos" v-else>
+          <label for="span"> Status: </label>
+          <span class="info-box">{{ initialRequest?.status.name }}</span>
+        </div>
+        </div>
       </div>
     </div>
   </div>
@@ -226,12 +233,25 @@ label {
   padding: 20px;
   display: flex;
   flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  background-color: white;
+  height: 580px;
+  width: 1000px;
+  border-radius: 20px;
+  padding-bottom:20px ;
+}
+.modal-content-admin {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
   justify-content: space-between;
   align-items: center;
   background-color: white;
-  height: 640px;
+  height: 660px;
   width: 1000px;
   border-radius: 20px;
+  padding-bottom:20px ;
 }
 
 footer {

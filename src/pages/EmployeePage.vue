@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import TablePage from '../components/TablePage.vue';
+import TablePage from '../components/UsersTablePage.vue';
 
 
 </script>

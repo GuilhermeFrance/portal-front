@@ -1,4 +1,3 @@
-T
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import type { User } from "../interfaces/UserInterface";
@@ -13,6 +12,7 @@ import {
   UserPlus,
 } from "lucide-vue-next";
 import UserModalEdit from "./UserModalEdit.vue";
+import { useAuthStore } from "../auth/stores/auth";
 
 const isModalOpen = ref(false);
 const isModalEditOpen = ref(false);
@@ -24,6 +24,10 @@ const itemsPerPage = ref(9);
 const totalItems = ref(0);
 const totalPages = ref(0);
 const isLoading = ref(true);
+const authStore = useAuthStore();
+
+console.log(authStore.decodedPayload)
+console.log(authStore.hasBadge('admin'))
 
 
 function OpenModal() {
@@ -111,7 +115,7 @@ onMounted(fetchUser);
     <div>
       <div class="header">
         <h2>FUNCIONÁRIOS:</h2>
-        <button @click="OpenModal" class="btn-add">
+        <button @click="OpenModal" class="btn-add" v-if="authStore.hasBadge('admin')">
           <UserPlus />Adicionar
         </button>
       </div>

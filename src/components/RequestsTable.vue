@@ -4,6 +4,7 @@ import type { Request } from "../interfaces/RequestInterface";
 import axios from "axios";
 import { Trash, ChevronRight, ChevronLeft } from "lucide-vue-next";
 import RequestModal from "./RequestModal.vue";
+import { useAuthStore } from "../auth/stores/auth";
 
 const isLoading = ref(false);
 const isModalOpen = ref(false);
@@ -14,6 +15,7 @@ const itemsPerPage = ref(10);
 const totalItems = ref(0);
 const totalPages = ref(0);
 const requestToEdit = ref<Request | null>(null);
+const authStore = useAuthStore();
 
 function OpenModalEdit(request: Request) {
   requestToEdit.value = request;
@@ -163,7 +165,7 @@ onMounted(fetchRequest);
                   <td>{{ request.type ? request.type.name : "N/A" }}</td>
                   <td>{{ formatTime(request.createdAt) }}</td>
                   <td>
-                    <div class="icons">
+                    <div class="icons" v-if="authStore.hasBadge('admin')">
                       <Trash
                         class="delete-i"
                         alt="excluir funcionário"
