@@ -4,9 +4,8 @@ import axios from "axios";
 import type { Type } from "../interfaces/TypeRequest";
 import type { UpdateRequestDto } from "../interfaces/UpdateRequestDto";
 import type { Request } from "../interfaces/RequestInterface";
-import { X } from 'lucide-vue-next'
-
-
+import { X } from "lucide-vue-next";
+import type { Status } from "../interfaces/Status";
 
 const props = defineProps({
   initialRequest: {
@@ -26,12 +25,12 @@ const editedRequest = ref<UpdateRequestDto>({
 const emit = defineEmits(["close", "request-updated"]);
 
 const API_TYPES_URL = "http://localhost:3000/v1/types";
-const API_REQUESTS_URL = "http://localhost:3000/requests"
+const API_REQUESTS_URL = "http://localhost:3000/requests";
 const API_STATUS_URL = "http://localhost:3000/status/all";
 
 const types = ref<Type[]>([]);
 const formError = ref<string | null>(null);
-const statusOptions = ref<{ key: string; name: string }[]>([]);
+const statusOptions = ref<Status | null>(null);
 watch(
   () => props.initialRequest,
   (newVal) => {
@@ -56,17 +55,13 @@ async function fetchType() {
     console.log("Erro ao carregar os dados");
   }
 }
-async function fetchStatus(){
-  try{
-    const res = await axios.get(API_STATUS_URL)
-  statusOptions.value = res.data;
-  }catch (e) {
-    console.log("Erro")
-     statusOptions.value = [
-      { key: "aberto", name: "ABERTO" },
-      { key: "processando", name: "PROCESSANDO" },
-      { key: "concluido", name: "CONCLUÍDO" },
-      { key: "rejeitado", name: "REJEITADO" },]
+async function fetchStatus() {
+  try {
+    const res = await axios.get(API_STATUS_URL);
+    statusOptions.value = res.data;
+    console.log(res)
+  } catch (e) {
+    console.log("Erro");
   }
 }
 function handleClose() {
@@ -103,9 +98,9 @@ function handleStatuschange(e: Event) {
   editedRequest.value.statusKey = newStatus;
 }
 onMounted(() => {
-  fetchType
-  fetchStatus
-  });
+  fetchType();
+  fetchStatus();
+});
 </script>
 
 <template>
@@ -113,7 +108,7 @@ onMounted(() => {
     <div class="modal-content">
       <header>
         <h3>Solicitacao {{ initialRequest?.id }}</h3>
-        <button class="closeModal" @click="handleClose"><X/></button>
+        <button class="closeModal" @click="handleClose"><X /></button>
       </header>
 
       <div class="infos-box">
@@ -137,19 +132,19 @@ onMounted(() => {
         <form @submit.prevent="handleSubmit">
           <label for="select">Status:</label>
           <select
-            name=""
+            name="status"
             id="cargo"
-            :value="editedRequest.statusKey"
+            v-model="editedRequest.statusKey"
             @change="handleStatuschange"
             required
           >
-            <option value="null" disabled>Status da solicitação</option>
+            <option value="" disabled>Status da solicitação</option>
             <option
               v-for="statusOpt in statusOptions"
               :key="statusOpt"
               :value="statusOpt"
             >
-              {{ statusOpt }}
+              {{ statusOpt.name }}
             </option>
           </select>
 
@@ -191,7 +186,7 @@ header {
   width: 940px;
   margin-bottom: 20px;
 }
-label{
+label {
   font-size: 17px;
 }
 .infos {
@@ -296,7 +291,10 @@ footer button {
 }
 
 .btn-save:hover {
-  background-image: linear-gradient(rgba(36, 13, 241, 0.678), rgba(0, 15, 231, 0.904));
+  background-image: linear-gradient(
+    rgba(36, 13, 241, 0.678),
+    rgba(0, 15, 231, 0.904)
+  );
   transition: 0.8s;
 }
 

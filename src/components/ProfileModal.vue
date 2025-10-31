@@ -13,7 +13,6 @@ const props = defineProps({
   },
 });
 
-const authStore = useAuthStore();
 
 const editedProfile = ref<UpdateProfileDto>({
   name: "",

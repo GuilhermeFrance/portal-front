@@ -2,15 +2,16 @@
 import { onMounted, ref } from "vue";
 import type { Request } from "../interfaces/RequestInterface";
 import axios from "axios";
-import UserModal from "./UserModal.vue";
 import { Trash, ChevronRight, ChevronLeft } from "lucide-vue-next";
 import RequestModal from "./RequestModal.vue";
+import type { Status } from "../interfaces/Status";
 
-const isLoading = ref(true);
+const isLoading = ref(false);
 const isModalOpen = ref(false);
 const API_URL = "http://localhost:3000/requests/all";
 const API_STATUS_URL = "http://localhost:3000/status/all";
 const requests = ref<Request[]>([]);
+const statusr = ref<Status | null>(null);
 const currentPage = ref(1);
 const itemsPerPage = ref(10);
 const totalItems = ref(0);
@@ -69,6 +70,13 @@ function limitDescription(text: string, maxLength: number): string {
   return text.substring(0, maxLength) + "...";
 }
 
+async function fetchStatus() {
+  try {
+    const response = await axios.get(API_STATUS_URL);
+    statusr.value = response.data;
+  } catch (error) {}
+}
+
 async function fetchRequest() {
   isLoading.value = true;
   try {
@@ -81,7 +89,7 @@ async function fetchRequest() {
     requests.value = response.data.data;
     totalItems.value = response.data.total;
     totalPages.value = response.data.lastPage;
-    console.log(response.data.data[0])
+    console.log(response.data.data[0]);
   } catch (err) {
     console.log("Erro ao carregar os dados");
   } finally {
@@ -150,8 +158,8 @@ onMounted(fetchRequest);
                   @click="OpenModalEdit(request)"
                 >
                   <td>{{ request.id }}</td>
-                  <td>{{ limitDescription(request.name, 18) }}  </td>
-                  <td> -   {{limitDescription(request.description, 40)}}</td>
+                  <td>{{ limitDescription(request.name, 18) }}</td>
+                  <td>- {{ limitDescription(request.description, 40) }}</td>
                   <td>{{ limitDescription(request.adress, 19) }}</td>
                   <td>
                     <span
@@ -160,10 +168,10 @@ onMounted(fetchRequest);
                         isOpen: request.status?.key === 'aberto',
                         Processing: request.status?.key === 'processando',
                         Conclused: request.status?.key === 'concluido',
-                        Rejected: request.status?.key === 'rejeitado'
+                        Rejected: request.status?.key === 'rejeitado',
                       }"
                     >
-                      {{ request.status? request.status.name : "N/A" }}
+                      {{ request.statusKey ? request.status.name : "N/A" }}
                     </span>
                   </td>
                   <td>{{ request.type ? request.type.name : "N/A" }}</td>
@@ -439,4 +447,3 @@ h2 {
   color: rgb(189, 0, 0);
 }
 </style>
-
