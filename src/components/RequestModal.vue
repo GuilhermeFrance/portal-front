@@ -30,7 +30,7 @@ const API_STATUS_URL = "http://localhost:3000/status/all";
 
 const types = ref<Type[]>([]);
 const formError = ref<string | null>(null);
-const statusOptions = ref<Status | null>(null);
+const statusOptions = ref<Status[] | null>([]);
 watch(
   () => props.initialRequest,
   (newVal) => {
@@ -78,12 +78,13 @@ async function handleSubmit() {
     return;
   }
 
-  const updatePayload = {
-    status: editedRequest.value.statusKey,
-  };
+  const updatePayload = {statusKey: editedRequest.value.statusKey} 
+
+  console.log(updatePayload)
   try {
     await axios.patch(`${API_REQUESTS_URL}/${requestId}`, updatePayload);
     console.log("Solicitacao editada com sucesso");
+    
     emit("request-updated");
   } catch (error) {
     formError.value = "Falha na atualização. Verifique os dados.";
@@ -133,16 +134,16 @@ onMounted(() => {
           <label for="select">Status:</label>
           <select
             name="status"
-            id="cargo"
-            v-model="editedRequest.statusKey"
+            id="status"
+            :value="editedRequest.statusKey"
             @change="handleStatuschange"
             required
           >
             <option value="" disabled>Status da solicitação</option>
             <option
               v-for="statusOpt in statusOptions"
-              :key="statusOpt"
-              :value="statusOpt"
+              :key="statusOpt.id"
+              :value="statusOpt.key"
             >
               {{ statusOpt.name }}
             </option>

@@ -159,16 +159,16 @@ onMounted(fetchRequest);
                 >
                   <td>{{ request.id }}</td>
                   <td>{{ limitDescription(request.name, 18) }}</td>
-                  <td>- {{ limitDescription(request.description, 40) }}</td>
+                  <td>- {{ limitDescription(request.description, 37) }}</td>
                   <td>{{ limitDescription(request.adress, 19) }}</td>
                   <td>
                     <span
                       class="status-pill"
                       :class="{
-                        isOpen: request.status?.key === 'aberto',
-                        Processing: request.status?.key === 'processando',
-                        Conclused: request.status?.key === 'concluido',
-                        Rejected: request.status?.key === 'rejeitado',
+                        isOpen: request.statusKey === 'aberto',
+                        Processing: request.statusKey === 'processando',
+                        Conclused: request.statusKey === 'concluido',
+                        Rejected: request.statusKey === 'rejeitado',
                       }"
                     >
                       {{ request.statusKey ? request.status.name : "N/A" }}
