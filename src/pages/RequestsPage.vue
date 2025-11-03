@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import RequestsTable from '../components/RequestsTable.vue';
-import TablePage from '../components/UsersTablePage.vue';
+
 
 
 </script>

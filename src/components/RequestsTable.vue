@@ -9,6 +9,7 @@ import { useAuthStore } from "../auth/stores/auth";
 const isLoading = ref(false);
 const isModalOpen = ref(false);
 const API_URL = "http://localhost:3000/requests/all";
+const API_CURRENT_REQUEST_URL = "http://localhost:3000/requests/my-requests";
 const requests = ref<Request[]>([]);
 const currentPage = ref(1);
 const itemsPerPage = ref(10);
@@ -84,7 +85,29 @@ async function fetchRequest() {
     isLoading.value = false;
   }
 }
-
+async function fetchCurrentRequest() {
+  isLoading.value = true;
+  try {
+    const token = authStore.token;
+    const response = await axios.get(`${API_CURRENT_REQUEST_URL}`, {
+      params: {
+        page: currentPage.value,
+        limit: itemsPerPage.value,
+      },
+      headers: {
+        Authorization: `Bearer ${token}` 
+      }
+    });
+    requests.value = response.data.data;
+    totalItems.value = response.data.total;
+    totalPages.value = response.data.lastPage;
+    console.log(response.data.data[0]);
+  } catch (err) {
+    console.log("Erro ao carregar os dados");
+  } finally {
+    isLoading.value = false;
+  }
+}
 async function deleteRequest(requestId: number) {
   if (!confirm(`Tem certeza que deseja remover a solicitação ${requestId}?`)) {
     return;
@@ -100,7 +123,9 @@ async function deleteRequest(requestId: number) {
     fetchRequest();
   }
 }
-onMounted(fetchRequest);
+onMounted(() => {
+  fetchRequest()
+  fetchCurrentRequest()});
 </script>
 
 <template>
@@ -116,7 +141,114 @@ onMounted(fetchRequest);
         <h2>Solititações:</h2>
       </div>
 
-      <div class="card">
+      <div class="card" v-if="authStore.hasBadge('admin') || authStore.hasBadge('manager')">
+        <div class="content-wrapper">
+          <div v-if="isLoading" class="loading-overlay">
+            <v-progress-circular
+              indeterminate
+              color="primary"
+              size="44"
+            ></v-progress-circular>
+          </div>
+          <div class="table" v-if="requests.length >= 1">
+            <table v-if="requests.length" id="users">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nome</th>
+                  <th>Descrição</th>
+                  <th>Endereço</th>
+                  <th>STATUS</th>
+                  <th>Serviço</th>
+                  <th>Data</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="request in requests"
+                  :key="request.id"
+                  @click="OpenModalEdit(request)"
+                >
+                  <td>{{ request.id }}</td>
+                  <td>{{ limitDescription(request.name, 18) }}</td>
+                  <td>- {{ limitDescription(request.description, 37) }}</td>
+                  <td>{{ limitDescription(request.adress, 19) }}</td>
+                  <td>
+                    <span
+                      class="status-pill"
+                      :class="{
+                        isOpen: request.statusKey === 'aberto',
+                        Processing: request.statusKey === 'processando',
+                        Conclused: request.statusKey === 'concluido',
+                        Rejected: request.statusKey === 'rejeitado',
+                      }"
+                    >
+                      {{ request.statusKey ? request.status.name : "N/A" }}
+                    </span>
+                  </td>
+                  <td>{{ request.type ? request.type.name : "N/A" }}</td>
+                  <td>{{ formatTime(request.createdAt) }}</td>
+                  <td>
+                    <div class="icons" v-if="authStore.hasBadge('admin')">
+                      <Trash
+                        class="delete-i"
+                        alt="excluir funcionário"
+                        @click.stop="deleteRequest(request.id)"
+                      />
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div
+            style="
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              align-content: center;
+              margin-top: 250px;
+              font-size: 20px;
+              font-weight: 200;
+            "
+            v-else
+          >
+            Nenhum registro econtrado.
+          </div>
+
+          <div class="tfoot-div">
+            <div class="pagination-info" v-if="requests.length >= 1">
+              <span style="font-weight: 200">
+                Pagina
+                <span style="font-weight: 400">{{ currentPage }}</span> de
+                <span>{{ totalPages }}</span></span
+              >
+              <span>
+                <span style="font-weight: 400"
+                  >({{ totalItems }} resultados)</span
+                >
+              </span>
+            </div>
+            <div class="pagination-btns" v-if="requests.length >= 1">
+              <button
+                @click="goToPage(currentPage - 1)"
+                :disabled="currentPage === 1"
+              >
+                <ChevronLeft />
+              </button>
+              <button
+                @click="goToPage(currentPage + 1)"
+                :disabled="currentPage === totalPages"
+              >
+                <ChevronRight />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--TABELA DO USUARIO-->
+      <div class="card" v-if="authStore.hasBadge('requester')">
         <div class="content-wrapper">
           <div v-if="isLoading" class="loading-overlay">
             <v-progress-circular
@@ -223,6 +355,7 @@ onMounted(fetchRequest);
         </div>
       </div>
     </div>
+    
   </section>
 </template>
 

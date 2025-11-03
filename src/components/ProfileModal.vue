@@ -22,7 +22,7 @@ const editedProfile = ref<UpdateProfileDto>({
 
 const emit = defineEmits(["close", "profile-updated"]);
 
-const API_CLIENTS_URL = "http://localhost:3000/clients";
+const API_CLIENTS_URL = "http://localhost:3000/clients/id";
 
 const formError = ref<string | null>(null);
 

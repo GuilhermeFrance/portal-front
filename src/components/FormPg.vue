@@ -3,14 +3,18 @@ import { ref, onMounted } from "vue";
 import type { Type } from "../interfaces/TypeRequest";
 import axios from "axios";
 import type { NewRequestDto } from "../interfaces/NewRequestDto";
+import { useAuthStore } from "../auth/stores/auth";
 
 const API_REQUESTS_URL = "http://localhost:3000/requests";
+
+const authStore = useAuthStore();
 
 const createInitialRequest = (): NewRequestDto => ({
   name: "",
   description: "",
   adress: "",
   typeId: null,
+  clientId: authStore.currentUser!.id,
 });
 
 const newRequest = ref<NewRequestDto>(createInitialRequest());

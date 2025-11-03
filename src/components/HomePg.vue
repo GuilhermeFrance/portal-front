@@ -9,195 +9,191 @@ import {
   User,
   Headset,
   MousePointer,
-  Lightbulb
+  Lightbulb,
 } from "lucide-vue-next";
+import { useAuthStore } from "../auth/stores/auth";
+
+const authStore = useAuthStore();
 </script>
 
 <template>
   <section>
-    <div class="home-page"> 
-      <img src="../assets/Design sem nome (3).png" class="logo" alt="">
-    <div class="home-card">
-      <div class="home">
-        <div class="link-list">
-          <div class="card-link">
-            <div class="icon-request">
-              <RouterLink
-                to="/solicitacoes"
-                style="text-decoration: none; color: black"
-              >
-                <div class="card-router">
-                  <div class="icons-link">
-                    <BookText class="lucide-icon" />
-                  </div>
-                  <div>
-                    <span class="link-title"> Solicitações</span>
-                    <p class="link-desc">
-                      Acesse a caixa de <br />
-                      entrada de solicitações.
-                    </p>
-                  </div>
-                </div>
-              </RouterLink>
-            </div>
-          </div>
-
-          <div class="card-link">
-            <div class="icon-request">
-              <RouterLink
-                to="/funcionarios"
-                style="text-decoration: none; color: black"
-              >
-                <div class="card-router">
-                  <div class="icons-link">
-                    <SquareUserRound class="lucide-icon" />
-                  </div>
-                  <div>
-                    <span class="link-title"> Funcionários</span>
-                    <p class="link-desc">
-                      Acesse a lista de <br />
-                      funcionários.
-                    </p>
-                  </div>
-                </div>
-              </RouterLink>
-            </div>
-          </div>
+    <div class="home-page">
+      <img src="../assets/Design sem nome (3).png" class="logo" alt="" />
+      <div class="hello-current"><span>Seja bem vindo(a), {{ authStore.currentUser!.name }}</span></div>
+      <div :class="{'home-card': authStore.hasBadge('admin') , 'home-card-user': !authStore.hasBadge('admin')}">
+        <div class="home">
           <div class="link-list">
-            <div class="card-link">
+            <div
+              class="card-link"
+              v-if="
+                authStore.hasBadge('admin') || authStore.hasBadge('manager')
+              "
+            >
               <div class="icon-request">
                 <RouterLink
-                  to="/solicite"
+                  to="/solicitacoes"
                   style="text-decoration: none; color: black"
                 >
                   <div class="card-router">
                     <div class="icons-link">
-                      <ClipboardPlus class="lucide-icon" />
+                      <BookText class="lucide-icon" />
                     </div>
                     <div>
-                      <span class="link-title"> Faça uma solicitação</span>
+                      <span class="link-title"> Solicitações</span>
                       <p class="link-desc">
-                        Solicite algum <br />
-                        serviço público.
+                        Acesse a caixa de <br />
+                        entrada de solicitações.
                       </p>
                     </div>
                   </div>
                 </RouterLink>
               </div>
             </div>
-          </div>
-        </div>
 
-        <div class="link-list">
-          <div class="card-link">
-            <div class="icon-request">
-              <RouterLink
-                to="/solicitacoes"
-                style="text-decoration: none; color: black"
-              >
-                <div class="card-router">
-                  <div class="icons-link">
-                    <Loader class="lucide-icon" />
-                  </div>
-                  <div>
-                    <span class="link-title"> Status</span>
-                    <p class="link-desc">
-                      Acompanhe a <br />
-                      sua solicitação.
-                    </p>
-                  </div>
-                </div>
-              </RouterLink>
-            </div>
-          </div>
-
-          <div class="card-link">
-            <div class="icon-request">
-              <RouterLink
-                to="/funcionarios"
-                style="text-decoration: none; color: black"
-              >
-                <div class="card-router">
-                  <div class="icons-link">
-                    <ChartNoAxesCombined class="lucide-icon" />
-                  </div>
-                  <div>
-                    <span class="link-title"> Dashboard</span>
-                    <p class="link-desc">
-                      Acompanhar progresso <br />
-                      das solicitações.
-                    </p>
-                  </div>
-                </div>
-              </RouterLink>
-            </div>
-          </div>
-          <div class="link-list">
-            <div class="card-link">
+            <div
+              class="card-link"
+              v-if="
+                authStore.hasBadge('admin') || authStore.hasBadge('manager')
+              "
+            >
               <div class="icon-request">
                 <RouterLink
-                  to="/perfil"
+                  to="/funcionarios"
                   style="text-decoration: none; color: black"
                 >
                   <div class="card-router">
                     <div class="icons-link">
-                      <User class="lucide-icon" />
+                      <SquareUserRound class="lucide-icon" />
                     </div>
                     <div>
-                      <span class="link-title"> Perfil</span>
+                      <span class="link-title"> Funcionários</span>
                       <p class="link-desc">
-                        Visualize ou <br />
-                        edite seu perfil.
+                        Acesse a lista de <br />
+                        funcionários.
                       </p>
                     </div>
                   </div>
                 </RouterLink>
               </div>
             </div>
-          </div>
-        </div>
-        <div class="link-list">
-          <div class="card-link">
-            <div class="icon-request">
-              <RouterLink
-                to="/solicitacoes"
-                style="text-decoration: none; color: black"
-              >
-                <div class="card-router">
-                  <div class="icons-link">
-                    <Headset class="lucide-icon" />
-                  </div>
-                  <div>
-                    <span class="link-title"> Ouvidoria</span>
-                    <p class="link-desc">
-                      Fale com um <br />
-                      suporte.
-                    </p>
-                  </div>
+            <div class="link-list">
+              <div class="card-link">
+                <div class="icon-request">
+                  <RouterLink
+                    to="/solicite"
+                    style="text-decoration: none; color: black"
+                  >
+                    <div class="card-router">
+                      <div class="icons-link">
+                        <ClipboardPlus class="lucide-icon" />
+                      </div>
+                      <div>
+                        <span class="link-title"> Faça uma solicitação</span>
+                        <p class="link-desc">
+                          Solicite algum <br />
+                          serviço público.
+                        </p>
+                      </div>
+                    </div>
+                  </RouterLink>
                 </div>
-              </RouterLink>
+              </div>
+            </div>
+            <div class="link-list" v-if="!authStore.hasBadge('admin')">
+              <div class="card-link">
+                <div class="icon-request">
+                  <RouterLink
+                    to="/solicitacoes"
+                    style="text-decoration: none; color: black"
+                  >
+                    <div class="card-router">
+                      <div class="icons-link">
+                        <Lightbulb class="lucide-icon" />
+                      </div>
+                      <div>
+                        <span class="link-title"> Sugestõess</span>
+                        <p class="link-desc">Deixe alguma sugestão.</p>
+                      </div>
+                    </div>
+                  </RouterLink>
+                </div>
+              </div>
             </div>
           </div>
+          
 
-          <div class="card-link">
-            <div class="icon-request">
-              <a s href="https://www.pmvc.ba.gov.br/" target="_blank"
-                to="/funcionarios"
-                style="text-decoration: none; color: black"
-              >
-                <div class="card-router">
-                  <div class="icons-link">
-                    <MousePointer class="lucide-icon" />
+          <div class="link-list">
+            <div class="card-link">
+              <div class="icon-request">
+                <RouterLink
+                  to="/solicitacoes"
+                  style="text-decoration: none; color: black"
+                >
+                  <div class="card-router">
+                    <div class="icons-link">
+                      <Loader class="lucide-icon" />
+                    </div>
+                    <div>
+                      <span class="link-title"> Status</span>
+                      <p class="link-desc">
+                        Acompanhe a <br />
+                        sua solicitação.
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <span class="link-title"> Site Oficial</span>
-                    <p class="link-desc">
-                      Clique para acessar <br />
-                      o site oifical PMVC.
-                    </p>
+                </RouterLink>
+              </div>
+            </div>
+
+            <div
+              class="card-link"
+              v-if="
+                authStore.hasBadge('admin') || authStore.hasBadge('manager')
+              "
+            >
+              <div class="icon-request">
+                <RouterLink
+                  to="/funcionarios"
+                  style="text-decoration: none; color: black"
+                >
+                  <div class="card-router">
+                    <div class="icons-link">
+                      <ChartNoAxesCombined class="lucide-icon" />
+                    </div>
+                    <div>
+                      <span class="link-title"> Dashboard</span>
+                      <p class="link-desc">
+                        Acompanhar progresso <br />
+                        das solicitações.
+                      </p>
+                    </div>
                   </div>
+                </RouterLink>
+              </div>
+            </div>
+            <div class="link-list">
+              <div class="card-link">
+                <div class="icon-request">
+                  <RouterLink
+                    to="/perfil"
+                    style="text-decoration: none; color: black"
+                  >
+                    <div class="card-router">
+                      <div class="icons-link">
+                        <User class="lucide-icon" />
+                      </div>
+                      <div>
+                        <span class="link-title"> Perfil</span>
+                        <p class="link-desc">
+                          Visualize ou <br />
+                          edite seu perfil.
+                        </p>
+                      </div>
+                    </div>
+                  </RouterLink>
                 </div>
-              </a>
+              </div>
             </div>
           </div>
           <div class="link-list">
@@ -209,25 +205,73 @@ import {
                 >
                   <div class="card-router">
                     <div class="icons-link">
-                      <Lightbulb class="lucide-icon" />
+                      <Headset class="lucide-icon" />
                     </div>
                     <div>
-                      <span class="link-title"> Sugestões</span>
-                      <p class="link-desc">Deixe alguma sugestão.</p>
+                      <span class="link-title"> Ouvidoria</span>
+                      <p class="link-desc">
+                        Fale com um <br />
+                        suporte.
+                      </p>
                     </div>
                   </div>
                 </RouterLink>
+              </div>
+            </div>
+
+            <div class="card-link">
+              <div class="icon-request">
+                <a
+                  
+                  href="https://www.pmvc.ba.gov.br/"
+                  target="_blank"
+                  to="/funcionarios"
+                  style="text-decoration: none; color: black"
+                >
+                  <div class="card-router">
+                    <div class="icons-link">
+                      <MousePointer class="lucide-icon" />
+                    </div>
+                    <div>
+                      <span class="link-title"> Site Oficial</span>
+                      <p class="link-desc">
+                        Clique para acessar <br />
+                        o site oifical PMVC.
+                      </p>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            </div>
+            <div class="link-list" v-if="authStore.hasBadge('admin') || authStore.hasBadge('manager')">
+              <div class="card-link">
+                <div class="icon-request">
+                  <RouterLink
+                    to="/solicitacoes"
+                    style="text-decoration: none; color: black"
+                  >
+                    <div class="card-router">
+                      <div class="icons-link">
+                        <Lightbulb class="lucide-icon" />
+                      </div>
+                      <div>
+                        <span class="link-title"> Sugestões</span>
+                        <p class="link-desc">Deixe alguma sugestão.</p>
+                      </div>
+                    </div>
+                  </RouterLink>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    </div>
   </section>
 </template>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 section {
   display: flex;
   font-family: "Inter", sans-serif;
@@ -236,10 +280,35 @@ section {
   align-content: center;
   padding-top: 50px;
 }
-.logo{
+.logo {
   width: 40%;
 }
-.home-page{
+
+.hello-current{
+
+  opacity: 0%;
+  padding-bottom: 40px;
+  position: relative;
+  animation-name: TextDown;
+  animation-duration: 1s;
+  animation-delay: 0.2s ;
+  animation-fill-mode: forwards;
+  animation-iteration-count: 1;
+  animation-timing-function: ease-in-out;
+  font-family:  'Montserrat', sans-serif;
+  font-size: 30px;
+  font-weight: 300;
+  color: #488AFF;
+ 
+}
+
+@keyframes TextDown {
+  from {opacity: 0%;top: -20px;}
+  to   {opacity: 100%;top:0px;}
+}
+
+
+.home-page {
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -273,6 +342,18 @@ section {
   padding: 40px;
   width: 1100px;
   height: 450px;
+  background-color: #fcfcfc;
+  border-radius: 20px;
+  box-shadow: 2px 2px 10px 2px rgba(0, 0, 0, 0.158);
+}
+.home-card-user {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 40px;
+  width: 1100px;
+  height: 270px;
   background-color: #fcfcfc;
   border-radius: 20px;
   box-shadow: 2px 2px 10px 2px rgba(0, 0, 0, 0.158);

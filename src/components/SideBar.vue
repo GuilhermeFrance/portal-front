@@ -4,15 +4,15 @@ import { RouterLink } from "vue-router";
 import { useAuthStore } from "../auth/stores/auth";
 
 const authStore = useAuthStore();
-async function handleLogout(){
-  authStore.logout()
+async function handleLogout() {
+  authStore.logout();
 }
 
-function formatString(text: string | undefined, maxLength: number){
-  if(!text){
-    return ""
+function formatString(text: string | undefined, maxLength: number) {
+  if (!text) {
+    return "";
   }
-  if(text.length <= maxLength){
+  if (text.length <= maxLength) {
     return text;
   }
   return text.substring(0, maxLength);
@@ -31,21 +31,20 @@ function formatString(text: string | undefined, maxLength: number){
           >Solicitações
           <div class="on-side"></div
         ></RouterLink>
-        <RouterLink to="/funcionarios" class="side-item"
+        <RouterLink
+          to="/funcionarios"
+          class="side-item"
+          v-if="authStore.hasBadge('admin') || authStore.hasBadge('manager')"
           >Funcionários
           <div class="on-side"></div
         ></RouterLink>
       </div>
       <div class="side-item-last">
-        
         <RouterLink to="/perfil" class="user-style-last">
           <UserRound class="lucide-icon" />
           <span>{{ formatString(authStore.currentUser?.name, 17) }}</span>
-          
         </RouterLink>
-        <LogOut @click.stop="handleLogout"/>
-        
-  
+        <LogOut class="logout-icon" @click.stop="handleLogout" />
       </div>
     </div>
   </div>
@@ -68,8 +67,8 @@ function formatString(text: string | undefined, maxLength: number){
   flex-direction: column;
   justify-content: space-between;
 }
-.side-item-last{
-   display: flex;
+.side-item-last {
+  display: flex;
   color: black;
   text-decoration: none;
   flex-direction: row;
@@ -83,7 +82,7 @@ function formatString(text: string | undefined, maxLength: number){
   transition: 0.3s;
   width: 296px;
 }
-.side-item-last:hover{
+.side-item-last:hover {
   cursor: pointer;
   background-color: rgb(238, 238, 238);
 }
@@ -112,9 +111,9 @@ function formatString(text: string | undefined, maxLength: number){
 .user-link:hover {
   background-color: rgb(238, 238, 238);
   cursor: pointer;
-  color:#0079FF;
+  color: #0079ff;
 }
-.user-style-last{
+.user-style-last {
   display: flex;
   font-weight: 500;
   color: black;
@@ -124,19 +123,26 @@ function formatString(text: string | undefined, maxLength: number){
   text-decoration: none;
   gap: 10px;
 }
-.side-item-last:hover .user-style-last span{
-  
-  color:#0079FF;
+
+.logout-icon {
+  color: rgb(182, 182, 182);
+  transition: 0.4s;
 }
-.side-item-last:hover .user-style-last .lucide-icon{
-  
-  color:#0079FF;
+.logout-icon:hover {
+  color: rgb(80, 80, 80);
+}
+
+.side-item-last:hover .user-style-last span {
+  color: #0079ff;
+}
+.side-item-last:hover .user-style-last .lucide-icon {
+  color: #0079ff;
 }
 .user-style-last.router-link-exact-active .lucide-icon {
-  color:#0079FF;
+  color: #0079ff;
 }
 .user-style-last.router-link-exact-active {
-  color:#0079FF;
+  color: #0079ff;
 }
 .user-style {
   display: flex;
@@ -151,11 +157,11 @@ function formatString(text: string | undefined, maxLength: number){
 .user-style:hover {
   background-color: rgb(238, 238, 238);
   cursor: pointer;
-  color: #0079FF;
+  color: #0079ff;
   transition: 0.3s;
 }
 .user-style.router-link-exact-active {
-  color: #0079FF;
+  color: #0079ff;
   font-weight: 600;
 }
 .side-item {
@@ -177,16 +183,16 @@ function formatString(text: string | undefined, maxLength: number){
 .side-item:hover {
   background-color: rgb(238, 238, 238);
   cursor: pointer;
-  color: #0079FF;
+  color: #0079ff;
 }
 .side-item.router-link-exact-active {
-  color: #0079FF;
+  color: #0079ff;
   font-weight: 700;
 }
 .side-item.router-link-exact-active .on-side {
   height: 50px;
   width: 5px;
-  background-color: #0079FF;
+  background-color: #0079ff;
   transition: 0.5s;
 }
 .on-side:hover {

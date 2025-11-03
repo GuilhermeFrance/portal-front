@@ -4,4 +4,5 @@ export interface NewRequestDto {
   description: string;
   adress: string;
   typeId: number | null;
+  clientId: number | null | undefined;
 }

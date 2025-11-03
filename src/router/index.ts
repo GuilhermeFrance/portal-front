@@ -10,6 +10,7 @@ import RegisterPage from "../pages/RegisterPage.vue";
 import NotFound from "../pages/NotFound.vue";
 import { useAuthStore } from "../auth/stores/auth";
 
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
