@@ -60,7 +60,7 @@ async function fetchStatus() {
   try {
     const res = await axios.get(API_STATUS_URL);
     statusOptions.value = res.data;
-    console.log(res)
+    console.log(res);
   } catch (e) {
     console.log("Erro");
   }
@@ -79,13 +79,13 @@ async function handleSubmit() {
     return;
   }
 
-  const updatePayload = {statusKey: editedRequest.value.statusKey} 
+  const updatePayload = { statusKey: editedRequest.value.statusKey };
 
-  console.log(updatePayload)
+  console.log(updatePayload);
   try {
     await axios.patch(`${API_REQUESTS_URL}/${requestId}`, updatePayload);
     console.log("Solicitacao editada com sucesso");
-    
+
     emit("request-updated");
   } catch (error) {
     formError.value = "Falha na atualização. Verifique os dados.";
@@ -107,7 +107,12 @@ onMounted(() => {
 
 <template>
   <div class="modal-background" @click.self="handleClose">
-    <div :class="{' modal-content-admin': authStore.hasBadge('admin'), 'modal-content': authStore.hasBadge('requester')}">
+    <div
+      :class="{
+        ' modal-content-admin': authStore.hasBadge('admin'),
+        'modal-content': authStore.hasBadge('requester'),
+      }"
+    >
       <header>
         <h3>Solicitacao {{ initialRequest?.id }}</h3>
         <button class="closeModal" @click="handleClose"><X /></button>
@@ -131,35 +136,37 @@ onMounted(() => {
           <span class="info-box-desc">{{ initialRequest?.description }}</span>
         </div>
         <div class="badge-binding">
-        
-        <form @submit.prevent="handleSubmit" v-if="authStore.hasBadge('admin')">
-          <label for="select">Status:</label>
-          <select
-            name="status"
-            id="status"
-            :value="editedRequest.statusKey"
-            @change="handleStatuschange"
-            required
+          <form
+            @submit.prevent="handleSubmit"
+            v-if="authStore.hasBadge('admin')"
           >
-            <option value="" disabled>Status da solicitação</option>
-            <option
-              v-for="statusOpt in statusOptions"
-              :key="statusOpt.id"
-              :value="statusOpt.key"
+            <label for="select">Status:</label>
+            <select
+              name="status"
+              id="status"
+              :value="editedRequest.statusKey"
+              @change="handleStatuschange"
+              required
             >
-              {{ statusOpt.name }}
-            </option>
-          </select>
+              <option value="" disabled>Status da solicitação</option>
+              <option
+                v-for="statusOpt in statusOptions"
+                :key="statusOpt.id"
+                :value="statusOpt.key"
+              >
+                {{ statusOpt.name }}
+              </option>
+            </select>
 
-          <footer>
-            <button type="submit" class="btn-save">Salvar</button>
-            <button @click="handleClose" class="btn-cancel">Cancelar</button>
-          </footer>
-        </form>
-        <div class="infos" v-else>
-          <label for="span"> Status: </label>
-          <span class="info-box">{{ initialRequest?.status.name }}</span>
-        </div>
+            <footer>
+              <button type="submit" class="btn-save">Salvar</button>
+              <button @click="handleClose" class="btn-cancel">Cancelar</button>
+            </footer>
+          </form>
+          <div class="infos" v-else>
+            <label for="span"> Status: </label>
+            <span class="info-box">{{ initialRequest?.status.name }}</span>
+          </div>
         </div>
       </div>
     </div>
@@ -196,6 +203,7 @@ header {
 }
 label {
   font-size: 17px;
+  font-weight: 500;
 }
 .infos {
   display: flex;
@@ -206,7 +214,7 @@ label {
   font-weight: 300;
   background-color: rgba(221, 221, 221, 0.315);
   height: 30px;
-  border: 1px solid rgba(0, 0, 0, 0.322);
+  border: 1px solid rgba(145, 145, 145, 0.322);
   display: flex;
   align-items: flex-end;
   padding: 6px;
@@ -221,7 +229,7 @@ label {
 }
 .info-box-desc {
   font-weight: 300;
-  border: 1px solid rgba(0, 0, 0, 0.322);
+  border: 1px solid rgba(145, 145, 145, 0.322);
   background-color: rgba(221, 221, 221, 0.315);
   height: 80px;
   display: flex;
@@ -239,7 +247,7 @@ label {
   height: 580px;
   width: 1000px;
   border-radius: 20px;
-  padding-bottom:20px ;
+  padding-bottom: 20px;
 }
 .modal-content-admin {
   padding: 20px;
@@ -251,7 +259,7 @@ label {
   height: 660px;
   width: 1000px;
   border-radius: 20px;
-  padding-bottom:20px ;
+  padding-bottom: 20px;
 }
 
 footer {
@@ -348,8 +356,6 @@ input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
 }
-
-
 
 select {
   height: 44px;
