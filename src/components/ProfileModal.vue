@@ -15,7 +15,8 @@ const props = defineProps({
 
 
 const editedProfile = ref<UpdateProfileDto>({
-  name: "",
+  firstName: "",
+  surname: "",
   email: "",
   cpf: "",
 });
@@ -31,12 +32,13 @@ watch(
   (newVal) => {
     if (newVal) {
       editedProfile.value = {
-        name: newVal.name ?? "",
+        firstName: newVal.firstName ?? "",
+        surname: newVal.surname ?? "",
         email: newVal.email ?? "",
         cpf: (newVal as any).cpf ?? "",
       };
     }else {
-      editedProfile.value = { name: "", email: "", cpf: ""}
+      editedProfile.value = { firstName: "", surname: "", email: "", cpf: ""}
     }
   },
   { immediate: true }
@@ -80,7 +82,7 @@ async function handleSubmit() {
   <div class="modal-background" @click.self="handleClose">
     <div class="modal-content">
       <header>
-        <h3>Solicitacao {{ initialProfile?.id }}</h3>
+        <h3>Editar perfil:</h3>
         <button class="closeModal" @click="handleClose"><X /></button>
       </header>
 
@@ -88,7 +90,11 @@ async function handleSubmit() {
         <form @submit.prevent="handleSubmit">
           <div class="infos">
             <label for="span"> Nome: </label>
-            <input class="info-box" type="text" v-model="editedProfile!.name">
+            <input class="info-box" type="text" v-model="editedProfile!.firstName">
+          </div>
+          <div class="infos">
+            <label for="span"> Sobrenome: </label>
+            <input class="info-box" type="text" v-model="editedProfile!.surname">
           </div>
           <div class="infos">
             <label for="span"> Endereço: </label>
@@ -129,7 +135,7 @@ header {
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  width: 940px;
+  width: 580px;
   margin-bottom: 20px;
 }
 label {
@@ -156,7 +162,7 @@ label {
   flex-direction: column;
   gap: 14px;
   justify-content: center;
-  width: 940px;
+  width: 580px;
 }
 .info-box-desc {
   font-weight: 300;
@@ -175,8 +181,8 @@ label {
   justify-content: space-between;
   align-items: center;
   background-color: white;
-  height: 320px;
-  width: 1000px;
+  height: 400px;
+  width: 600px;
   border-radius: 20px;
 }
 

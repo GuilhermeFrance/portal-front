@@ -1,5 +1,6 @@
 export interface NewClientDto {
-    name: string;
+    firstName: string;
+    surname: string;
     cpf: string;
     email: string;
     password: string;

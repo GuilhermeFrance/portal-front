@@ -8,7 +8,8 @@ import { useRouter } from "vue-router";
 const router = useRouter()
 
 const NewClient = ref<NewClientDto>({
-  name: "",
+  firstName: "",
+  surname: "",
   cpf: "",
   email: "",
   password: "",
@@ -20,12 +21,13 @@ function handlePasswordVisible(){
   isPasswordVisible.value = !isPasswordVisible.value
 }
 
-const API_CLIENT_URL = "http://localhost:3000/register";
+const API_CLIENT_URL = "http://localhost:3000/clients/register";
 
 const formError = ref<string | null>(null);
 
 async function handleSubmit() {
-  if(!NewClient.value.name ||
+  if(!NewClient.value.firstName ||
+  !NewClient.value.surname ||
   !NewClient.value.cpf  ||
   !NewClient.value.email||
   !NewClient.value.password) {
@@ -38,7 +40,7 @@ async function handleSubmit() {
   }
   try {
   await axios.post(API_CLIENT_URL, NewClient.value)
-  console.log("Cliente criado com sucesso!")
+  alert("Cliente criado com sucesso!")
   router.push("/login")
   } catch (error) {
   console.log("Erro na criação do funcionário")
@@ -56,10 +58,20 @@ async function handleSubmit() {
       </div>
       <div class="register-inputs">
         <form @submit.prevent="handleSubmit">
-          <div class="register-input">
+          <div class="names">
+            <div class="register-input-name">
             <label for="input">Nome:</label>
-            <input placeholder="Insira seu nome completo" type="text" v-model="NewClient.name" />
+            <input placeholder="Insira seu nome completo" type="text" v-model="NewClient.firstName" />
+            </div>
+            <div class="register-input-name">
+            <label for="input">Sobrenome:</label>
+            <input placeholder="Insira seu nome completo" type="text" v-model="NewClient.surname" />
+            </div>
           </div>
+          
+    
+          
+          
           <div class="register-input">
             <label for="input">CPF:</label>
             <input placeholder="Insira seu CPF (somente números)" type="text" v-model="NewClient.cpf"/>
@@ -160,11 +172,21 @@ footer {
   border-radius: 20px;
   box-shadow: 2px 2px 15px 2px rgba(146, 146, 146, 0.315);
 }
-
+.names {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
 .register-input {
   display: flex;
   flex-direction: column;
   width: 800px;
+  gap: 6px;
+}
+.register-input-name {
+  display: flex;
+  flex-direction: column;
+  width: 390px;
   gap: 6px;
 }
 

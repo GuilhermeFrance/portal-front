@@ -1,6 +1,7 @@
 export interface UpdateProfileDto {
 
-  name: string;
+  firstName: string;
+  surname: string;
   email: string;
   cpf: string;
 
