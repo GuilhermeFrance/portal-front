@@ -42,7 +42,7 @@ function formatString(text: string | undefined, maxLength: number) {
       <div class="side-item-last">
         <RouterLink to="/perfil" class="user-style-last">
           <UserRound class="lucide-icon" />
-          <span>{{ formatString(authStore.currentUser?.name, 17) }}</span>
+          <span>{{ authStore.currentUser?.firstName }}</span>
         </RouterLink>
         <LogOut class="logout-icon" @click.stop="handleLogout" />
       </div>

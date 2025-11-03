@@ -20,7 +20,7 @@ const authStore = useAuthStore();
   <section>
     <div class="home-page">
       <img src="../assets/Design sem nome (3).png" class="logo" alt="" />
-      <div class="hello-current"><span>Seja bem vindo(a), {{ authStore.currentUser!.name }}</span></div>
+      <div class="hello-current"><span>Seja bem vindo(a), {{ authStore.currentUser!.firstName }}.</span></div>
       <div :class="{'home-card': authStore.hasBadge('admin') , 'home-card-user': !authStore.hasBadge('admin')}">
         <div class="home">
           <div class="link-list">
@@ -297,7 +297,7 @@ section {
   animation-timing-function: ease-in-out;
   font-family:  'Montserrat', sans-serif;
   font-size: 30px;
-  font-weight: 300;
+  font-weight: 500;
   color: #488AFF;
  
 }
