@@ -35,7 +35,7 @@ function handleRoleChange(e: Event) {
 
   newRequest.value.typeId = newTypeId;
 }
-async function fetchRequest() {
+async function fetchType() {
   try {
     const response = await axios.get<Type[]>(API_URL_TYPES);
     types.value = response.data;
@@ -44,9 +44,6 @@ async function fetchRequest() {
   }
 }
 
-function handleClose() {
-  emit("close");
-}
 
 
 async function handleSubmit() {
@@ -71,7 +68,7 @@ async function handleSubmit() {
     console.log("Erro na criação da solicitacao");
   }
 }
-onMounted(fetchRequest)
+onMounted(fetchType)
 </script>
 
 <template>
