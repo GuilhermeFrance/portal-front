@@ -3,6 +3,7 @@
 import { computed } from 'vue';
 import SideBar from './components/SideBar.vue';
 import { RouterView, useRoute } from 'vue-router';
+import AppAlerts from './components/AppAlerts.vue';
 
 const route = useRoute()
 
@@ -18,12 +19,15 @@ const showSideBar = computed(() => {
 </script>
 
 <template>
+  
   <main :class="{'has-sidebar': showSideBar}">
     <SideBar v-if="showSideBar"/>
     <div class="main-content">
     <RouterView/>
+    <AppAlerts />
     </div>
   </main>
+ 
 </template>
 
 <style scoped>

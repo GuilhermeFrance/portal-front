@@ -3,9 +3,11 @@ import type { ClientModel } from "../models/ClientModel";
 import { computed, ref } from "vue";
 import axios from "axios";
 import router from "../../router";
+import { useAlertStore } from "./alertStore";
 
 export const useAuthStore = defineStore("auth", () => {
-  const alert = ref<string | null>(null);
+  const alertStore = useAlertStore();
+  const alerts = ref<string | null>(null);
   const clientLogin = ref<ClientModel>({
     email: "",
     password: "",
@@ -63,7 +65,7 @@ export const useAuthStore = defineStore("auth", () => {
   async function handleSubmitLogin() {
     if (!clientLogin.value.email || !clientLogin.value.password) {
       console.log("Preencha todos os campos obrigatórios");
-      return (alert.value = "Preencha todos os campos obrigatórios");
+      return (alerts.value = "Preencha todos os campos obrigatórios");
     }
     try {
       isLoading.value = true;
@@ -78,7 +80,7 @@ export const useAuthStore = defineStore("auth", () => {
       await getCurrentUser();
       decodedPayload.value = parseJwt(token.value)
       console.log(response);
-
+      
       await router.push({ name: "home" });
 
       console.log("Login feito com sucesso!");
@@ -90,7 +92,7 @@ export const useAuthStore = defineStore("auth", () => {
           ? error.response.data.message
           : "Falha ao salvar. Verifique o sevidor.";
 
-      alert.value = Array.isArray(backEndMessage)
+      alerts.value = Array.isArray(backEndMessage)
         ? backEndMessage.join(", ")
         : backEndMessage;
       console.log("Erro ao fazer login");
@@ -124,7 +126,7 @@ export const useAuthStore = defineStore("auth", () => {
       console.log("Erro ao buscar dados do usuário.", error);
       const status = error?.response?.status;
       if (status === 401 || status === 403) {
-        console.warn("Token inválido/expirado. Executando logout.");
+        alert("Token inválido/expirado. Executando logout.");
         await logout();
         return;
       }
@@ -142,7 +144,7 @@ export const useAuthStore = defineStore("auth", () => {
       };
       localStorage.removeItem("auth_token");
       delete axios.defaults.headers.common["Authorization"];
-      alert.value = null;
+      alerts.value = null;
 
       console.log("Logout realizado com sucesso!");
       await router.push({ name: "Login" });
@@ -163,6 +165,7 @@ export const useAuthStore = defineStore("auth", () => {
     console.log(decodedPayload.value)
     if (isTokenExpired(token.value)) {
       console.info("Token expirado, faça login novamente");
+      alert("Sessão expirado, faça login novamente")
       await logout();
       return;
     }
@@ -187,7 +190,7 @@ export const useAuthStore = defineStore("auth", () => {
     token,
     isLoading,
     isAuthenticated,
-    alert,
+    alert: alerts,
     handleSubmitLogin,
     logout,
     initializeAuth,

@@ -3,7 +3,9 @@ import { ref } from "vue";
 import { Eye, EyeClosed } from "lucide-vue-next";
 import { useAuthStore } from "../auth/stores/auth";
 import { useRoute, useRouter } from "vue-router";
+import { useAlertStore } from "../auth/stores/alertStore";
 
+const alertStore = useAlertStore();
 const authStore = useAuthStore();
 const router = useRouter();
 const route = useRoute();
@@ -20,7 +22,9 @@ async function handleSubmit() {
   }
   try {
     await authStore.handleSubmitLogin();
+
     redirect();
+    alertStore.showAlert(`Login feito com sucesso`, "success", 10);
   } catch (error) {
     console.log("Erro!");
   }
@@ -86,7 +90,11 @@ async function redirect() {
               <span href="" style="font-weight: 300">Não tem cadastro? </span>
               <RouterLink class="signup" to="/signup">Cadastre-se</RouterLink>
             </div>
-            <div style="display: flex; justify-content: center; margin-top: 30px;"><span class="alert">{{ formError }}</span></div>
+            <div
+              style="display: flex; justify-content: center; margin-top: 30px"
+            >
+              <span class="alert">{{ formError }}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -127,7 +135,7 @@ form {
   width: 100%;
   height: 100%;
 }
-.alert{
+.alert {
   color: red;
   font-weight: 300;
   text-decoration: underline;
