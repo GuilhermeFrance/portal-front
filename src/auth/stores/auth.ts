@@ -15,7 +15,6 @@ export const useAuthStore = defineStore("auth", () => {
   const decodedPayload = ref<any | null>(null)
   const isLoading = ref(false);
   const isAuthenticated = computed(() => !!currentUser.value);
-  const isAuth = computed(() => !!token.value)
   const API_URL_CLIENT = "http://localhost:3000/login";
   const API_URL_CURRIENT = "http://localhost:3000/clients";
 

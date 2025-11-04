@@ -165,8 +165,21 @@ select{
     border-radius: 8px;
     background-color: white;
     font-size: 15px;
-     padding-left: 10px;
+    padding-left: 10px;
+    transition: 0.3s;
 }
+select:hover{
+  background: rgb(236, 236, 236);
+}
+select::picker-icon{
+  color: rgb(0, 255, 21);
+  transition: 0.4s rotate;
+}
+
+option:checked {
+  font-weight: bold;
+}
+
 .form {
   padding: 30px;
   width: 700px;
@@ -203,6 +216,7 @@ select{
   font-family: "Inter", sans-serif;
   padding-left: 10px;
   color: rgb(190, 190, 190);
+  
 }
 .form-input::placeholder {
   font-style: italic;
@@ -219,6 +233,7 @@ select{
   resize: vertical;
   font-size: 16px;
   font-family: "Inter", sans-serif;
+  resize: none;
 }
 label {
   font-weight: 600;

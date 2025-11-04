@@ -4,32 +4,31 @@ import { Eye, EyeClosed } from "lucide-vue-next";
 import { useAuthStore } from "../auth/stores/auth";
 import { useRoute, useRouter } from "vue-router";
 
-
 const authStore = useAuthStore();
 const router = useRouter();
 const route = useRoute();
-const formError = ref<string | null>(null)
+const formError = ref<string | null>(null);
 const isPasswordVisible = ref(false);
 
 function handlePasswordVisible() {
   isPasswordVisible.value = !isPasswordVisible.value;
 }
 
-async function handleSubmit(){
-  if(!authStore.clientLogin.email || !authStore.clientLogin.password){
-    formError.value = "Preencha todos os campos obrigatórios"
+async function handleSubmit() {
+  if (!authStore.clientLogin.email || !authStore.clientLogin.password) {
+    formError.value = "Preencha todos os campos obrigatórios!";
   }
   try {
-    await authStore.handleSubmitLogin()
+    await authStore.handleSubmitLogin();
     redirect();
   } catch (error) {
-    console.log("Erro!")
+    console.log("Erro!");
   }
 }
 
 async function redirect() {
   const q = route.query.redirect as string;
-  const r = typeof q === "string" && q.startsWith("/")? q : "/";
+  const r = typeof q === "string" && q.startsWith("/") ? q : "/";
   await router.replace(r);
 }
 </script>
@@ -87,6 +86,7 @@ async function redirect() {
               <span href="" style="font-weight: 300">Não tem cadastro? </span>
               <RouterLink class="signup" to="/signup">Cadastre-se</RouterLink>
             </div>
+            <div style="display: flex; justify-content: center; margin-top: 30px;"><span class="alert">{{ formError }}</span></div>
           </div>
         </div>
       </div>
@@ -127,7 +127,11 @@ form {
   width: 100%;
   height: 100%;
 }
-
+.alert{
+  color: red;
+  font-weight: 300;
+  text-decoration: underline;
+}
 .login {
   display: flex;
   flex-direction: column;

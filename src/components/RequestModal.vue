@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watch, type PropType } from "vue";
+import { computed, onMounted, ref, watch, type PropType } from "vue";
 import axios from "axios";
 import type { Type } from "../interfaces/TypeRequest";
 import type { UpdateRequestDto } from "../interfaces/UpdateRequestDto";
@@ -7,7 +7,9 @@ import type { Request } from "../interfaces/RequestInterface";
 import { X } from "lucide-vue-next";
 import type { Status } from "../interfaces/Status";
 import { useAuthStore } from "../auth/stores/auth";
+import type { ClientModel } from "../auth/models/ClientModel";
 
+const authStore = useAuthStore();
 const props = defineProps({
   initialRequest: {
     type: Object as PropType<Request | null>,
@@ -21,17 +23,21 @@ const editedRequest = ref<UpdateRequestDto>({
   adress: "",
   typeId: null,
   statusKey: "aberto",
+  clientId: undefined,
+  client: null,
 });
 
 const emit = defineEmits(["close", "request-updated"]);
-
 const API_TYPES_URL = "http://localhost:3000/v1/types";
 const API_REQUESTS_URL = "http://localhost:3000/requests";
 const API_STATUS_URL = "http://localhost:3000/status/all";
-const authStore = useAuthStore();
+const API_REQUESTER_URL = "http://localhost:3000/clients/id";
+const userName = ref<string | null>(null);
 const types = ref<Type[]>([]);
+const requester = ref<ClientModel | undefined>(undefined);
 const formError = ref<string | null>(null);
 const statusOptions = ref<Status[] | null>([]);
+
 watch(
   () => props.initialRequest,
   (newVal) => {
@@ -42,7 +48,18 @@ watch(
         adress: newVal.adress,
         typeId: newVal.typeId || null,
         statusKey: newVal.statusKey,
+        clientId: newVal.clientId,
+        client: newVal.client,
       };
+    }
+  },
+  { immediate: true }
+);
+watch(
+  () => editedRequest.value.clientId,
+  (newClientId) => {
+    if (newClientId) {
+      fetchRequester();
     }
   },
   { immediate: true }
@@ -63,6 +80,17 @@ async function fetchStatus() {
     console.log(res);
   } catch (e) {
     console.log("Erro");
+  }
+}
+async function fetchRequester() {
+  const clientId = editedRequest.value.clientId;
+  if (!clientId) return;
+  try {
+    const res = await axios.get(`${API_REQUESTER_URL}/${clientId}`);
+    console.log(res);
+    requester.value = res.data;
+  } catch (error) {
+    console.log("erro ao achar requester");
   }
 }
 function handleClose() {
@@ -134,6 +162,24 @@ onMounted(() => {
         <div class="infos">
           <label for="span"> Descrição: </label>
           <span class="info-box-desc">{{ initialRequest?.description }}</span>
+        </div>
+        <div class="infos">
+          <div style="display: flex; justify-content: flex-start; gap: 10px">
+            <div class="current-info">
+              <label for="span"> Nome do Solicitante: </label>
+              <span class="info-box-current">{{
+                `${requester?.firstName} ${requester?.surname} `
+              }}</span>
+            </div>
+            <div class="current-info">
+              <label for="span"> CPF: </label>
+              <span class="info-box-current">{{ ` ${requester?.cpf} ` }}</span>
+            </div>
+            <div class="current-info">
+              <label for="span"> Email: </label>
+              <span class="info-box-current">{{ `${requester?.email} ` }}</span>
+            </div>
+          </div>
         </div>
         <div class="badge-binding">
           <form
@@ -220,6 +266,17 @@ label {
   padding: 6px;
   border-radius: 8px;
 }
+.info-box-current {
+  font-weight: 300;
+  width: 290px;
+  background-color: rgba(221, 221, 221, 0.315);
+  height: 30px;
+  border: 1px solid rgba(145, 145, 145, 0.322);
+  display: flex;
+  align-items: flex-end;
+  padding: 6px;
+  border-radius: 8px;
+}
 .infos-box {
   display: flex;
   flex-direction: column;
@@ -256,12 +313,16 @@ label {
   justify-content: space-between;
   align-items: center;
   background-color: white;
-  height: 660px;
+  height: 700px;
   width: 1000px;
   border-radius: 20px;
   padding-bottom: 20px;
 }
-
+.current-info{
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
 footer {
   display: flex;
   flex-direction: row;

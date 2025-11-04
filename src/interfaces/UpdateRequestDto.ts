@@ -1,4 +1,4 @@
-import type { Type } from "typescript";
+import type { ClientModel } from "../auth/models/ClientModel";
 
 export interface UpdateRequestDto {
         name: string;
@@ -6,5 +6,7 @@ export interface UpdateRequestDto {
         adress: string;
         typeId: number | null;
         statusKey: string;
+        clientId: number | undefined;
+        client: ClientModel | null;
       
 }

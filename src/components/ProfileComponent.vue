@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Pencil, Inbox, Loader, ClipboardPlus, Headset, Calendar1 } from "lucide-vue-next";
+import { Pencil, Inbox, Loader, ClipboardPlus, Headset, Calendar1, GraduationCap, IdCard } from "lucide-vue-next";
 import { useAuthStore } from "../auth/stores/auth";
 import { getTime } from "vuetify/lib/labs/VCalendar/util/timestamp.mjs";
 import { ref } from "vue";
@@ -46,6 +46,21 @@ function formatString(text: string | undefined, maxLength: number) {
     return text;
   }
   return text.substring(0, maxLength);
+}
+
+function setBage(badge: string | undefined ): string | undefined{
+  if(authStore.currentUser?.badgesKey == 'requester'){
+    return "Solicitante"
+  } else if (authStore.currentUser?.badgesKey == 'manager'){
+    return "Gerente"
+  } else return "Administrador"
+}
+function formatCpf(cpfValue: string): string {
+  if (!cpfValue) {
+    return "N/A";
+  }
+  const cleanedCpf = cpfValue.replace(/[^\d]/g, "").substring(0, 11);
+  return cleanedCpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
 }
 </script>
 
@@ -97,7 +112,7 @@ function formatString(text: string | undefined, maxLength: number) {
         <div class="infos">
           <div class="card-info">
             <div>
-              <h2>Informações pessoais</h2>
+              <h2>Informações pessoais:</h2>
             </div>
             <div class="informacoes">
               <div class="info-column">
@@ -111,19 +126,29 @@ function formatString(text: string | undefined, maxLength: number) {
 
               <div class="info-column">
                 <div class="info-title">
-                  <span>{{ authStore.currentUser?.surname }}</span>
+                  <span>Sobrenome</span>
                 </div>
                 <div class="name-info">
-                  <div class="info-card">France</div>
+                  <div class="info-card">{{ authStore.currentUser?.surname }}</div>
                 </div>
               </div>
             </div>
+            <div style="display: flex; flex-direction: column; gap: 50px;">
             <div class="info-column">
-              <div class="info-title"><span>Email</span></div>
+              <div class="info-title"><span>Email:</span></div>
               <div class="name-info" style="width: 790px">
                 <div class="info-card" style="width: 790px">
                   {{ authStore.currentUser?.email }}
                 </div>
+              </div>
+              <div class="info-column">
+              <div class="info-title"><span>CPF:</span></div>
+              <div class="name-info" style="width: 790px">
+                <div class="info-card" style="width: 790px">
+                  {{ formatCpf(authStore.currentUser!.cpf!)}}
+                </div>
+              </div>
+              </div>
               </div>
             </div>
           </div>
@@ -188,7 +213,10 @@ function formatString(text: string | undefined, maxLength: number) {
                 </RouterLink>
               </div>
           </div>
-          <div class="profile-job2"><h2>Cargo</h2></div>
+          <div class="profile-job2">
+            <div style="display: flex; align-items: center; gap: 10px;"><IdCard/><h2>Cargo</h2></div>
+            <div class="role-area"><div class="side-detail"></div>{{ setBage(authStore.currentUser?.badgesKey)}}</div>
+          </div>
         </div>
       </div>
     </div>
@@ -211,6 +239,26 @@ function formatString(text: string | undefined, maxLength: number) {
 .icons-link:hover {
   color: white;
   transition: background 0.2s ease;
+}
+.role-area{
+  display: flex;
+  border-radius: 10px;
+  border: 1px solid rgb(228, 228, 228);
+  align-items: center;
+  justify-content: flex-start;
+  gap: 100px;
+  height: 80px;
+  font-weight: 400;
+  transition: 0.4s ease;
+}
+.role-area:hover{
+  background-color: rgb(243, 243, 243);
+}
+.side-detail{
+  background: linear-gradient(blue,rgb(0, 174, 255));
+  border-radius: 10px 0px 0px 10px;
+  height: 80px;
+  width: 10px;
 }
 .icons-link {
   display: flex;
@@ -254,6 +302,7 @@ section {
 .profile-card {
   display: flex;
   flex-direction: column;
+
   gap: 45px;
 }
 .profile-title {
@@ -327,13 +376,14 @@ section {
 .profile-main-info {
   display: flex;
   flex-direction: row;
+  gap: 10px;
   justify-content: space-between;
 }
 .infos {
   font-family: "Inter", sans-serif;
   width: 800px;
   background-color: rgb(252, 252, 252);
-  height: 664px;
+  height: 604px;
   margin-bottom: 20px;
   border: 1px solid rgb(215, 215, 215);
   border-radius: 20px;
@@ -363,7 +413,7 @@ section {
   display: flex;
   flex-direction: column;
   width: 340px;
-  gap: 8px;
+  gap: 15px;
   font-weight: 300;
   color: rgb(0, 0, 0);
 }
@@ -384,7 +434,7 @@ section {
 .profile-job {
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: center;
   gap: 6px;
   background-color: rgb(252, 252, 252);
   border-radius: 20px;
@@ -392,12 +442,17 @@ section {
   height: 360px;
   border: 1px solid rgb(215, 215, 215);
   padding: 20px;
+  padding-right: 30px;
 }
 .profile-job2 {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 0px;
   background-color: rgb(252, 252, 252);
   border-radius: 20px;
   width: 305px;
-  height: 240px;
+  height: 180px;
   border: 1px solid rgb(215, 215, 215);
   padding: 20px;
 }

@@ -9,8 +9,10 @@ import { useAuthStore } from "../auth/stores/auth";
 const isLoading = ref(false);
 const isModalOpen = ref(false);
 const API_URL = "http://localhost:3000/requests/all";
+const API_FOR_DELETE = "http://localhost:3000/requests"
 const API_CURRENT_REQUEST_URL = "http://localhost:3000/requests/my-requests";
 const requests = ref<Request[]>([]);
+const userRequests = ref<Request[]>([]);
 const currentPage = ref(1);
 const itemsPerPage = ref(10);
 const totalItems = ref(0);
@@ -95,10 +97,10 @@ async function fetchCurrentRequest() {
         limit: itemsPerPage.value,
       },
       headers: {
-        Authorization: `Bearer ${token}` 
-      }
+        Authorization: `Bearer ${token}`,
+      },
     });
-    requests.value = response.data.data;
+    userRequests.value = response.data.data;
     totalItems.value = response.data.total;
     totalPages.value = response.data.lastPage;
     console.log(response.data.data[0]);
@@ -113,7 +115,7 @@ async function deleteRequest(requestId: number) {
     return;
   }
   try {
-    await axios.delete(`${API_URL}/${requestId}`);
+    await axios.delete(`${API_FOR_DELETE}/${requestId}`);
     requests.value = requests.value.filter(
       (request) => request.id !== requestId
     );
@@ -123,9 +125,25 @@ async function deleteRequest(requestId: number) {
     fetchRequest();
   }
 }
+async function deleteCurrentRequest(requestId: number) {
+  if (!confirm(`Tem certeza que deseja remover a solicitação ${requestId}?`)) {
+    return;
+  }
+  try {
+    await axios.delete(`${API_CURRENT_REQUEST_URL}/${requestId}`);
+    userRequests.value = userRequests.value.filter(
+      (userRequest) => userRequest.id !== requestId
+    );
+    fetchRequest();
+  } catch (error) {
+    alert("Erro ao excluir");
+    fetchRequest();
+  }
+}
 onMounted(() => {
-  fetchRequest()
-  fetchCurrentRequest()});
+  fetchRequest();
+  fetchCurrentRequest();
+});
 </script>
 
 <template>
@@ -141,7 +159,10 @@ onMounted(() => {
         <h2>Solititações:</h2>
       </div>
 
-      <div class="card" v-if="authStore.hasBadge('admin') || authStore.hasBadge('manager')">
+      <div
+        class="card"
+        v-if="authStore.hasBadge('admin') || authStore.hasBadge('manager')"
+      >
         <div class="content-wrapper">
           <div v-if="isLoading" class="loading-overlay">
             <v-progress-circular
@@ -193,7 +214,7 @@ onMounted(() => {
                     <div class="icons" v-if="authStore.hasBadge('admin')">
                       <Trash
                         class="delete-i"
-                        alt="excluir funcionário"
+                        title="excluir funcionário"
                         @click.stop="deleteRequest(request.id)"
                       />
                     </div>
@@ -257,8 +278,8 @@ onMounted(() => {
               size="44"
             ></v-progress-circular>
           </div>
-          <div class="table" v-if="requests.length >= 1">
-            <table v-if="requests.length" id="users">
+          <div class="table" v-if="userRequests.length >= 1">
+            <table v-if="userRequests.length" id="users">
               <thead>
                 <tr>
                   <th>ID</th>
@@ -273,7 +294,7 @@ onMounted(() => {
               </thead>
               <tbody>
                 <tr
-                  v-for="request in requests"
+                  v-for="request in userRequests"
                   :key="request.id"
                   @click="OpenModalEdit(request)"
                 >
@@ -297,11 +318,11 @@ onMounted(() => {
                   <td>{{ request.type ? request.type.name : "N/A" }}</td>
                   <td>{{ formatTime(request.createdAt) }}</td>
                   <td>
-                    <div class="icons" v-if="authStore.hasBadge('admin')">
+                    <div class="icons">
                       <Trash
                         class="delete-i"
                         alt="excluir funcionário"
-                        @click.stop="deleteRequest(request.id)"
+                        @click.stop="deleteCurrentRequest(request.id)"
                       />
                     </div>
                   </td>
@@ -325,7 +346,7 @@ onMounted(() => {
           </div>
 
           <div class="tfoot-div">
-            <div class="pagination-info" v-if="requests.length >= 1">
+            <div class="pagination-info" v-if="userRequests.length >= 1">
               <span style="font-weight: 200">
                 Pagina
                 <span style="font-weight: 400">{{ currentPage }}</span> de
@@ -337,7 +358,7 @@ onMounted(() => {
                 >
               </span>
             </div>
-            <div class="pagination-btns" v-if="requests.length >= 1">
+            <div class="pagination-btns" v-if="userRequests.length >= 1">
               <button
                 @click="goToPage(currentPage - 1)"
                 :disabled="currentPage === 1"
@@ -355,7 +376,6 @@ onMounted(() => {
         </div>
       </div>
     </div>
-    
   </section>
 </template>
 

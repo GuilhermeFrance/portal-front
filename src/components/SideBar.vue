@@ -38,13 +38,24 @@ function formatString(text: string | undefined, maxLength: number) {
           >Funcionários
           <div class="on-side"></div
         ></RouterLink>
+             <RouterLink
+          to="/solicite"
+          class="side-item"
+          >Faça uma solicitação
+          <div class="on-side"></div
+        ></RouterLink>
+        
       </div>
-      <div class="side-item-last">
-        <RouterLink to="/perfil" class="user-style-last">
+      <div>
+        
+        <RouterLink to="/perfil" class="side-item-last">
+          <div style="display: flex; align-items: center; gap: 10px;">
           <UserRound class="lucide-icon" />
           <span>{{ authStore.currentUser?.firstName }}</span>
+          </div>
+          <LogOut class="logout-icon" @click.stop="handleLogout" />
         </RouterLink>
-        <LogOut class="logout-icon" @click.stop="handleLogout" />
+        
       </div>
     </div>
   </div>
@@ -71,21 +82,22 @@ function formatString(text: string | undefined, maxLength: number) {
   display: flex;
   color: black;
   text-decoration: none;
+  align-items: center;
   flex-direction: row;
   align-items: center;
+  gap: 12px;
   justify-content: space-between;
-  height: 30px;
+  padding-left: 20px;
+  height: 50px;
   border: 1px solid rgb(255, 255, 255);
-  padding: 10px;
-  padding-left: 0px;
   padding-right: 0px;
   transition: 0.3s;
-  width: 296px;
+  width: 276px;
 }
 .side-item-last:hover {
   cursor: pointer;
-  background-color: rgb(238, 238, 238);
 }
+
 .navigation-side-bar {
   display: flex;
   flex-direction: column;
@@ -132,16 +144,16 @@ function formatString(text: string | undefined, maxLength: number) {
   color: rgb(80, 80, 80);
 }
 
-.side-item-last:hover .user-style-last span {
+.side-item-last:hover  span {
   color: #0079ff;
 }
-.side-item-last:hover .user-style-last .lucide-icon {
+.side-item-last:hover .lucide-icon {
   color: #0079ff;
 }
-.user-style-last.router-link-exact-active .lucide-icon {
+.sidem-item-last.router-link-exact-active .lucide-icon {
   color: #0079ff;
 }
-.user-style-last.router-link-exact-active {
+.side-item-last.router-link-exact-active {
   color: #0079ff;
 }
 .user-style {
