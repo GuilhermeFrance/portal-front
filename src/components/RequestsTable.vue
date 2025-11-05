@@ -5,6 +5,7 @@ import axios from "axios";
 import { Trash, ChevronRight, ChevronLeft } from "lucide-vue-next";
 import RequestModal from "./RequestModal.vue";
 import { useAuthStore } from "../auth/stores/auth";
+import { useAlertStore } from "../auth/stores/alertStore";
 
 const isLoading = ref(false);
 const isModalOpen = ref(false);
@@ -19,6 +20,7 @@ const totalItems = ref(0);
 const totalPages = ref(0);
 const requestToEdit = ref<Request | null>(null);
 const authStore = useAuthStore();
+const alertStore = useAlertStore()
 
 function OpenModalEdit(request: Request) {
   requestToEdit.value = request;
@@ -119,9 +121,10 @@ async function deleteRequest(requestId: number) {
     requests.value = requests.value.filter(
       (request) => request.id !== requestId
     );
+    alertStore.showAlert("Solicitação excluída", 'info', 3000);
     fetchRequest();
   } catch (error) {
-    alert("Erro ao excluir");
+    alertStore.showAlert("Erro ao excluir", 'error', 3000);
     fetchRequest();
   }
 }
@@ -134,9 +137,10 @@ async function deleteCurrentRequest(requestId: number) {
     userRequests.value = userRequests.value.filter(
       (userRequest) => userRequest.id !== requestId
     );
+     alertStore.showAlert("Solicitação excluída", 'success', 3000);
     fetchRequest();
   } catch (error) {
-    alert("Erro ao excluir");
+    alertStore.showAlert("Erro ao excluir", 'error', 3000);
     fetchRequest();
   }
 }

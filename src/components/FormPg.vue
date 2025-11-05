@@ -4,10 +4,12 @@ import type { Type } from "../interfaces/TypeRequest";
 import axios from "axios";
 import type { NewRequestDto } from "../interfaces/NewRequestDto";
 import { useAuthStore } from "../auth/stores/auth";
+import { useAlertStore } from "../auth/stores/alertStore";
 
 const API_REQUESTS_URL = "http://localhost:3000/requests";
 
 const authStore = useAuthStore();
+const alertStore = useAlertStore()
 
 const createInitialRequest = (): NewRequestDto => ({
   name: "",
@@ -59,11 +61,11 @@ async function handleSubmit() {
 
   try {
     const response = await axios.post(API_REQUESTS_URL, newRequest.value);
-    console.log("Solicitacao criada com sucesso");
+    console.log("Solicitacao enviada com sucesso.");
     emit("request-created");
     resetForm()
    
-    alert("Solicitação criada com sucesso")
+    alertStore.showAlert("Solicitação criada com sucesso", 'success', 3000)
   } catch (error) {
     console.log("Erro na criação da solicitacao");
   }

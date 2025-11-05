@@ -126,7 +126,7 @@ export const useAuthStore = defineStore("auth", () => {
       console.log("Erro ao buscar dados do usuário.", error);
       const status = error?.response?.status;
       if (status === 401 || status === 403) {
-        alert("Token inválido/expirado. Executando logout.");
+        alertStore.showAlert("Token inválido/expirado. Executando logout.", 'success', 3000);
         await logout();
         return;
       }
@@ -166,6 +166,7 @@ export const useAuthStore = defineStore("auth", () => {
     if (isTokenExpired(token.value)) {
       console.info("Token expirado, faça login novamente");
       alert("Sessão expirado, faça login novamente")
+      alertStore.showAlert("Sessão expirada, faça login novamente.", 'warning', 3000)
       await logout();
       return;
     }

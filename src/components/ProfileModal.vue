@@ -4,15 +4,21 @@ import axios from "axios";
 import type { UpdateProfileDto } from "../interfaces/UpdateProfileDto";
 import { X } from "lucide-vue-next";
 import type { ClientModel } from "../auth/models/ClientModel";
+import { useAlertStore } from "../auth/stores/alertStore";
+import { useRouter } from "vue-router";
+import { storeToRefs } from "pinia";
+import { useAuthStore } from "../auth/stores/auth";
 
-
+const alertStore = useAlertStore();
+const authStore = useAuthStore()
+const { clientLogin } = storeToRefs(authStore)
+const firstName = clientLogin.value.firstName
 const props = defineProps({
   initialProfile: {
-    type: Object as PropType<ClientModel | null >,
+    type: Object as PropType<ClientModel | null>,
     required: true,
   },
 });
-
 
 const editedProfile = ref<UpdateProfileDto>({
   firstName: "",
@@ -37,28 +43,26 @@ watch(
         email: newVal.email ?? "",
         cpf: (newVal as any).cpf ?? "",
       };
-    }else {
-      editedProfile.value = { firstName: "", surname: "", email: "", cpf: ""}
+    } else {
+      editedProfile.value = { firstName: "", surname: "", email: "", cpf: "" };
     }
   },
   { immediate: true }
 );
 
 function handleClose() {
-  if(!confirm("Tem certeza que deseja cancelar a operação?")){
-  return 
-  }else{
-    emit("close")
+  if (!confirm("Tem certeza que deseja cancelar a operação?")) {
+    return;
+  } else {
+    emit("close");
   }
-  
 }
-
 
 async function handleSubmit() {
   formError.value = null;
 
   const clientId = props.initialProfile?.id;
-  console.log(clientId)
+  console.log(clientId);
 
   if (!clientId) {
     formError.value = "Erro: ID da solicitacao nao encontrado para edicao";
@@ -68,10 +72,8 @@ async function handleSubmit() {
   try {
     await axios.patch(`${API_CLIENTS_URL}/${clientId}`, editedProfile.value);
     console.log("Usuário editado com sucesso");
-    alert("Usuário editado com sucesso")
     emit("profile-updated");
-    window.location.reload()
-
+    alertStore.showAlert("Usuário editado com sucesso", 'info', 3000);
   } catch (error) {
     formError.value = "Falha na atualização. Verifique os dados.";
   }
@@ -90,11 +92,19 @@ async function handleSubmit() {
         <form @submit.prevent="handleSubmit">
           <div class="infos">
             <label for="span"> Nome: </label>
-            <input class="info-box" type="text" v-model="editedProfile!.firstName">
+            <input
+              class="info-box"
+              type="text"
+              v-model="editedProfile!.firstName"
+            />
           </div>
           <div class="infos">
             <label for="span"> Sobrenome: </label>
-            <input class="info-box" type="text" v-model="editedProfile!.surname">
+            <input
+              class="info-box"
+              type="text"
+              v-model="editedProfile!.surname"
+            />
           </div>
           <div class="infos">
             <label for="span"> Endereço: </label>
@@ -276,11 +286,9 @@ footer button {
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
-  /* display: none; <- Crashes Chrome on hover */
   -webkit-appearance: none;
-  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+  margin: 0;
 }
-
 
 select {
   height: 44px;

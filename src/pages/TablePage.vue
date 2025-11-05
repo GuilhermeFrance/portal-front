@@ -1,21 +1,29 @@
-T<script setup lang="ts">
+T
+<script setup lang="ts">
 import { onMounted, ref } from "vue";
 import type { User } from "../interfaces/UserInterface";
 import axios from "axios";
 import UserModal from "../components/UserModal.vue";
 import UserModaEdit from "../components/UserModalEdit.vue";
-import { Trash, UserPen, ChevronRight, ChevronLeft, UserPlus } from "lucide-vue-next";
-
+import {
+  Trash,
+  UserPen,
+  ChevronRight,
+  ChevronLeft,
+  UserPlus,
+} from "lucide-vue-next";
+import { useAlertStore } from "../auth/stores/alertStore";
 
 const isModalOpen = ref(false);
 const isModalEditOpen = ref(false);
 const API_URL = "http://localhost:3000/users";
 const users = ref<User[]>([]);
-const userToEdit = ref<User | null>(null)
+const userToEdit = ref<User | null>(null);
 const currentPage = ref(1);
 const itemsPerPage = ref(8);
 const totalItems = ref(0);
 const totalPages = ref(0);
+const alertStore = useAlertStore();
 
 function OpenModal() {
   isModalOpen.value = true;
@@ -25,16 +33,16 @@ function CloseModal() {
   isModalOpen.value = false;
 }
 
-function OpenModalEdit(user: User){
-  userToEdit.value = user
+function OpenModalEdit(user: User) {
+  userToEdit.value = user;
   isModalEditOpen.value = true;
 }
 function CloseEditModal() {
   isModalEditOpen.value = false;
 }
 function handleUserUpdated() {
-    CloseModal();
-    fetchUser(); // Recarrega os dados para mostrar as mudanças
+  CloseModal();
+  fetchUser(); // Recarrega os dados para mostrar as mudanças
 }
 
 async function deleteUser(userId: number) {
@@ -45,7 +53,7 @@ async function deleteUser(userId: number) {
     await axios.delete(`${API_URL}/${userId}`);
     users.value = users.value.filter((user) => user.id !== userId);
   } catch (error) {
-    alert("Erro ao excluir");
+    alertStore.showAlert("Funcionário excluído", "info", 3000);
     fetchUser();
   }
 }
@@ -87,14 +95,12 @@ onMounted(fetchUser);
       @close="CloseModal"
       @user-created="handleUsersCreated"
     />
-    <UserModalEdit
-      v-if="isModalEditOpen"
-    />
+    <UserModalEdit v-if="isModalEditOpen" />
     <div>
       <div class="header">
         <h2>FUNCIONÁRIOS:</h2>
         <button @click="OpenModal" class="btn-add">
-          <UserPlus/>Adicionar 
+          <UserPlus />Adicionar
         </button>
       </div>
 
@@ -118,9 +124,12 @@ onMounted(fetchUser);
                 <td>{{ user.role ? user.role.name : "N/A" }}</td>
                 <td>
                   <div class="icons">
-                   
-                    <UserPen class="edit-i" @click="OpenModalEdit(user)" title="editar usuario"/>
-                     <Trash
+                    <UserPen
+                      class="edit-i"
+                      @click="OpenModalEdit(user)"
+                      title="editar usuario"
+                    />
+                    <Trash
                       class="delete-i"
                       alt="excluir funcionário"
                       @click="deleteUser(user.id)"
@@ -131,8 +140,20 @@ onMounted(fetchUser);
             </tbody>
           </table>
         </div>
-        <div style="display: flex; justify-content: center;
-        align-items: center; align-content: center; margin-top: 250px; font-size: 20px; font-weight: 200;" v-else> Nenhum registro econtrado. </div>
+        <div
+          style="
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            align-content: center;
+            margin-top: 250px;
+            font-size: 20px;
+            font-weight: 200;
+          "
+          v-else
+        >
+          Nenhum registro econtrado.
+        </div>
       </div>
 
       <div class="tfoot-div">
