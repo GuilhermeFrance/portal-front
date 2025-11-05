@@ -14,8 +14,8 @@ import {
 } from "lucide-vue-next";
 import UserModalEdit from "./UserModalEdit.vue";
 import { useAuthStore } from "../auth/stores/auth";
-import { debounce } from "vuetify/lib/util/helpers.mjs";
 import type { Role } from "../interfaces/RoleInterface";
+import { debounce } from "vuetify/lib/util/helpers.mjs";
 
 const isModalOpen = ref(false);
 const isModalEditOpen = ref(false);
@@ -32,14 +32,14 @@ const isLoading = ref(true);
 const authStore = useAuthStore();
 
 const search = ref("");
-const roleFilter = ref<number | null>(null);
+const roleId = ref<number | null>(null);
 
 const debouncedFetch = debounce(() => {
   currentPage.value = 1;
   fetchUser();
 }, 450);
 
-watch([search, roleFilter], () => {
+watch([search, roleId], () => {
   debouncedFetch();
 });
 
@@ -96,13 +96,19 @@ function goToPage(page: number) {
 
 async function fetchUser() {
   isLoading.value = true;
+  console.log('Filtros enviados:', {
+    page: currentPage.value,
+    limit: itemsPerPage.value,
+    search: search.value,
+    roleId: roleId.value,
+  });
   try {
     const response = await axios.get(`${API_URL}`, {
       params: {
         page: currentPage.value,
         limit: itemsPerPage.value,
         search: search.value,
-        roleFilter: roleFilter.value,
+        roleId: roleId.value,
       },
       
     });
@@ -117,6 +123,7 @@ async function fetchUser() {
 }
 
 async function fetchRoles(){
+  
   try {
     const response = await axios.get<Role[]>(API_ROLES)
     roles.value = response.data
@@ -160,7 +167,7 @@ onMounted(() => {
               @click="
                 () => {
                   search = '';
-                  roleFilter = null;
+                  roleId = null;
                   fetchUser();
                 }
               "
@@ -170,10 +177,10 @@ onMounted(() => {
           </div>
           <div>
             <select
-              v-model.number="roleFilter"
+              v-model.number="roleId"
               style="height: 50px; border-radius: 8px; padding: 4px; background-color: white; border: 1px solid gainsboro; font-size: 16px;"
             >
-              <option value="">Todos os cargos</option>
+              <option value=null>Todos os cargos</option>
               <option v-for="role in roles" :key="role.id" :value="role.id">{{ role.name }}</option>
               
             </select>
