@@ -5,7 +5,7 @@ import axios from "axios";
 import router from "../../router";
 import { useAlertStore } from "./alertStore";
 
-export const useAuthStore = defineStore("auth", () => {
+export const useAuthStore = defineStore("auth",  () => {
   const alertStore = useAlertStore();
   const alerts = ref<string | null>(null);
   const clientLogin = ref<ClientModel>({
@@ -17,9 +17,9 @@ export const useAuthStore = defineStore("auth", () => {
   const decodedPayload = ref<any | null>(null)
   const isLoading = ref(false);
   const isAuthenticated = computed(() => !!currentUser.value);
+  const fullName = computed(() => `${currentUser.value?.firstName} ${currentUser.value?.surname}`)
   const API_URL_CLIENT = "http://localhost:3000/login";
   const API_URL_CURRIENT = "http://localhost:3000/clients";
-
   const userBadgeKey = computed(() => {
     return decodedPayload.value?.badges ?? null; 
   })
@@ -80,7 +80,7 @@ export const useAuthStore = defineStore("auth", () => {
       await getCurrentUser();
       decodedPayload.value = parseJwt(token.value)
       console.log(response);
-      
+      alertStore.showAlert(`Login feito com sucesso`, "success", 3000);
       await router.push({ name: "home" });
 
       console.log("Login feito com sucesso!");
@@ -100,7 +100,7 @@ export const useAuthStore = defineStore("auth", () => {
       isLoading.value = false;
     }
   }
-
+  
   async function getCurrentUser() {
     if (!token.value) {
       currentUser.value = null;
@@ -201,5 +201,6 @@ export const useAuthStore = defineStore("auth", () => {
     userBadgeKey,
     hasBadge,
     decodedPayload,
+    fullName,
   };
 });

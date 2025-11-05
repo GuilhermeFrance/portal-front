@@ -2,6 +2,7 @@ import type { Role } from "./RoleInterface";
 
 export interface User {
   id: number;
+  publicId: number;
   email: string;
   name: string;
   cpf: string;

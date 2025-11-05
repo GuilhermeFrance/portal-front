@@ -4,9 +4,10 @@ import type { Role } from "../interfaces/RoleInterface";
 import axios from "axios";
 import type { NewUserDTO } from "../interfaces/NewUserDto";
 import { X } from "lucide-vue-next";
+import { useAlertStore } from "../auth/stores/alertStore";
 
 const API_USERS_URL = "http://localhost:3000/users";
-
+const alertStore = useAlertStore()
 const newUser = ref<NewUserDTO>({
   name: "",
   email: "",
@@ -59,6 +60,7 @@ async function handleSubmit() {
     console.log("Funcionário criado com sucesso:", response.data);
     console.log("Tentativa de E-mail:", newUser.value.email);
     emit("user-created");
+    alertStore.showAlert(`Funcionário(a) ${newUser.value.name} criado com sucesso`, 'success', 5000)
     handleClose();
   } catch (err) {
     console.error("Erro na criação do funcionário", err);

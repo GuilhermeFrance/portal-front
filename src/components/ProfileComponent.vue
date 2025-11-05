@@ -2,14 +2,16 @@
 import { Pencil, Inbox, Loader, ClipboardPlus, Headset, Calendar1, GraduationCap, IdCard } from "lucide-vue-next";
 import { useAuthStore } from "../auth/stores/auth";
 import { getTime } from "vuetify/lib/labs/VCalendar/util/timestamp.mjs";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import ProfileModal from "./ProfileModal.vue";
 import type { ClientModel } from "../auth/models/ClientModel";
 import { RouterLink } from "vue-router";
+import { storeToRefs } from "pinia";
 
 const isModalEditOpen = ref(false);
 const authStore = useAuthStore();
 const profileToEdit = ref<ClientModel | null>(null);
+
 
 function openEditModal() {
   profileToEdit.value = authStore.currentUser ?? null;
@@ -78,8 +80,7 @@ function formatCpf(cpfValue: string): string {
         <div class="profile-headera">
           <div class="header-row">
             <span style="font-size: 20px"
-              >{{ authStore.currentUser?.firstName }}
-              {{ authStore.currentUser?.surname }}</span
+              >{{ authStore.fullName }}</span
             >
             <button @click="openEditModal" class="edit-btn">
               <pencil class="icon" /> Editar

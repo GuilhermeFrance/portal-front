@@ -7,6 +7,10 @@ import { X } from "lucide-vue-next";
 import type { User } from "../interfaces/UserInterface";
 import type { UpdateUserDto } from "../interfaces/UpdateUserDto";
 import type { Role } from "../interfaces/RoleInterface";
+import { useAlertStore } from "../auth/stores/alertStore";
+
+
+const alertStore = useAlertStore();
 
 const props = defineProps({
   initialUser: {
@@ -23,7 +27,7 @@ const editedRequest = ref<UpdateUserDto>({
 
 const emit = defineEmits(["close", "user-updated"]);
 
-const API_ROLES_URL = "http://localhost:3000/roles";
+const API_ROLES_URL = "http://localhost:3000/allroles";
 const API_USER_URL = "http://localhost:3000/users";
 
 const roles = ref<Role[]>([]);
@@ -76,6 +80,8 @@ async function handleSubmit() {
 
   const userId = props.initialUser?.id;
 
+  
+
   if (!userId) {
     formError.value = "Erro: ID da solicitacao nao encontrado para edicao";
     return;
@@ -84,9 +90,15 @@ async function handleSubmit() {
   try {
     await axios.patch(`${API_USER_URL}/${userId}`, editedRequest.value);
     console.log("Solicitacao editada com sucesso");
+    alertStore.showAlert(`Alteração feita`, 'success', 150000)
     emit("user-updated");
   } catch (error) {
-    formError.value = "Falha na atualização. Verifique os dados.";
+    if(!editedRequest.value.email || 
+    !editedRequest.value.name 
+  ){
+    formError.value = "Preencha todos os campos obrigatórios!"
+  }else { formError.value = "Falha na atualização. Verifique os dados.";}
+    
 
   }
 }
@@ -152,6 +164,7 @@ onMounted(fetchRole);
             <label for="span"> Última alteração: </label>
             <span class="info-box">{{ formatDate(initialUser?.updatedAt) }}</span>
           </div>
+          <div style="display: flex; justify-content: center;"> <span style="color: red; ">{{ formError }}</span></div>
         </div>     
         <footer>
           <button type="submit" class="btn-save">Salvar</button>

@@ -290,11 +290,11 @@ section {
   padding-bottom: 40px;
   position: relative;
   animation-name: TextDown;
-  animation-duration: 1s;
-  animation-delay: 0.2s ;
+  animation-duration: 0.9s;
+  animation-delay: 0.3s ;
   animation-fill-mode: forwards;
   animation-iteration-count: 1;
-  animation-timing-function: ease-in-out;
+  animation-timing-function: ease;
   font-family:  'Montserrat', sans-serif;
   font-size: 30px;
   font-weight: 500;

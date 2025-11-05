@@ -22,8 +22,9 @@ async function handleSubmit() {
   }
   try {
     await authStore.handleSubmitLogin();
-    alertStore.showAlert(`Login feito com sucesso`, "success", 3000);
+    
     redirect();
+    
   } catch (error) {
     console.log("Erro!");
   }

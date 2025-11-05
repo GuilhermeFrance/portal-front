@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, Transition } from "vue";
 import type { Request } from "../interfaces/RequestInterface";
 import axios from "axios";
 import { Trash, ChevronRight, ChevronLeft } from "lucide-vue-next";
@@ -152,12 +152,14 @@ onMounted(() => {
 
 <template>
   <section>
-    <RequestModal
+    <Transition name="modal-fade">
+    <RequestModal 
       v-if="isModalOpen"
       :initialRequest="requestToEdit"
       @close="CloseModal"
       @request-updated="handleRequestUpdated"
     />
+    </Transition>
     <div>
       <div class="header">
         <h2>Solititações:</h2>
@@ -197,7 +199,7 @@ onMounted(() => {
                 >
                   <td>{{ request.id }}</td>
                   <td>{{ limitDescription(request.name, 18) }}</td>
-                  <td>- {{ limitDescription(request.description, 37) }}</td>
+                  <td> {{ limitDescription(request.description, 37) }}</td>
                   <td>{{ limitDescription(request.adress, 19) }}</td>
                   <td>
                     <span
@@ -304,7 +306,7 @@ onMounted(() => {
                 >
                   <td>{{ request.id }}</td>
                   <td>{{ limitDescription(request.name, 18) }}</td>
-                  <td>- {{ limitDescription(request.description, 37) }}</td>
+                  <td> {{ limitDescription(request.description, 37) }}</td>
                   <td>{{ limitDescription(request.adress, 19) }}</td>
                   <td>
                     <span
@@ -590,5 +592,30 @@ h2 {
 }
 .Rejected {
   color: rgb(189, 0, 0);
+}
+
+/* ANIMAÇÕES */
+
+.modal-fade-enter-active,
+.modal-fade-leave-active{
+  transition: opacity 0.3s ease;
+}
+.modal-fade-enter-from,
+.modal-fade-leave-to {
+  opacity: 0;
+}
+.modal-fade-enter-active .modal-content,
+.modal-fade-leave-active .modal-content,
+.modal-fade-enter-active .modal-content-admin,
+.modal-fade-leave-active .modal-content-admin {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.modal-fade-enter-from .modal-content,
+.modal-fade-leave-to .modal-content {
+  transform: scale(0.1);
+}
+.modal-fade-enter-from .modal-content-admin,
+.modal-fade-leave-to .modal-content-admin {
+  transform: scale(0.1);
 }
 </style>

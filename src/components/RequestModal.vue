@@ -301,10 +301,11 @@ label {
   justify-content: flex-start;
   align-items: center;
   background-color: white;
-  height: 580px;
+  height: 650px;
   width: 1000px;
   border-radius: 20px;
   padding-bottom: 20px;
+  scale: 1;
 }
 .modal-content-admin {
   padding: 20px;
@@ -317,6 +318,7 @@ label {
   width: 1000px;
   border-radius: 20px;
   padding-bottom: 20px;
+  scale: 1;
 }
 .current-info{
   display: flex;

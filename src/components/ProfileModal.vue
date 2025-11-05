@@ -73,7 +73,8 @@ async function handleSubmit() {
     await axios.patch(`${API_CLIENTS_URL}/${clientId}`, editedProfile.value);
     console.log("Usuário editado com sucesso");
     emit("profile-updated");
-    alertStore.showAlert("Usuário editado com sucesso", 'info', 3000);
+    window.location.reload()
+   
   } catch (error) {
     formError.value = "Falha na atualização. Verifique os dados.";
   }

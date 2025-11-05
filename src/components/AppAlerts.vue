@@ -22,8 +22,8 @@ function getClass(type: string){
         :key="alert.id"
         :class="['app-alert', getClass(alert.type)]"
         >
-        <p>{{ alert.message }}</p>
-        <button @click="store.removeAlert(alert.id)" style="background:  none; border: none; cursor: pointer;"><span style="color: white;"><X/></span></button>
+        <p style="font-weight: 800;">{{ alert.message }}</p>
+        <button @click="store.removeAlert(alert.id)" title="fechar" style="background:  none; border: none; cursor: pointer;"><span style="color: white;"><X/></span></button>
         </div>
     </TransitionGroup>
     </div>

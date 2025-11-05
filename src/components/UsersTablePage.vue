@@ -115,9 +115,12 @@ onMounted(fetchUser);
     <div>
       <div class="header">
         <h2>FUNCIONÁRIOS:</h2>
+        <div style="display: flex; align-items: center; width: 400px; justify-content: space-between;">
+          <input class="app-filter" type="text">
         <button @click="OpenModal" class="btn-add" v-if="authStore.hasBadge('admin')">
           <UserPlus />Adicionar
         </button>
+        </div>
       </div>
 
       <div class="card">
@@ -142,7 +145,7 @@ onMounted(fetchUser);
               </thead>
               <tbody>
                 <tr v-for="user in users" :key="user.id">
-                  <td>{{ user.id }}</td>
+                  <td>{{ user.publicId }}</td>
                   <td>{{ user.name }}</td>
                   <td>{{ formatCpf(user.cpf) }}</td>
                   <td>{{ user.role ? user.role.name : "N/A" }}</td>
@@ -220,12 +223,20 @@ section {
   align-items: center;
   align-content: center;
 }
+.app-filter{
+  height: 40px;
+  border: 1px solid rgb(189, 189, 189);
+  border-radius: 6px;
+  padding-left: 6px;
+  font-size: 16px;
+}
 .content-wrapper {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   width: 100%;
   height: 100%;
+ 
 }
 .loading-overlay {
   position: absolute;
