@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import type { User } from "../interfaces/UserInterface";
 import axios from "axios";
 import UserModal from "./UserModal.vue";
@@ -10,13 +10,18 @@ import {
   ChevronRight,
   ChevronLeft,
   UserPlus,
+  Eraser,
 } from "lucide-vue-next";
 import UserModalEdit from "./UserModalEdit.vue";
 import { useAuthStore } from "../auth/stores/auth";
+import { debounce } from "vuetify/lib/util/helpers.mjs";
+import type { Role } from "../interfaces/RoleInterface";
 
 const isModalOpen = ref(false);
 const isModalEditOpen = ref(false);
 const API_URL = "http://localhost:3000/users";
+const API_ROLES = "http://localhost:3000/allroles"
+const roles = ref<Role[]>([])
 const users = ref<User[]>([]);
 const userToEdit = ref<User | null>(null);
 const currentPage = ref(1);
@@ -26,9 +31,20 @@ const totalPages = ref(0);
 const isLoading = ref(true);
 const authStore = useAuthStore();
 
-console.log(authStore.decodedPayload)
-console.log(authStore.hasBadge('admin'))
+const search = ref("");
+const roleFilter = ref<number | null>(null);
 
+const debouncedFetch = debounce(() => {
+  currentPage.value = 1;
+  fetchUser();
+}, 450);
+
+watch([search, roleFilter], () => {
+  debouncedFetch();
+});
+
+console.log(authStore.decodedPayload);
+console.log(authStore.hasBadge("admin"));
 
 function OpenModal() {
   isModalOpen.value = true;
@@ -85,7 +101,10 @@ async function fetchUser() {
       params: {
         page: currentPage.value,
         limit: itemsPerPage.value,
+        search: search.value,
+        roleFilter: roleFilter.value,
       },
+      
     });
     users.value = response.data.data;
     totalItems.value = response.data.total;
@@ -96,7 +115,19 @@ async function fetchUser() {
     isLoading.value = false;
   }
 }
-onMounted(fetchUser);
+
+async function fetchRoles(){
+  try {
+    const response = await axios.get<Role[]>(API_ROLES)
+    roles.value = response.data
+  } catch (error) {
+    
+  }
+}
+onMounted(() => {
+  fetchUser();
+  fetchRoles();
+});
 </script>
 
 <template>
@@ -115,11 +146,46 @@ onMounted(fetchUser);
     <div>
       <div class="header">
         <h2>FUNCIONÁRIOS:</h2>
-        <div style="display: flex; align-items: center; width: 400px; justify-content: space-between;">
-          <input class="app-filter" type="text">
-        <button @click="OpenModal" class="btn-add" v-if="authStore.hasBadge('admin')">
-          <UserPlus />Adicionar
-        </button>
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            width: 600px;
+            justify-content: space-between;
+          "
+        >
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <input class="app-filter" type="text" v-model="search" />
+            <button
+              @click="
+                () => {
+                  search = '';
+                  roleFilter = null;
+                  fetchUser();
+                }
+              "
+              class="btn-add"
+              style="height: 44px; width: 50px; background: #1b61f7"
+            ><Eraser/></button>
+          </div>
+          <div>
+            <select
+              v-model.number="roleFilter"
+              style="height: 50px; border-radius: 8px; padding: 4px; background-color: white; border: 1px solid gainsboro; font-size: 16px;"
+            >
+              <option value="">Todos os cargos</option>
+              <option v-for="role in roles" :key="role.id" :value="role.id">{{ role.name }}</option>
+              
+            </select>
+          </div>
+
+          <button
+            @click="OpenModal"
+            class="btn-add"
+            v-if="authStore.hasBadge('admin')"
+          >
+            <UserPlus />Adicionar
+          </button>
         </div>
       </div>
 
@@ -223,7 +289,7 @@ section {
   align-items: center;
   align-content: center;
 }
-.app-filter{
+.app-filter {
   height: 40px;
   border: 1px solid rgb(189, 189, 189);
   border-radius: 6px;
@@ -236,7 +302,6 @@ section {
   justify-content: space-between;
   width: 100%;
   height: 100%;
- 
 }
 .loading-overlay {
   position: absolute;
