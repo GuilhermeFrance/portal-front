@@ -14,7 +14,6 @@ import { useAuthStore } from "../auth/stores/auth";
 import { useAlertStore } from "../auth/stores/alertStore";
 import type { Status } from "../interfaces/Status";
 import { debounce } from "vuetify/lib/util/helpers.mjs";
-import type { Role } from "../interfaces/RoleInterface";
 
 const isLoading = ref(false);
 const isModalOpen = ref(false);
@@ -42,7 +41,7 @@ const alertStore = useAlertStore();
 const debouncedFetch = debounce(() => {
   currentPage.value = 1;
   fetchRequest();
-  fetchCurrentRequest()
+  fetchCurrentRequest();
 }, 450);
 
 watch([search, statuses], () => {
@@ -222,13 +221,17 @@ onMounted(() => {
           "
         >
           <div style="display: flex; align-items: center; gap: 8px">
+            <div>
+              <label for="input">Filtro:</label>
             <div class="search-wrapper">
+              
               <Search class="search-icon" /><input
                 class="app-filter"
                 type="text"
                 placeholder="Pesquisar..."
                 v-model="search"
               />
+            </div>
             </div>
             <button
               @click="
@@ -240,12 +243,13 @@ onMounted(() => {
                 }
               "
               class="btn-add"
-              style="height: 44px; width: 50px; background: #0079ff"
+              style="height: 44px; width: 50px; background: #0079ff; margin-top: 20px;"
             >
               <Eraser />
             </button>
           </div>
           <div>
+            <label  for="select">Trâmite: </label>
             <select
               v-model="statuses"
               style="
@@ -259,7 +263,7 @@ onMounted(() => {
                 font-family: 'Inter', sans-serif;
               "
             >
-              <option value="null" disabled>TODOS OS STATUS</option>
+              <option value="null" >TODOS OS STATUS</option>
               <option
                 v-for="stats in status"
                 :key="stats.key"
@@ -509,7 +513,7 @@ section {
   width: 1300px;
   background-color: white;
   border-radius: 10px 10px 10px 10px;
-  box-shadow: 1px 10px 10px rgb(179, 179, 179);
+  box-shadow: 2px 2px 10px 2px rgba(0, 0, 0, 0.158);
 }
 
 .header {
@@ -644,7 +648,7 @@ section {
   background-color: white;
   height: 40px;
   border-radius: 0px 0px 10px 10px;
-  box-shadow: 1px 10px 10px rgb(179, 179, 179);
+  box-shadow: 2px 2px 10px 2px rgba(0, 0, 0, 0.158);
   border-top: 1px solid rgba(128, 128, 128, 0.199);
 }
 table {

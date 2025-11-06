@@ -15,7 +15,7 @@ import FormPg from '../components/FormPg.vue';
 section{
     background: linear-gradient(rgb(4, 100, 211), rgb(25, 169, 235));
     width: 100%;
-    height: 96.3%;
+    height: 92.3%;
 }
 .content{
     padding-top: 150px;

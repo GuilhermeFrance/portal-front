@@ -154,12 +154,16 @@ onMounted(() => {
           style="
             display: flex;
             align-items: center;
-            width: 700px;
+            width: 720px;
             justify-content: space-between;
           "
         >
+        <div style="display: flex; gap: 10px; margin-bottom: 14px;">
           <div style="display: flex; align-items: center; gap: 8px">
+            <div>
+              <label for="input">Filtros:</label>
             <div class="search-wrapper">
+              
             <Search class="search-icon"/><input
               class="app-filter"
               type="text"
@@ -167,7 +171,7 @@ onMounted(() => {
               placeholder="Pesquisar..."
             />
             
-            
+            </div>
             </div>
             <button
               @click="
@@ -178,12 +182,13 @@ onMounted(() => {
                 }
               "
               class="btn-add"
-              style="height: 44px; width: 50px; background: #0079ff"
+              style="height: 44px; width: 50px; background: #0079ff; margin-top: 20px;"
             >
               <Eraser />
             </button>
           </div>
           <div>
+            <label for="select">Cargo: </label>
             <select
               v-model.number="roleId"
               style="
@@ -202,6 +207,7 @@ onMounted(() => {
                 {{ role.name }}
               </option>
             </select>
+            </div>
           </div>
 
           <button
@@ -349,7 +355,7 @@ section {
   width: 1040px;
   background-color: white;
   border-radius: 10px 10px 10px 10px;
-  box-shadow: 1px 10px 10px rgb(179, 179, 179);
+  box-shadow: 2px 2px 10px 2px rgba(0, 0, 0, 0.158);
 } 
 .app-filter {
   height: 40px;
@@ -465,7 +471,7 @@ section {
   background-color: white;
   height: 40px;
   border-radius: 0px 0px 10px 10px;
-  box-shadow: 1px 10px 10px rgb(179, 179, 179);
+  box-shadow: 2px 2px 10px 2px rgba(0, 0, 0, 0.158);
   border-top: 1px solid rgba(128, 128, 128, 0.199);
 }
 table {

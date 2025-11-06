@@ -198,6 +198,7 @@ function formatString(text: string | undefined, maxLength: number) {
   color: #0079ff;
 }
 .side-item.router-link-exact-active {
+  background-color: rgb(248, 248, 248);
   color: #0079ff;
   font-weight: 700;
 }

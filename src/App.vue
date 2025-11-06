@@ -9,10 +9,16 @@ const route = useRoute()
 
 
 const PagesNoSide = ['Register', 'Login', 'NotFound']
+const PagesNoBackground = ['Login', 'Register', 'form-request'] // Adicione aqui as páginas que NÃO devem ter background
+
 const showSideBar = computed(() => {
   const currentRouteNAme = (route.name ?? '') as string;
-
   return !PagesNoSide.includes(currentRouteNAme)
+})
+
+const showBackground = computed(() => {
+  const currentRouteNAme = (route.name ?? '') as string;
+  return !PagesNoBackground.includes(currentRouteNAme)
 })
 
 
@@ -22,7 +28,7 @@ const showSideBar = computed(() => {
   
   <main :class="{'has-sidebar': showSideBar}">
     <SideBar v-if="showSideBar"/>
-    <div class="main-content">
+    <div class="main-content" :class="{'has-background': showBackground}">
     <RouterView/>
     <AppAlerts />
     </div>
@@ -47,6 +53,14 @@ main{
 .main-content{
   grid-column: 2;
   min-height: 100vh;
+}
+
+.main-content.has-background{
+  background-image: url('./assets/background.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 
 </style>

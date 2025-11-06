@@ -20,7 +20,10 @@ const authStore = useAuthStore();
   <section>
     <div class="home-page">
       <img src="../assets/Design sem nome (3).png" class="logo" alt="" />
-      <div class="hello-current"><span>Seja bem vindo(a), {{authStore.currentUser!.firstName}}</span></div>
+      <div style="display: flex; flex-direction: column; align-items: flex-end; width: 480px;">
+      <img src="../assets/dice3.png" alt="" class="logo-png">
+      <div class="hello-current"><span>Seja bem vindo(a), <span class="current-hello">{{authStore.currentUser!.firstName}}</span></span></div>
+      </div>
       <div :class="{'home-card': authStore.hasBadge('admin') , 'home-card-user': !authStore.hasBadge('admin')}">
         <div class="home">
           <div class="link-list">
@@ -297,9 +300,24 @@ section {
   animation-timing-function: ease;
   font-family:  'Montserrat', sans-serif;
   font-size: 30px;
-  font-weight: 500;
-  color: #488AFF;
+  font-weight: 200;
+  color: #003eaa;
  
+}
+.logo-png{
+  width: 10%;
+  position: relative;
+  animation-name: DiceDown;
+  animation-duration: 5s;
+  animation-delay: 0s;
+  animation-fill-mode: forwards;
+  animation-timing-function: cubic-bezier(0.510, 0.345, 0.145);
+}
+
+@keyframes DiceDown{
+  0%    {opacity: 0%; right: 400px; top: -1000px; transform: rotate(0deg);}
+  25%   {opacity: 100%; right: 400px; top: 0px; transform: rotate(0deg);}
+  100%  {opacity: 0%; right: 0px; top: 0px; transform: rotate(760deg);}
 }
 
 @keyframes TextDown {
@@ -307,6 +325,22 @@ section {
   to   {opacity: 100%;top:0px;}
 }
 
+.current-hello{
+  opacity: 0%;
+  padding-bottom: 40px;
+  position: relative;
+  animation-name: TextDown;
+  animation-duration: 0.4s;
+  animation-delay: 0.8s ;
+  animation-fill-mode: forwards;
+  animation-iteration-count: 1;
+  animation-timing-function: ease-in-out;
+  font-family:  'Montserrat', sans-serif;
+  font-size: 30px;
+  font-weight: 600;
+  color: #488AFF;
+ 
+}
 
 .home-page {
   display: flex;

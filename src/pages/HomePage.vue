@@ -10,6 +10,6 @@ import HomePg from '../components/HomePg.vue';
 
 <style scoped>
 .content{
-    padding-top: 80px;
+    padding-top: 40px;
 }
 </style>
