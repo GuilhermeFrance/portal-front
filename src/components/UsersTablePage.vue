@@ -71,7 +71,7 @@ function CloseEditModal() {
 }
 function handleUserUpdated() {
   CloseEditModal();
-  fetchUser(); // Recarrega os dados para mostrar as mudanças
+  fetchUser(); 
 }
 
 async function deleteUser(userId: number) {
@@ -91,7 +91,7 @@ async function deleteUser(userId: number) {
 function goToPage(page: number) {
   if (page >= 1 && page <= totalPages.value) {
     currentPage.value = page;
-    fetchUser(); // Busca os novos dados
+    fetchUser(); 
   }
 }
 

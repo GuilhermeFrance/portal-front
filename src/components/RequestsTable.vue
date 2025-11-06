@@ -1,26 +1,53 @@
 <script setup lang="ts">
-import { onMounted, ref, Transition } from "vue";
+import { onMounted, ref, Transition, watch } from "vue";
 import type { Request } from "../interfaces/RequestInterface";
 import axios from "axios";
-import { Trash, ChevronRight, ChevronLeft } from "lucide-vue-next";
+import {
+  Trash,
+  ChevronRight,
+  ChevronLeft,
+  Search,
+  Eraser,
+} from "lucide-vue-next";
 import RequestModal from "./RequestModal.vue";
 import { useAuthStore } from "../auth/stores/auth";
 import { useAlertStore } from "../auth/stores/alertStore";
+import type { Status } from "../interfaces/Status";
+import { debounce } from "vuetify/lib/util/helpers.mjs";
+import type { Role } from "../interfaces/RoleInterface";
 
 const isLoading = ref(false);
 const isModalOpen = ref(false);
+
 const API_URL = "http://localhost:3000/requests/all";
-const API_FOR_DELETE = "http://localhost:3000/requests"
+const API_FOR_DELETE = "http://localhost:3000/requests";
 const API_CURRENT_REQUEST_URL = "http://localhost:3000/requests/my-requests";
+const API_STATUS_URL = "http://localhost:3000/status/all"
+
 const requests = ref<Request[]>([]);
 const userRequests = ref<Request[]>([]);
+
 const currentPage = ref(1);
 const itemsPerPage = ref(10);
 const totalItems = ref(0);
 const totalPages = ref(0);
+const search = ref("");
+const statuses = ref<number | null>(null);
+const status = ref<Status[]>([])
 const requestToEdit = ref<Request | null>(null);
+
 const authStore = useAuthStore();
-const alertStore = useAlertStore()
+const alertStore = useAlertStore();
+
+
+const debouncedFetch = debounce(() => {
+  currentPage.value = 1;
+  fetchRequest();
+}, 450);
+
+watch([search, statuses], () => {
+  debouncedFetch();
+});
 
 function OpenModalEdit(request: Request) {
   requestToEdit.value = request;
@@ -77,6 +104,8 @@ async function fetchRequest() {
       params: {
         page: currentPage.value,
         limit: itemsPerPage.value,
+        filter: search.value,
+        statusKey: statuses.value,
       },
     });
     requests.value = response.data.data;
@@ -112,6 +141,10 @@ async function fetchCurrentRequest() {
     isLoading.value = false;
   }
 }
+async function fetchStatus(){
+  const response = await axios.get<Status[]>(API_STATUS_URL)
+  status.value = response.data
+}
 async function deleteRequest(requestId: number) {
   if (!confirm(`Tem certeza que deseja remover a solicitação ${requestId}?`)) {
     return;
@@ -121,10 +154,10 @@ async function deleteRequest(requestId: number) {
     requests.value = requests.value.filter(
       (request) => request.id !== requestId
     );
-    alertStore.showAlert("Solicitação excluída", 'info', 3000);
+    alertStore.showAlert("Solicitação excluída", "info", 3000);
     fetchRequest();
   } catch (error) {
-    alertStore.showAlert("Erro ao excluir", 'error', 3000);
+    alertStore.showAlert("Erro ao excluir", "error", 3000);
     fetchRequest();
   }
 }
@@ -137,32 +170,86 @@ async function deleteCurrentRequest(requestId: number) {
     userRequests.value = userRequests.value.filter(
       (userRequest) => userRequest.id !== requestId
     );
-     alertStore.showAlert("Solicitação excluída", 'success', 3000);
+    alertStore.showAlert("Solicitação excluída", "success", 3000);
     fetchRequest();
   } catch (error) {
-    alertStore.showAlert("Erro ao excluir", 'error', 3000);
+    alertStore.showAlert("Erro ao excluir", "error", 3000);
     fetchRequest();
   }
 }
+
 onMounted(() => {
   fetchRequest();
   fetchCurrentRequest();
+  fetchStatus();
 });
 </script>
 
 <template>
   <section>
     <Transition name="modal-fade">
-    <RequestModal 
-      v-if="isModalOpen"
-      :initialRequest="requestToEdit"
-      @close="CloseModal"
-      @request-updated="handleRequestUpdated"
-    />
+      <RequestModal
+        v-if="isModalOpen"
+        :initialRequest="requestToEdit"
+        @close="CloseModal"
+        @request-updated="handleRequestUpdated"
+      />
     </Transition>
     <div>
       <div class="header">
         <h2>Solititações:</h2>
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            width: 350px;
+            gap: 14px;
+            justify-content: space-between;
+          "
+        >
+          <div style="display: flex; align-items: center; gap: 8px">
+            <div class="search-wrapper">
+              <Search class="search-icon" /><input
+                class="app-filter"
+                type="text"
+                placeholder="Pesquisar..."
+                v-model="search"
+              />
+            </div>
+            <button
+              @click="() => {
+                search = '';
+                statuses = null;
+                fetchRequest()
+                fetchCurrentRequest()
+              }"
+              class="btn-add"
+              style="height: 44px; width: 50px; background: #0079ff"
+            >
+              <Eraser />
+            </button>
+          </div>
+          <div>
+            <select
+            v-model.number="statuses"
+              style="
+                height: 50px;
+                border-radius: 8px;
+                padding: 10px;
+                padding-right: 20px;
+                background-color: white;
+                border: 1px solid gainsboro;
+                font-size: 16px;
+                font-family: 'Inter', sans-serif;
+              "
+            >
+              <option value="null" disabled>STATUS</option>
+              <option v-for="stats in status" :key="stats.id" :value="stats!.id">
+                {{ stats!.name }}
+              </option>
+            </select>
+          </div>
+        </div>
       </div>
 
       <div
@@ -199,7 +286,7 @@ onMounted(() => {
                 >
                   <td>{{ request.id }}</td>
                   <td>{{ limitDescription(request.name, 18) }}</td>
-                  <td> {{ limitDescription(request.description, 37) }}</td>
+                  <td>{{ limitDescription(request.description, 37) }}</td>
                   <td>{{ limitDescription(request.adress, 19) }}</td>
                   <td>
                     <span
@@ -306,7 +393,7 @@ onMounted(() => {
                 >
                   <td>{{ request.id }}</td>
                   <td>{{ limitDescription(request.name, 18) }}</td>
-                  <td> {{ limitDescription(request.description, 37) }}</td>
+                  <td>{{ limitDescription(request.description, 37) }}</td>
                   <td>{{ limitDescription(request.adress, 19) }}</td>
                   <td>
                     <span
@@ -408,7 +495,7 @@ section {
 .header {
   display: flex;
   flex-direction: row;
-  width: 1300px;
+  width: 1148px;
   justify-content: space-between;
   margin-bottom: 10px;
 }
@@ -431,6 +518,27 @@ section {
   background-color: rgba(255, 255, 255);
 
   z-index: 10;
+}
+.app-filter {
+  height: 40px;
+  border: 1px solid rgb(189, 189, 189);
+  border-radius: 6px;
+  padding-left: 40px;
+  padding-right: 10px;
+  font-size: 16px;
+  border: 1px solid gainsboro;
+}
+.search-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  color: rgb(179, 179, 179);
+  pointer-events: none;
+  padding-left: 10px;
 }
 .btn-add {
   display: flex;
@@ -597,7 +705,7 @@ h2 {
 /* ANIMAÇÕES */
 
 .modal-fade-enter-active,
-.modal-fade-leave-active{
+.modal-fade-leave-active {
   transition: opacity 0.3s ease;
 }
 .modal-fade-enter-from,
