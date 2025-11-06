@@ -22,7 +22,7 @@ const isModalOpen = ref(false);
 const API_URL = "http://localhost:3000/requests/all";
 const API_FOR_DELETE = "http://localhost:3000/requests";
 const API_CURRENT_REQUEST_URL = "http://localhost:3000/requests/my-requests";
-const API_STATUS_URL = "http://localhost:3000/status/all"
+const API_STATUS_URL = "http://localhost:3000/status/all";
 
 const requests = ref<Request[]>([]);
 const userRequests = ref<Request[]>([]);
@@ -32,17 +32,17 @@ const itemsPerPage = ref(10);
 const totalItems = ref(0);
 const totalPages = ref(0);
 const search = ref("");
-const statuses = ref<number | null>(null);
-const status = ref<Status[]>([])
+const statuses = ref<string | null>(null);
+const status = ref<Status[]>([]);
 const requestToEdit = ref<Request | null>(null);
 
 const authStore = useAuthStore();
 const alertStore = useAlertStore();
 
-
 const debouncedFetch = debounce(() => {
   currentPage.value = 1;
   fetchRequest();
+  fetchCurrentRequest()
 }, 450);
 
 watch([search, statuses], () => {
@@ -99,13 +99,19 @@ function limitDescription(text: string, maxLength: number): string {
 
 async function fetchRequest() {
   isLoading.value = true;
+  console.log("Filtros enviados:", {
+    page: currentPage.value,
+    limit: itemsPerPage.value,
+    filter: search.value,
+    statusKey: statuses.value,
+  });
   try {
     const response = await axios.get(`${API_URL}`, {
       params: {
         page: currentPage.value,
         limit: itemsPerPage.value,
-        filter: search.value,
         statusKey: statuses.value,
+        filter: search.value,
       },
     });
     requests.value = response.data.data;
@@ -120,12 +126,20 @@ async function fetchRequest() {
 }
 async function fetchCurrentRequest() {
   isLoading.value = true;
+  console.log("Filtros enviados:", {
+    page: currentPage.value,
+    limit: itemsPerPage.value,
+    filter: search.value,
+    statusKey: statuses.value,
+  });
   try {
     const token = authStore.token;
     const response = await axios.get(`${API_CURRENT_REQUEST_URL}`, {
       params: {
         page: currentPage.value,
         limit: itemsPerPage.value,
+        statusKey: statuses.value,
+        filter: search.value,
       },
       headers: {
         Authorization: `Bearer ${token}`,
@@ -141,9 +155,9 @@ async function fetchCurrentRequest() {
     isLoading.value = false;
   }
 }
-async function fetchStatus(){
-  const response = await axios.get<Status[]>(API_STATUS_URL)
-  status.value = response.data
+async function fetchStatus() {
+  const response = await axios.get<Status[]>(API_STATUS_URL);
+  status.value = response.data;
 }
 async function deleteRequest(requestId: number) {
   if (!confirm(`Tem certeza que deseja remover a solicitação ${requestId}?`)) {
@@ -217,12 +231,14 @@ onMounted(() => {
               />
             </div>
             <button
-              @click="() => {
-                search = '';
-                statuses = null;
-                fetchRequest()
-                fetchCurrentRequest()
-              }"
+              @click="
+                () => {
+                  search = '';
+                  statuses = null;
+                  fetchRequest();
+                  fetchCurrentRequest();
+                }
+              "
               class="btn-add"
               style="height: 44px; width: 50px; background: #0079ff"
             >
@@ -231,9 +247,9 @@ onMounted(() => {
           </div>
           <div>
             <select
-            v-model.number="statuses"
+              v-model="statuses"
               style="
-                height: 50px;
+                height: 45px;
                 border-radius: 8px;
                 padding: 10px;
                 padding-right: 20px;
@@ -244,7 +260,11 @@ onMounted(() => {
               "
             >
               <option value="null" disabled>STATUS</option>
-              <option v-for="stats in status" :key="stats.id" :value="stats!.id">
+              <option
+                v-for="stats in status"
+                :key="stats.key"
+                :value="stats!.key"
+              >
                 {{ stats!.name }}
               </option>
             </select>
