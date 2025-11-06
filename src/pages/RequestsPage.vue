@@ -13,6 +13,6 @@ import RequestsTable from '../components/RequestsTable.vue';
 
 <style scoped>
 .content{
-    padding-top: 150px;
+    padding-top: 200px;
 }
 </style>

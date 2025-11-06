@@ -259,7 +259,7 @@ onMounted(() => {
                 font-family: 'Inter', sans-serif;
               "
             >
-              <option value="null" disabled>STATUS</option>
+              <option value="null" disabled>TODOS OS STATUS</option>
               <option
                 v-for="stats in status"
                 :key="stats.key"
@@ -515,7 +515,7 @@ section {
 .header {
   display: flex;
   flex-direction: row;
-  width: 1148px;
+  width: 1120px;
   justify-content: space-between;
   margin-bottom: 10px;
 }
