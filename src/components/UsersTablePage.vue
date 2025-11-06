@@ -20,8 +20,8 @@ import { debounce } from "vuetify/lib/util/helpers.mjs";
 const isModalOpen = ref(false);
 const isModalEditOpen = ref(false);
 const API_URL = "http://localhost:3000/users";
-const API_ROLES = "http://localhost:3000/allroles"
-const roles = ref<Role[]>([])
+const API_ROLES = "http://localhost:3000/allroles";
+const roles = ref<Role[]>([]);
 const users = ref<User[]>([]);
 const userToEdit = ref<User | null>(null);
 const currentPage = ref(1);
@@ -96,10 +96,10 @@ function goToPage(page: number) {
 
 async function fetchUser() {
   isLoading.value = true;
-  console.log('Filtros enviados:', {
+  console.log("Filtros enviados:", {
     page: currentPage.value,
     limit: itemsPerPage.value,
-    search: search.value,
+    filter: search.value,
     roleId: roleId.value,
   });
   try {
@@ -107,10 +107,9 @@ async function fetchUser() {
       params: {
         page: currentPage.value,
         limit: itemsPerPage.value,
-        search: search.value,
+        filter: search.value,
         roleId: roleId.value,
       },
-      
     });
     users.value = response.data.data;
     totalItems.value = response.data.total;
@@ -122,14 +121,11 @@ async function fetchUser() {
   }
 }
 
-async function fetchRoles(){
-  
+async function fetchRoles() {
   try {
-    const response = await axios.get<Role[]>(API_ROLES)
-    roles.value = response.data
-  } catch (error) {
-    
-  }
+    const response = await axios.get<Role[]>(API_ROLES);
+    roles.value = response.data;
+  } catch (error) {}
 }
 onMounted(() => {
   fetchUser();
@@ -157,12 +153,17 @@ onMounted(() => {
           style="
             display: flex;
             align-items: center;
-            width: 600px;
+            width: 640px;
             justify-content: space-between;
           "
         >
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <input class="app-filter" type="text" v-model="search" />
+          <div style="display: flex; align-items: center; gap: 8px">
+            <input
+              class="app-filter"
+              type="text"
+              v-model="search"
+              placeholder="Busque por id, nome ou CPF"
+            />
             <button
               @click="
                 () => {
@@ -172,17 +173,27 @@ onMounted(() => {
                 }
               "
               class="btn-add"
-              style="height: 44px; width: 50px; background: #1b61f7"
-            ><Eraser/></button>
+              style="height: 44px; width: 50px; background: #0079ff"
+            >
+              <Eraser />
+            </button>
           </div>
           <div>
             <select
               v-model.number="roleId"
-              style="height: 50px; border-radius: 8px; padding: 4px; background-color: white; border: 1px solid gainsboro; font-size: 16px;"
+              style="
+                height: 50px;
+                border-radius: 8px;
+                padding: 4px;
+                background-color: white;
+                border: 1px solid gainsboro;
+                font-size: 16px;
+              "
             >
-              <option value=null>Todos os cargos</option>
-              <option v-for="role in roles" :key="role.id" :value="role.id">{{ role.name }}</option>
-              
+              <option value="null">Todos os cargos</option>
+              <option v-for="role in roles" :key="role.id" :value="role.id">
+                {{ role.name }}
+              </option>
             </select>
           </div>
 
@@ -300,8 +311,14 @@ section {
   height: 40px;
   border: 1px solid rgb(189, 189, 189);
   border-radius: 6px;
-  padding-left: 6px;
+  padding-left: 10px;
+  padding-right: 10px;
   font-size: 16px;
+  border: 1px solid gainsboro;
+}
+.app-filter::placeholder{
+  opacity: 50%;
+  font-weight: 200;
 }
 .content-wrapper {
   display: flex;
