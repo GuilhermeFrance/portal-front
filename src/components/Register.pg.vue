@@ -207,7 +207,7 @@ footer {
   font-size: 14px;
 }
 .password-wrapper{
-  position: relative; /* FUNDAMENTAL: Ponto de referência para o ícone */
+  position: relative; 
   display: flex;
   align-items: center;
   width: 800px;
@@ -219,13 +219,13 @@ footer {
 }
 .toggle-password {
   position: absolute;
-  right: 10px; /* Afasta 10px da direita do wrapper */
+  right: 10px; 
   cursor: pointer;
   color: #777;
-  display: flex; /* Para alinhar o ícone Lucide/SVG */
+  display: flex; 
   height: 100%;
   align-items: center;
-  user-select: none; /* Impede que o usuário selecione o ícone */
+  user-select: none; 
 }
 
 .toggle-password:hover {

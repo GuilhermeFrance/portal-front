@@ -11,6 +11,7 @@ import {
   ChevronLeft,
   UserPlus,
   Eraser,
+  Search,
 } from "lucide-vue-next";
 import UserModalEdit from "./UserModalEdit.vue";
 import { useAuthStore } from "../auth/stores/auth";
@@ -153,17 +154,21 @@ onMounted(() => {
           style="
             display: flex;
             align-items: center;
-            width: 640px;
+            width: 700px;
             justify-content: space-between;
           "
         >
           <div style="display: flex; align-items: center; gap: 8px">
-            <input
+            <div class="search-wrapper">
+            <Search class="search-icon"/><input
               class="app-filter"
               type="text"
               v-model="search"
-              placeholder="Busque por id, nome ou CPF"
+              placeholder="Pesquisar..."
             />
+            
+            
+            </div>
             <button
               @click="
                 () => {
@@ -184,10 +189,12 @@ onMounted(() => {
               style="
                 height: 50px;
                 border-radius: 8px;
-                padding: 4px;
+                padding: 10px;
+                padding-right: 20px;
                 background-color: white;
                 border: 1px solid gainsboro;
                 font-size: 16px;
+                font-family: 'Inter', sans-serif;
               "
             >
               <option value="null">Todos os cargos</option>
@@ -307,15 +314,7 @@ section {
   align-items: center;
   align-content: center;
 }
-.app-filter {
-  height: 40px;
-  border: 1px solid rgb(189, 189, 189);
-  border-radius: 6px;
-  padding-left: 10px;
-  padding-right: 10px;
-  font-size: 16px;
-  border: 1px solid gainsboro;
-}
+
 .app-filter::placeholder{
   opacity: 50%;
   font-weight: 200;
@@ -351,8 +350,31 @@ section {
   background-color: white;
   border-radius: 10px 10px 10px 10px;
   box-shadow: 1px 10px 10px rgb(179, 179, 179);
+} 
+.app-filter {
+  height: 40px;
+  border: 1px solid rgb(189, 189, 189);
+  border-radius: 6px;
+  padding-left: 40px;
+  padding-right: 10px;
+  font-size: 16px;
+  border: 1px solid gainsboro;
+}
+.search-wrapper{
+  position: relative; 
+  display: flex;
+  align-items: center;
+  
+  
 }
 
+.search-icon{
+  position: absolute;
+  color: rgb(179, 179, 179);
+  pointer-events: none;
+  padding-left: 10px;
+ 
+}
 .header {
   display: flex;
   flex-direction: row;
