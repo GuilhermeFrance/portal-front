@@ -13,6 +13,6 @@ import TablePage from '../components/UsersTablePage.vue';
 <style scoped>
 
 .content{
-    padding-top: 200px;
+    padding-top: 230px;
 }
 </style>

@@ -20,6 +20,7 @@ export const useAuthStore = defineStore("auth",  () => {
   const fullName = computed(() => `${currentUser.value?.firstName} ${currentUser.value?.surname}`)
   const API_URL_CLIENT = "http://localhost:3000/login";
   const API_URL_CURRIENT = "http://localhost:3000/clients";
+  
   const userBadgeKey = computed(() => {
     return decodedPayload.value?.badges ?? null; 
   })
@@ -78,7 +79,9 @@ export const useAuthStore = defineStore("auth",  () => {
       localStorage.setItem("user_email", clientLogin.value.email);
       axios.defaults.headers.common["Authorization"] = `Bearer ${token.value}`;
       await getCurrentUser();
+
       decodedPayload.value = parseJwt(token.value)
+      
       console.log(response);
       alertStore.showAlert(`Login feito com sucesso`, "success", 3000);
       await router.push({ name: "home" });

@@ -19,8 +19,8 @@ const authStore = useAuthStore();
 <template>
   <section>
     <div class="home-page">
-      <img src="../assets/Design sem nome (3).png" class="logo" alt="" />
-      <div style="display: flex; flex-direction: column; align-items: flex-end; width: 480px;">
+      <img src="../assets/logo-portal.png" class="logo" alt="" />
+      <div style="display: flex; flex-direction: column; align-items: center; width: 480px;">
       <img src="../assets/dice3.png" alt="" class="logo-png">
       <div class="hello-current"><span>Seja bem vindo(a), <span class="current-hello">{{authStore.currentUser!.firstName}}</span></span></div>
       </div>
@@ -315,9 +315,9 @@ section {
 }
 
 @keyframes DiceDown{
-  0%    {opacity: 0%; right: 400px; top: -1000px; transform: rotate(0deg);}
-  25%   {opacity: 100%; right: 400px; top: 0px; transform: rotate(0deg);}
-  100%  {opacity: 0%; right: 0px; top: 0px; transform: rotate(760deg);}
+  0%    {opacity: 0%; right: 180px; top: -1000px; transform: rotate(0deg);}
+  25%   {opacity: 100%; right: 180px; top: 0px; transform: rotate(0deg);}
+  100%  {opacity: 0%; right: -180px; top: 0px; transform: rotate(760deg);}
 }
 
 @keyframes TextDown {
@@ -375,7 +375,7 @@ section {
   justify-content: flex-start;
   padding: 40px;
   width: 1100px;
-  height: 450px;
+  height: 500px;
   background-color: #fcfcfc;
   border-radius: 20px;
   box-shadow: 2px 2px 10px 2px rgba(0, 0, 0, 0.158);
@@ -387,7 +387,7 @@ section {
   justify-content: flex-start;
   padding: 40px;
   width: 1100px;
-  height: 270px;
+  height: 370px;
   background-color: #fcfcfc;
   border-radius: 20px;
   box-shadow: 2px 2px 10px 2px rgba(0, 0, 0, 0.158);

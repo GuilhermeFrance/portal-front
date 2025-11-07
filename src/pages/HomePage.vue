@@ -11,5 +11,6 @@ import HomePg from '../components/HomePg.vue';
 <style scoped>
 .content{
     padding-top: 40px;
+    padding-right: 50px;
 }
 </style>

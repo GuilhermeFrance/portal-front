@@ -385,7 +385,9 @@ onMounted(() => {
           </div>
         </div>
       </div>
-      <!--TABELA DO USUARIO-->
+
+     
+
       <div class="card" v-if="authStore.hasBadge('requester')">
         <div class="content-wrapper">
           <div v-if="isLoading" class="loading-overlay">
