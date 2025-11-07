@@ -317,7 +317,8 @@ section {
 @keyframes DiceDown{
   0%    {opacity: 0%; right: 180px; top: -1000px; transform: rotate(0deg);}
   25%   {opacity: 100%; right: 180px; top: 0px; transform: rotate(0deg);}
-  100%  {opacity: 0%; right: -180px; top: 0px; transform: rotate(760deg);}
+  100%  {opacity: 0%; right: -180px; top: 0px; transform: rotate(720deg);}
+ 
 }
 
 @keyframes TextDown {
