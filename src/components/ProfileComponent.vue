@@ -298,13 +298,13 @@ section {
   justify-content: center;
   align-items: center;
   align-content: center;
-  padding-top: 50px;
+  padding-top: 20px;
 }
 .profile-card {
   display: flex;
   flex-direction: column;
-
-  gap: 45px;
+  scale: 0.95;
+  gap: 10px;
 }
 .profile-title {
   display: flex;
@@ -452,7 +452,7 @@ section {
   gap: 0px;
   background-color: rgb(252, 252, 252);
   border-radius: 20px;
-  width: 305px;
+  width: 315px;
   height: 180px;
   border: 1px solid rgb(215, 215, 215);
   padding: 20px;

@@ -311,7 +311,7 @@ section {
   animation-duration: 5s;
   animation-delay: 0s;
   animation-fill-mode: forwards;
-  animation-timing-function: cubic-bezier(0.510, 0.345, 0.145);
+  animation-timing-function: cubic-bezier(0.210, 0.345, 0.145);
 }
 
 @keyframes DiceDown{
