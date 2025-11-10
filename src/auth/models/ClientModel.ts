@@ -7,4 +7,6 @@ export interface ClientModel {
   password: string;
   badgesKey?: string;
   createdAt?: Date;
+  profileUrl?: string;
+  profileImgId?: number;
 }
