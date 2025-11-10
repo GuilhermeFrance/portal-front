@@ -25,6 +25,19 @@ const isModalPickOpen = ref(false);
 
 function openPickModal() {
   isModalPickOpen.value = true;
+  console.log(authStore.currentUser?.profileImageId);
+}
+
+function handleUrlImage() {
+  if (authStore.currentUser?.profileImageId) {
+    return "http://localhost:3000/avatars/id/1";
+  } else if (authStore.currentUser?.profileImageId) {
+    return "http://localhost:3000/avatars/id/2";
+  } else if (authStore.currentUser?.profileImageId) {
+    return "http://localhost:3000/avatars/id/3";
+  } else {
+    return "http://localhost:3000/avatars/id/1";
+  }
 }
 
 function ClosePickModal() {
@@ -95,7 +108,9 @@ function formatCpf(cpfValue: string): string {
     />
     <div class="profile-card">
       <div class="profile-title">
-        <div class="profile-image" @click="openPickModal" title="Mudar avatar"></div>
+        <div class="profile-image" @click="openPickModal" title="Mudar avatar">
+          <img class="profile-img" :src="handleUrlImage()" />
+        </div>
         <div class="profile-headera">
           <div class="header-row">
             <span style="font-size: 20px">{{ authStore.fullName }}</span>
@@ -297,6 +312,16 @@ function formatCpf(cpfValue: string): string {
   border-radius: 10px;
   color: white;
 }
+.profile-img {
+  display: flex;
+  width: 100%;
+  transition: 0.3s;
+}
+
+.profile-img:hover{
+  opacity: 80%;
+}
+
 .link-title {
   font-weight: 600;
 }

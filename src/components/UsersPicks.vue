@@ -3,11 +3,15 @@ import { X } from "lucide-vue-next";
 import type { ImageDto } from "../interfaces/ImageDto";
 import { onMounted, ref } from "vue";
 import axios from "axios";
+import { useAuthStore } from "../auth/stores/auth";
 const image = ref<ImageDto[]>([]);
 
 const selectedId = ref<number | null>(null)
 const emit = defineEmits<{(e: "close-pick") : void; (e: "avatar-selected", payload: {id: number; url: string}): void;}>()
 const API_PICK_URL = "http://localhost:3000/avatars/all";
+const API_CLIENT = "http://localhost:3000/clients/id"
+const authStore = useAuthStore()
+
 
 async function fetchImages() {
   try {
@@ -19,9 +23,20 @@ async function fetchImages() {
     console.log("Erro ao puxar as imagens", error);
   }
 }
-function chooseAvatar(av: ImageDto){
-    selectedId.value = av.id;
-    emit("avatar-selected", { id: av.id, url: av.url})
+async function updateProfileImage(imageId: number){
+  try {
+    await axios.patch(`${API_CLIENT}/${authStore.currentUser?.id}`, { profileImageId: imageId
+    }, {
+      headers: {
+        Authorization: `Bearer ${authStore.token}`
+      }
+    
+    })
+    if(authStore.currentUser){authStore.currentUser!.profileImageId = imageId;}
+    
+  } catch (error) {
+    
+  }
 }
 function handleClose() {
   emit("close-pick");
@@ -46,8 +61,9 @@ onMounted(fetchImages);
             v-for="avatar in image"
             :key="avatar.id"
             class="images-selector"
+            :value="avatar.id"
             :class="{ selected: selectedId === avatar.id }"
-            @click="chooseAvatar(avatar)"
+            @click="updateProfileImage(avatar.id)"
           >
             <img :src="avatar.url" :alt="avatar.url">
           </div>

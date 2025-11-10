@@ -8,5 +8,5 @@ export interface ClientModel {
   badgesKey?: string;
   createdAt?: Date;
   profileUrl?: string;
-  profileImgId?: number;
+  profileImageId?: number;
 }
