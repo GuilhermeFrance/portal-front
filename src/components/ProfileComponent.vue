@@ -29,15 +29,15 @@ function openPickModal() {
 }
 
 function handleUrlImage() {
-  if (authStore.currentUser?.profileImageId) {
-    return "http://localhost:3000/avatars/id/1";
-  } else if (authStore.currentUser?.profileImageId) {
-    return "http://localhost:3000/avatars/id/2";
-  } else if (authStore.currentUser?.profileImageId) {
-    return "http://localhost:3000/avatars/id/3";
-  } else {
-    return "http://localhost:3000/avatars/id/1";
+  switch(authStore.currentUser?.profileImageId){
+    case 1: return 'http://localhost:3000/avatars/id/1'
+    case 2: return 'http://localhost:3000/avatars/id/2'
+    case 3: return 'http://localhost:3000/avatars/id/3'
+    case 4: return 'http://localhost:3000/avatars/id/4'
+    case 5: return 'http://localhost:3000/avatars/id/5'
+    case 6: return 'http://localhost:3000/avatars/id/6'
   }
+  
 }
 
 function ClosePickModal() {
@@ -399,7 +399,7 @@ section {
 .profile-image {
   width: 160px;
   height: 160px;
-  background-color: rgb(93, 213, 250);
+  background-color: rgb(240, 240, 240);
   transition: 0.2s;
   border-radius: 100px;
   cursor: pointer;

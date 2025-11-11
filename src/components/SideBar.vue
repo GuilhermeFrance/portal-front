@@ -8,6 +8,17 @@ async function handleLogout() {
   authStore.logout();
 }
 
+function handleUrlImage() {
+  switch(authStore.currentUser?.profileImageId){
+    case 1: return 'http://localhost:3000/avatars/id/1'
+    case 2: return 'http://localhost:3000/avatars/id/2'
+    case 3: return 'http://localhost:3000/avatars/id/3'
+    case 4: return 'http://localhost:3000/avatars/id/4'
+    case 5: return 'http://localhost:3000/avatars/id/5'
+    case 6: return 'http://localhost:3000/avatars/id/6'
+  }
+}
+
 function formatString(text: string | undefined, maxLength: number) {
   if (!text) {
     return "";
@@ -38,24 +49,19 @@ function formatString(text: string | undefined, maxLength: number) {
           >Funcionários
           <div class="on-side"></div
         ></RouterLink>
-             <RouterLink
-          to="/solicite"
-          class="side-item"
+        <RouterLink to="/solicite" class="side-item"
           >Faça uma solicitação
           <div class="on-side"></div
         ></RouterLink>
-        
       </div>
       <div>
-        
         <RouterLink to="/perfil" class="side-item-last">
-          <div style="display: flex; align-items: center; gap: 10px;">
-          <UserRound class="lucide-icon" />
-          <span>{{ authStore.currentUser?.firstName }}</span>
+          <div style="display: flex; align-items: center; gap: 10px">
+            <img class="side-bar-icon" :src="handleUrlImage()" />
+            <span>{{ authStore.currentUser?.firstName }}</span>
           </div>
           <LogOut class="logout-icon" @click.stop="handleLogout" />
         </RouterLink>
-        
       </div>
     </div>
   </div>
@@ -96,6 +102,10 @@ function formatString(text: string | undefined, maxLength: number) {
 }
 .side-item-last:hover {
   cursor: pointer;
+}
+.side-bar-icon{
+  width: 32px;
+  height: 32px;
 }
 
 .navigation-side-bar {
@@ -144,11 +154,14 @@ function formatString(text: string | undefined, maxLength: number) {
   color: rgb(80, 80, 80);
 }
 
-.side-item-last:hover  span {
+.side-item-last:hover span {
   color: #0079ff;
 }
-.side-item-last:hover .lucide-icon {
-  color: #0079ff;
+.side-item-last:hover .side-bar-icon {
+  filter: saturate(2);
+}
+.side-item-last.router-link-exact-active .side-bar-icon {
+  filter: saturate(2);
 }
 .sidem-item-last.router-link-exact-active .lucide-icon {
   color: #0079ff;

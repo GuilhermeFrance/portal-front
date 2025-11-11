@@ -10,6 +10,8 @@ function getClass(type: string){
         case 'success': return 'alert-success';
         case 'error': return 'alert-error';
         case 'warning': return 'alert-warning';
+        case 'alert': return 'alert'
+        case 'all-ok': return 'all-ok'
         default: return 'alert-info'
     }
 }
@@ -66,7 +68,10 @@ function getClass(type: string){
 .alert-error { background-color: #f44336; } 
 .alert-warning { background-color: #ff9800; } 
 .alert-info { background-color: #2196F3; } 
-
+.alert{background: #FF00E6;
+background: linear-gradient(90deg,rgba(255, 0, 230, 1) 0%, rgba(0, 206, 247, 1) 100%);}
+.all-ok{background: #7f06cf;
+background: linear-gradient(90deg,rgba(127, 6, 207, 1) 35%, rgba(0, 12, 140, 1) 100%);}
 
 .alert-transition-enter-active,
 .alert-transition-leave-active {

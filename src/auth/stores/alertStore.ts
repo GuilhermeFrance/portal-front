@@ -4,7 +4,7 @@ import { ref } from "vue";
 interface Alert{
     id: number;
     message: string;
-    type: 'success' | 'error' | 'warning' | 'info';
+    type: 'success' | 'error' | 'warning' | 'info' | 'alert' | 'all-ok';
     timeout: number;
 }
 

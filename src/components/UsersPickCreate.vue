@@ -10,7 +10,6 @@ const image = ref<ImageDto[]>([]);
 const selectedId = ref<number | null>(null)
 const emit = defineEmits<{(e: "close-pick") : void; (e: "avatar-selected", payload: {id: number; url: string}): void;}>()
 const API_PICK_URL = "http://localhost:3000/avatars/all";
-const API_CLIENT = "http://localhost:3000/clients/id"
 const authStore = useAuthStore()
 const alertStore = useAlertStore();
 
@@ -24,22 +23,10 @@ async function fetchImages() {
     console.log("Erro ao puxar as imagens", error);
   }
 }
-async function updateProfileImage(imageId: number){
-  try {
-    await axios.patch(`${API_CLIENT}/${authStore.currentUser?.id}`, { profileImageId: imageId
-    }, {
-      headers: {
-        Authorization: `Bearer ${authStore.token}`
-      }
-    
-    })
-    emit("close-pick");
-    alertStore.showAlert("Avatar atualizado com sucesso", 'alert', 3000)
-    if(authStore.currentUser){authStore.currentUser!.profileImageId = imageId;}
-    
-  } catch (error) {
-    
-  }
+
+function selectAvatar(avatar: ImageDto){
+  selectedId.value = avatar.id;
+  emit("avatar-selected", { id: avatar.id, url: avatar.url})
 }
 function handleClose() {
   emit("close-pick");
@@ -66,7 +53,7 @@ onMounted(fetchImages);
             class="images-selector"
             :value="avatar.id"
             :class="{ selected: selectedId === avatar.id }"
-            @click="updateProfileImage(avatar.id)"
+            @click="selectAvatar(avatar)"
           >
             <img :src="avatar.url" :alt="avatar.url">
           </div>
@@ -99,8 +86,8 @@ onMounted(fetchImages);
   font-family: "Inter", sans-serif;
 }
 .images-selector{
-    width: 120px;              
-  height: 120px;
+   width: 120px;
+   height: 120px;
 }
 .card {
   display: flex;
@@ -115,19 +102,19 @@ onMounted(fetchImages);
 }
 
 .card-imgs {
-  
+
   max-width: 500px;
-  padding: 20px;
-  flex-wrap: wrap;
   display: flex;
+  flex-wrap: wrap;
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  gap:40px;
+  gap: 40px;
   cursor: pointer;
 }
 img {
   width: 100%;
+
   transition: 0.2s ease;
 }
 
