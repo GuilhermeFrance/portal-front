@@ -4,19 +4,35 @@ import { ref } from "vue";
 import type { NewClientDto } from "../interfaces/NewClientDto";
 import axios from "axios";
 import { useRouter } from "vue-router";
-import UsersPicks from "./UsersPicks.vue";
-import { useAuthStore } from "../auth/stores/auth";
+
 import UsersPickCreate from "./UsersPickCreate.vue";
 import { useAlertStore } from "../auth/stores/alertStore";
 
-const authStore = useAuthStore();
 const router = useRouter();
 const isModalPickAvatarOpen = ref(false);
-const isSectionPickAvatarOPen = ref(false)
+const isSectionPickAvatarOPen = ref(false);
 const alertStore = useAlertStore();
 
-function handleSectionPick(){
-  isSectionPickAvatarOPen.value = !isSectionPickAvatarOPen.value
+const fieldErrors = ref<Record<string, string>>({});
+
+function hasFieldError(field: string): boolean {
+  return !!fieldErrors.value[field];
+}
+
+function getFieldError(field: string): string {
+  return fieldErrors.value[field] || "";
+}
+
+function clearFieldError(field: string): void {
+  delete fieldErrors.value[field];
+}
+
+function clearAllfieldErros() {
+  return fieldErrors.value = {};
+}
+
+function handleSectionPick() {
+  isSectionPickAvatarOPen.value = !isSectionPickAvatarOPen.value;
 }
 function openModalPick() {
   isModalPickAvatarOpen.value = true;
@@ -45,20 +61,25 @@ const API_CLIENT_URL = "http://localhost:3000/clients/register";
 const formError = ref<string | null>(null);
 
 function handleUrlImage() {
-  switch(NewClient.value.profileImageId){
-    case 1: return 'http://localhost:3000/avatars/id/1'
-    case 2: return 'http://localhost:3000/avatars/id/2'
-    case 3: return 'http://localhost:3000/avatars/id/3'
-    case 4: return 'http://localhost:3000/avatars/id/4'
-    case 5: return 'http://localhost:3000/avatars/id/5'
-    case 6: return 'http://localhost:3000/avatars/id/6'
+  switch (NewClient.value.profileImageId) {
+    case 1:
+      return "http://localhost:3000/avatars/id/1";
+    case 2:
+      return "http://localhost:3000/avatars/id/2";
+    case 3:
+      return "http://localhost:3000/avatars/id/3";
+    case 4:
+      return "http://localhost:3000/avatars/id/4";
+    case 5:
+      return "http://localhost:3000/avatars/id/5";
+    case 6:
+      return "http://localhost:3000/avatars/id/6";
   }
-  
 }
-function handleAvatarSelected(avatarData: {id: number, url: string}){
+function handleAvatarSelected(avatarData: { id: number; url: string }) {
   NewClient.value.profileImageId = avatarData.id;
-  closeModalPick()
-  console.log('Avatar selecionado: ', avatarData.id)
+  closeModalPick();
+  console.log("Avatar selecionado: ", avatarData.id);
 }
 async function handleSubmit() {
   if (
@@ -77,17 +98,24 @@ async function handleSubmit() {
   }
   try {
     await axios.post(API_CLIENT_URL, NewClient.value);
-    alertStore.showAlert("Usuário criado com sucesso!", 'success', 4000)
+    alertStore.showAlert("Usuário criado com sucesso!", "success", 4000);
     router.push("/login");
-  } catch (error) {
-    console.log("Erro na criação do funcionário");
+  } catch (error: any) {
+    console.log(error.response?.status)
+    if(error.response?.status === 409){
+      const { field, message } = error.response.data;
+      fieldErrors.value[field] = message;
+    }
   }
 }
 </script>
 
 <template>
-  <UsersPickCreate v-if="isModalPickAvatarOpen" @close-pick="closeModalPick"
-  @avatar-selected="handleAvatarSelected" />
+  <UsersPickCreate
+    v-if="isModalPickAvatarOpen"
+    @close-pick="closeModalPick"
+    @avatar-selected="handleAvatarSelected"
+  />
   <section>
     <div class="card-register">
       <div class="header">
@@ -104,6 +132,7 @@ async function handleSubmit() {
                 type="text"
                 v-model="NewClient.firstName"
               />
+              
             </div>
             <div class="register-input-name">
               <label for="input">Sobrenome:</label>
@@ -130,6 +159,7 @@ async function handleSubmit() {
               type="text"
               v-model="NewClient.email"
             />
+            <span v-if="hasFieldError('email')">{{getFieldError('email')}}</span>
           </div>
           <div class="register-input">
             <label for="input">Senha:</label>
@@ -151,23 +181,32 @@ async function handleSubmit() {
               </p>
             </div>
           </div>
-          <div style="width: 800px; height: 1px; background-color: gainsboro;"></div>
-          <div class="header-avatar-pick"> 
-            <div style="display: flex; align-items: center; justify-content: space-between; padding-bottom: 10px;">
-            <span>Avatar:</span>
-            <ChevronDown @click="handleSectionPick" v-if="isSectionPickAvatarOPen"/>
-            <ChevronUp @click="handleSectionPick" v-else />
+          <div
+            style="width: 800px; height: 1px; background-color: gainsboro"
+          ></div>
+          <div class="header-avatar-pick">
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding-bottom: 10px;
+              "
+            >
+              <span>Avatar:</span>
+              <ChevronDown
+                @click="handleSectionPick"
+                v-if="isSectionPickAvatarOPen"
+              />
+              <ChevronUp @click="handleSectionPick" v-else />
             </div>
             <Transition name="expand">
-            <div class="avatar-section" v-if="isSectionPickAvatarOPen">
-              <img
-                style="width: 18%"
-                :src="handleUrlImage()"
-              />
-              <button @click="openModalPick" class="btn-change-avatar">
-                Escolher avatar
-              </button>
-            </div>
+              <div class="avatar-section" v-if="isSectionPickAvatarOPen">
+                <img style="width: 18%" :src="handleUrlImage()" />
+                <button @click="openModalPick" class="btn-change-avatar">
+                  Escolher avatar
+                </button>
+              </div>
             </Transition>
           </div>
           <footer>
@@ -196,7 +235,7 @@ async function handleSubmit() {
 section {
   display: grid;
   place-items: center;
- padding-top: 150px;
+  padding-top: 150px;
   align-content: center;
   background-image: radial-gradient(
     farthest-corner at 40px 40px,
@@ -205,7 +244,6 @@ section {
   );
   min-height: 100vh;
   padding: 0px;
-  
 }
 
 form {
@@ -242,7 +280,7 @@ footer {
   align-items: center;
   justify-content: space-between;
 }
-.header-avatar-pick{
+.header-avatar-pick {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -265,20 +303,20 @@ footer {
   color: #ffffff;
 }
 .expand-enter-from,
-.expand-leave-to{
+.expand-leave-to {
   max-height: 0;
   opacity: 0;
   transform: translateY(-10px);
 }
 .expand-enter-to,
-.expand-leave-from{
+.expand-leave-from {
   max-height: 300px;
   opacity: 1;
   transform: translateY(0px);
 }
 .expand-enter-active,
-.expand-leave-active{
-  transition:  all 0.4s ease-in-out;
+.expand-leave-active {
+  transition: all 0.4s ease-in-out;
 }
 .card-register {
   display: flex;
