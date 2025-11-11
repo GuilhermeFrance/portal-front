@@ -12,6 +12,6 @@ import RegisterPg from '../components/Register.pg.vue';
 
 <style scoped>
 .content{
-    padding-top: 20px;
+    margin-top: 150px;
 }
 </style>

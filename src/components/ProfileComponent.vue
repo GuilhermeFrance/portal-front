@@ -1,5 +1,14 @@
 <script setup lang="ts">
-import { Pencil, Inbox, Loader, ClipboardPlus, Headset, Calendar1, GraduationCap, IdCard } from "lucide-vue-next";
+import {
+  Pencil,
+  Inbox,
+  Loader,
+  ClipboardPlus,
+  Headset,
+  Calendar1,
+  GraduationCap,
+  IdCard,
+} from "lucide-vue-next";
 import { useAuthStore } from "../auth/stores/auth";
 import { getTime } from "vuetify/lib/labs/VCalendar/util/timestamp.mjs";
 import { computed, ref } from "vue";
@@ -7,11 +16,33 @@ import ProfileModal from "./ProfileModal.vue";
 import type { ClientModel } from "../auth/models/ClientModel";
 import { RouterLink } from "vue-router";
 import { storeToRefs } from "pinia";
+import UsersPicks from "./UsersPicks.vue";
 
 const isModalEditOpen = ref(false);
 const authStore = useAuthStore();
 const profileToEdit = ref<ClientModel | null>(null);
+const isModalPickOpen = ref(false);
 
+function openPickModal() {
+  isModalPickOpen.value = true;
+  console.log(authStore.currentUser?.profileImageId);
+}
+
+function handleUrlImage() {
+  switch(authStore.currentUser?.profileImageId){
+    case 1: return 'http://localhost:3000/avatars/id/1'
+    case 2: return 'http://localhost:3000/avatars/id/2'
+    case 3: return 'http://localhost:3000/avatars/id/3'
+    case 4: return 'http://localhost:3000/avatars/id/4'
+    case 5: return 'http://localhost:3000/avatars/id/5'
+    case 6: return 'http://localhost:3000/avatars/id/6'
+  }
+  
+}
+
+function ClosePickModal() {
+  isModalPickOpen.value = false;
+}
 
 function openEditModal() {
   profileToEdit.value = authStore.currentUser ?? null;
@@ -50,12 +81,12 @@ function formatString(text: string | undefined, maxLength: number) {
   return text.substring(0, maxLength);
 }
 
-function setBage(badge: string | undefined ): string | undefined{
-  if(authStore.currentUser?.badgesKey == 'requester'){
-    return "Solicitante"
-  } else if (authStore.currentUser?.badgesKey == 'manager'){
-    return "Gerente"
-  } else return "Administrador"
+function setBage(badge: string | undefined): string | undefined {
+  if (authStore.currentUser?.badgesKey == "requester") {
+    return "Solicitante";
+  } else if (authStore.currentUser?.badgesKey == "manager") {
+    return "Gerente";
+  } else return "Administrador";
 }
 function formatCpf(cpfValue: string): string {
   if (!cpfValue) {
@@ -67,6 +98,7 @@ function formatCpf(cpfValue: string): string {
 </script>
 
 <template>
+  <UsersPicks v-if="isModalPickOpen" @close-pick="ClosePickModal" />
   <section>
     <ProfileModal
       v-if="isModalEditOpen"
@@ -76,12 +108,12 @@ function formatCpf(cpfValue: string): string {
     />
     <div class="profile-card">
       <div class="profile-title">
-        <div class="profile-image"></div>
+        <div class="profile-image" @click="openPickModal" title="Mudar avatar">
+          <img class="profile-img" :src="handleUrlImage()" />
+        </div>
         <div class="profile-headera">
           <div class="header-row">
-            <span style="font-size: 20px"
-              >{{ authStore.fullName }}</span
-            >
+            <span style="font-size: 20px">{{ authStore.fullName }}</span>
             <button @click="openEditModal" class="edit-btn">
               <pencil class="icon" /> Editar
             </button>
@@ -102,7 +134,7 @@ function formatCpf(cpfValue: string): string {
                 <Inbox size="18" /> {{ authStore.currentUser?.email }}</span
               >
               <span style="display: flex; align-items: center; gap: 10px">
-                <Calendar1 size="18"/> entrou em
+                <Calendar1 size="18" /> entrou em
                 {{ formatTime(authStore.currentUser?.createdAt) }}</span
               >
             </div>
@@ -130,93 +162,101 @@ function formatCpf(cpfValue: string): string {
                   <span>Sobrenome</span>
                 </div>
                 <div class="name-info">
-                  <div class="info-card">{{ authStore.currentUser?.surname }}</div>
+                  <div class="info-card">
+                    {{ authStore.currentUser?.surname }}
+                  </div>
                 </div>
               </div>
             </div>
-            <div style="display: flex; flex-direction: column; gap: 50px;">
-            <div class="info-column">
-              <div class="info-title"><span>Email:</span></div>
-              <div class="name-info" style="width: 790px">
-                <div class="info-card" style="width: 790px">
-                  {{ authStore.currentUser?.email }}
-                </div>
-              </div>
+            <div style="display: flex; flex-direction: column; gap: 50px">
               <div class="info-column">
-              <div class="info-title"><span>CPF:</span></div>
-              <div class="name-info" style="width: 790px">
-                <div class="info-card" style="width: 790px">
-                  {{ formatCpf(authStore.currentUser!.cpf!)}}
+                <div class="info-title"><span>Email:</span></div>
+                <div class="name-info" style="width: 790px">
+                  <div class="info-card" style="width: 790px">
+                    {{ authStore.currentUser?.email }}
+                  </div>
                 </div>
-              </div>
-              </div>
+                <div class="info-column">
+                  <div class="info-title"><span>CPF:</span></div>
+                  <div class="name-info" style="width: 790px">
+                    <div class="info-card" style="width: 790px">
+                      {{ formatCpf(authStore.currentUser!.cpf!) }}
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
         <div class="profile-side">
           <div class="profile-job">
-           <div class="icon-request">
-                  <RouterLink
-                    to="/solicite"
-                    style="text-decoration: none; color: black"
-                  >
-                    <div class="card-router">
-                      <div class="icons-link">
-                        <ClipboardPlus class="lucide-icon" />
-                      </div>
-                      <div>
-                        <span class="link-title"> Faça uma solicitação</span>
-                        <p class="link-desc">
-                          Solicite algum <br />
-                          serviço público.
-                        </p>
-                      </div>
-                    </div>
-                  </RouterLink>
+            <div class="icon-request">
+              <RouterLink
+                to="/solicite"
+                style="text-decoration: none; color: black"
+              >
+                <div class="card-router">
+                  <div class="icons-link">
+                    <ClipboardPlus class="lucide-icon" />
+                  </div>
+                  <div>
+                    <span class="link-title"> Faça uma solicitação</span>
+                    <p class="link-desc">
+                      Solicite algum <br />
+                      serviço público.
+                    </p>
+                  </div>
                 </div>
-                 <div class="icon-request">
-                <RouterLink
-                  to="/solicitacoes"
-                  style="text-decoration: none; color: black"
-                >
-                  <div class="card-router">
-                    <div class="icons-link">
-                      <Loader class="lucide-icon" />
-                    </div>
-                    <div>
-                      <span class="link-title"> Status</span>
-                      <p class="link-desc">
-                        Acompanhe a <br />
-                        sua solicitação.
-                      </p>
-                    </div>
+              </RouterLink>
+            </div>
+            <div class="icon-request">
+              <RouterLink
+                to="/solicitacoes"
+                style="text-decoration: none; color: black"
+              >
+                <div class="card-router">
+                  <div class="icons-link">
+                    <Loader class="lucide-icon" />
                   </div>
-                </RouterLink>
-              </div>
-              <div class="icon-request">
-                <RouterLink
-                  to="/solicitacoes"
-                  style="text-decoration: none; color: black"
-                >
-                  <div class="card-router">
-                    <div class="icons-link">
-                      <Headset class="lucide-icon" />
-                    </div>
-                    <div>
-                      <span class="link-title"> Ouvidoria</span>
-                      <p class="link-desc">
-                        Fale com um <br />
-                        suporte.
-                      </p>
-                    </div>
+                  <div>
+                    <span class="link-title"> Status</span>
+                    <p class="link-desc">
+                      Acompanhe a <br />
+                      sua solicitação.
+                    </p>
                   </div>
-                </RouterLink>
-              </div>
+                </div>
+              </RouterLink>
+            </div>
+            <div class="icon-request">
+              <RouterLink
+                to="/solicitacoes"
+                style="text-decoration: none; color: black"
+              >
+                <div class="card-router">
+                  <div class="icons-link">
+                    <Headset class="lucide-icon" />
+                  </div>
+                  <div>
+                    <span class="link-title"> Ouvidoria</span>
+                    <p class="link-desc">
+                      Fale com um <br />
+                      suporte.
+                    </p>
+                  </div>
+                </div>
+              </RouterLink>
+            </div>
           </div>
           <div class="profile-job2">
-            <div style="display: flex; align-items: center; gap: 10px;"><IdCard/><h2>Cargo</h2></div>
-            <div class="role-area"><div class="side-detail"></div>{{ setBage(authStore.currentUser?.badgesKey)}}</div>
+            <div style="display: flex; align-items: center; gap: 10px">
+              <IdCard />
+              <h2>Cargo</h2>
+            </div>
+            <div class="role-area">
+              <div class="side-detail"></div>
+              {{ setBage(authStore.currentUser?.badgesKey) }}
+            </div>
           </div>
         </div>
       </div>
@@ -241,7 +281,7 @@ function formatCpf(cpfValue: string): string {
   color: white;
   transition: background 0.2s ease;
 }
-.role-area{
+.role-area {
   display: flex;
   border-radius: 10px;
   border: 1px solid rgb(228, 228, 228);
@@ -252,11 +292,11 @@ function formatCpf(cpfValue: string): string {
   font-weight: 400;
   transition: 0.4s ease;
 }
-.role-area:hover{
+.role-area:hover {
   background-color: rgb(243, 243, 243);
 }
-.side-detail{
-  background: linear-gradient(blue,rgb(0, 174, 255));
+.side-detail {
+  background: linear-gradient(blue, rgb(0, 174, 255));
   border-radius: 10px 0px 0px 10px;
   height: 80px;
   width: 10px;
@@ -272,6 +312,16 @@ function formatCpf(cpfValue: string): string {
   border-radius: 10px;
   color: white;
 }
+.profile-img {
+  display: flex;
+  width: 100%;
+  transition: 0.3s;
+}
+
+.profile-img:hover{
+  opacity: 80%;
+}
+
 .link-title {
   font-weight: 600;
 }
@@ -349,8 +399,13 @@ section {
 .profile-image {
   width: 160px;
   height: 160px;
-  background-color: rgb(93, 213, 250);
+  background-color: rgb(240, 240, 240);
+  transition: 0.2s;
   border-radius: 100px;
+  cursor: pointer;
+}
+.profile-image:hover {
+  background-color: rgb(0, 181, 236);
 }
 .header-row {
   font-size: 18px;

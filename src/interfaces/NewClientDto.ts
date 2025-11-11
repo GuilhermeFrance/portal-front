@@ -4,4 +4,5 @@ export interface NewClientDto {
     cpf: string;
     email: string;
     password: string;
+    profileImageId: number;
 }

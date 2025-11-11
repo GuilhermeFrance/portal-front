@@ -115,6 +115,10 @@ input {
   font-size: 16px;
   font-family: "Inter", sans-serif;
 }
+input:is(:-webkit-autofill, :autofill){
+  font-size: 15px;
+  font-weight: 500;
+}
 input:focus {
   background-color: aliceblue;
 }
