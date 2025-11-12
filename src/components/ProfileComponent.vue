@@ -8,6 +8,7 @@ import {
   Calendar1,
   GraduationCap,
   IdCard,
+  Camera,
 } from "lucide-vue-next";
 import { useAuthStore } from "../auth/stores/auth";
 import { getTime } from "vuetify/lib/labs/VCalendar/util/timestamp.mjs";
@@ -29,15 +30,20 @@ function openPickModal() {
 }
 
 function handleUrlImage() {
-  switch(authStore.currentUser?.profileImageId){
-    case 1: return 'http://localhost:3000/avatars/id/1'
-    case 2: return 'http://localhost:3000/avatars/id/2'
-    case 3: return 'http://localhost:3000/avatars/id/3'
-    case 4: return 'http://localhost:3000/avatars/id/4'
-    case 5: return 'http://localhost:3000/avatars/id/5'
-    case 6: return 'http://localhost:3000/avatars/id/6'
+  switch (authStore.currentUser?.profileImageId) {
+    case 1:
+      return "http://localhost:3000/avatars/id/1";
+    case 2:
+      return "http://localhost:3000/avatars/id/2";
+    case 3:
+      return "http://localhost:3000/avatars/id/3";
+    case 4:
+      return "http://localhost:3000/avatars/id/4";
+    case 5:
+      return "http://localhost:3000/avatars/id/5";
+    case 6:
+      return "http://localhost:3000/avatars/id/6";
   }
-  
 }
 
 function ClosePickModal() {
@@ -108,7 +114,12 @@ function formatCpf(cpfValue: string): string {
     />
     <div class="profile-card">
       <div class="profile-title">
-        <div class="profile-image" @click="openPickModal" title="Mudar avatar">
+        <div
+          class="profile-image-container"
+          @click="openPickModal"
+          title="Mudar avatar"
+        >
+          <div class="camera-overlay"><Camera class="camera-icon"/></div>
           <img class="profile-img" :src="handleUrlImage()" />
         </div>
         <div class="profile-headera">
@@ -315,13 +326,40 @@ function formatCpf(cpfValue: string): string {
 .profile-img {
   display: flex;
   width: 100%;
+  height: 100%;
+  object-fit: cover;
   transition: 0.3s;
 }
 
-.profile-img:hover{
+.profile-img:hover {
   opacity: 80%;
 }
-
+.camera-overlay{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(35, 3, 122, 0.8);
+  border-radius: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+.profile-image-container:hover .camera-overlay {
+  opacity: 1;               
+}
+.camera-icon{
+  color: white;
+  width: 46px;
+  height: 46px;
+}
+.profile-image-container:hover .profile-img {
+  filter: blur(2px) brightness(0.8);
+}
 .link-title {
   font-weight: 600;
 }
@@ -396,12 +434,14 @@ section {
   justify-content: space-between;
   width: 900px;
 }
-.profile-image {
+.profile-image-container {
+  position: relative;
   width: 160px;
   height: 160px;
-  background-color: rgb(240, 240, 240);
+
   transition: 0.2s;
   border-radius: 100px;
+  overflow: hidden;
   cursor: pointer;
 }
 .profile-image:hover {

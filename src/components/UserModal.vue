@@ -236,32 +236,26 @@ footer button {
 .btn-save {
   font-weight: 800;
   color: white;
-  background-image: linear-gradient(
-    rgba(22, 169, 206, 0.678),
-    rgba(29, 204, 195, 0.616)
-  );
+  background-color: rgb(6, 54, 196);
 
   border: none;
 }
 
 .btn-save:hover {
-  background-image: linear-gradient(rgb(22, 169, 206), rgb(29, 204, 195));
-  transition: 0.8s;
+  background-color: rgb(0, 36, 145);
+  transition: 0.3s;
 }
 
 .btn-cancel {
   font-weight: 800;
   color: white;
-  background-image: linear-gradient(
-    rgba(102, 102, 102, 0.664),
-    rgba(107, 107, 107, 0.692)
-  );
+  background-color: gray;
   border: none;
 }
 
 .btn-cancel:hover {
-  background-image: linear-gradient(rgb(102, 102, 102), rgb(107, 107, 107));
-  transition: 0.8s;
+  background-color: rgb(71, 71, 71);
+  transition: 0.3s;
 }
 
 .user-input {
