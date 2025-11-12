@@ -123,7 +123,7 @@ router.beforeEach(async (to) => {
   }
   const getBadgeAdmin = authStore.hasBadge('admin')
   if(requiresAdminBadge && !getBadgeAdmin){
-    const redirect = (to.query.redirect as string) ?? { name: 'home'}
+    const redirect = (to.query.redirect as string) ?? { name: 'NotFound'}
     return redirect;
   }
 });
