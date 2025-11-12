@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { Eye, EyeClosed } from "lucide-vue-next";
 import { useAuthStore } from "../auth/stores/auth";
 import { useRoute, useRouter } from "vue-router";
@@ -12,21 +12,26 @@ const route = useRoute();
 const formError = ref<string | null>(null);
 const isPasswordVisible = ref(false);
 
+const loginError = computed(() => authStore.alert)
+
+function handleResetError(){
+  authStore.alert = null
+  formError.value = null
+}
+
 function handlePasswordVisible() {
   isPasswordVisible.value = !isPasswordVisible.value;
 }
 
 async function handleSubmit() {
-  if (!authStore.clientLogin.email || !authStore.clientLogin.password) {
-    formError.value = "Preencha todos os campos obrigatórios!";
-  }
+ 
   try {
     await authStore.handleSubmitLogin();
-    
+    console.log(loginError)
     redirect();
     
-  } catch (error) {
-    console.log("Erro!");
+  } catch {
+    formError.value = "Credenciais inválidas"
   }
 }
 
@@ -55,13 +60,15 @@ async function redirect() {
             alt=""
           />
           <div class="input-area">
-            <form @submit.prevent="handleSubmit">
+            <form @submit.prevent="handleSubmit"
+                  >
               <div class="input">
                 <label for="input">Email:</label>
                 <input
                   type="text"
                   placeholder="Insira o seu e-mail"
                   v-model="authStore.clientLogin.email"
+                  @input="handleResetError()"
                 />
               </div>
               <div class="input">
@@ -72,6 +79,7 @@ async function redirect() {
                     placeholder="Insira a sua senha"
                     v-model="authStore.clientLogin.password"
                     id="password"
+                    @input="handleResetError()"
                   />
                   <span class="toggle-password" @click="handlePasswordVisible">
                     <Eye class="icon" v-if="isPasswordVisible" />
@@ -93,6 +101,7 @@ async function redirect() {
             <div
               style="display: flex; justify-content: center; margin-top: 30px"
             >
+              <span class="alert">{{ loginError }}</span>
               <span class="alert">{{ formError }}</span>
             </div>
           </div>
@@ -119,7 +128,7 @@ input:is(:-webkit-autofill, :autofill){
   font-size: 15px;
   font-weight: 500;
 }
-input:focus {
+input:input {
   background-color: aliceblue;
 }
 input::placeholder {
@@ -141,8 +150,8 @@ form {
 }
 .alert {
   color: red;
-  font-weight: 300;
-  text-decoration: underline;
+  font-weight: 500;
+  
 }
 .login {
   display: flex;

@@ -66,6 +66,7 @@ const router = createRouter({
           name: "funcionarios",
           component: EmployeePage,
           meta: {
+            requiresAdminBadge: true,
             requiresAuth: true,
             title: "Funcionários",
           },
@@ -109,12 +110,20 @@ router.beforeEach(async (to) => {
   
   const authStore = useAuthStore();
   await authStore.initializeAuth();
+
   const requiresAuth = to.meta.requiresAuth === true;
+  const requiresAdminBadge = to.meta.requiresAdminBadge === true;
+
   if(requiresAuth && !authStore.token){
     return {name: 'Login', query: {redirect: to.fullPath}}
   }
   if(authStore.token && to.name === 'Login'){
     const redirect = (to.query.redirect as string) ?? { name: 'home'}
+    return redirect;
+  }
+  const getBadgeAdmin = authStore.hasBadge('admin')
+  if(requiresAdminBadge && !getBadgeAdmin){
+    const redirect = (to.query.redirect as string) ?? { name: 'NotFound'}
     return redirect;
   }
 });

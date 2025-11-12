@@ -72,6 +72,8 @@ async function handleSubmit() {
     formError.value = Array.isArray(backEndMessage)
       ? backEndMessage.join(", ")
       : backEndMessage;
+
+      alertStore.showAlert(formError.value, 'warning', 8000)
   }
 }
 

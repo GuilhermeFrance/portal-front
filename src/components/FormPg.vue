@@ -9,7 +9,8 @@ import { useAlertStore } from "../auth/stores/alertStore";
 const API_REQUESTS_URL = "http://localhost:3000/requests";
 
 const authStore = useAuthStore();
-const alertStore = useAlertStore()
+const alertStore = useAlertStore();
+const alerts = ref<string | null>(null);
 
 const createInitialRequest = (): NewRequestDto => ({
   name: "",
@@ -26,8 +27,8 @@ const emit = defineEmits(["close", "request-created"]);
 const API_URL_TYPES = "http://localhost:3000/v1/types";
 const types = ref<Type[]>([]);
 
-function resetForm(){
-    newRequest.value=createInitialRequest()
+function resetForm() {
+  newRequest.value = createInitialRequest();
 }
 
 function handleRoleChange(e: Event) {
@@ -46,8 +47,6 @@ async function fetchType() {
   }
 }
 
-
-
 async function handleSubmit() {
   if (
     !newRequest.value.name ||
@@ -55,22 +54,35 @@ async function handleSubmit() {
     !newRequest.value.typeId ||
     !newRequest.value.description
   ) {
-    alert("Preencha todos os campos obrigatórios");
-    return
+    alertStore.showAlert(
+      "Preencha todos os campos obrigatórios",
+      "warning",
+      4000
+    );
+    return;
   }
 
   try {
     const response = await axios.post(API_REQUESTS_URL, newRequest.value);
     console.log("Solicitacao enviada com sucesso.");
     emit("request-created");
-    resetForm()
-   
-    alertStore.showAlert("Solicitação criada com sucesso", 'success', 3000)
-  } catch (error) {
+    resetForm();
+
+    alertStore.showAlert("Solicitação criada com sucesso", "success", 3000);
+  } catch (error: any) {
+    const backEndMessage =
+      axios.isAxiosError(error) && error.response?.data?.message
+        ? error.response.data.message
+        : "Falha ao salvar. Verifique o sevidor.";
+    console.log(error.response);
+    alerts.value = Array.isArray(backEndMessage)
+      ? backEndMessage.join(", ")
+      : backEndMessage;
+    alertStore.showAlert(alerts.value, "warning", 8000);
     console.log("Erro na criação da solicitacao");
   }
 }
-onMounted(fetchType)
+onMounted(fetchType);
 </script>
 
 <template>
@@ -101,7 +113,7 @@ onMounted(fetchType)
               required
             />
           </div>
-       
+
           <div class="form-item">
             <label for="input">Serviço:</label>
             <select
@@ -141,12 +153,11 @@ onMounted(fetchType)
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 
-.header{
-    font-family: 'Inter',sans-serif;
-    font-size: 26px;
-    margin-bottom: 60px;
-    font-weight: 700;
-   
+.header {
+  font-family: "Inter", sans-serif;
+  font-size: 26px;
+  margin-bottom: 60px;
+  font-weight: 700;
 }
 section {
   display: flex;
@@ -158,19 +169,19 @@ form {
   flex-direction: column;
   gap: 30px;
 }
-select{
-    height: 40px;
-    border: 1px solid rgba(20, 17, 0, 0.158);
-    border-radius: 8px;
-    background-color: white;
-    font-size: 15px;
-    padding-left: 10px;
-    transition: 0.3s;
+select {
+  height: 40px;
+  border: 1px solid rgba(20, 17, 0, 0.158);
+  border-radius: 8px;
+  background-color: white;
+  font-size: 15px;
+  padding-left: 10px;
+  transition: 0.3s;
 }
-select:hover{
+select:hover {
   background: rgb(236, 236, 236);
 }
-select::picker-icon{
+select::picker-icon {
   color: rgb(0, 255, 21);
   transition: 0.4s rotate;
 }
@@ -203,7 +214,7 @@ option:checked {
   height: 30px;
   border-radius: 10px;
   font-size: 16px;
-   padding-left: 10px;
+  padding-left: 10px;
 }
 .form-input-adress {
   border: 1px solid rgba(20, 17, 0, 0.158);
@@ -215,7 +226,6 @@ option:checked {
   font-family: "Inter", sans-serif;
   padding-left: 10px;
   color: rgb(190, 190, 190);
-  
 }
 .form-input::placeholder {
   font-style: italic;

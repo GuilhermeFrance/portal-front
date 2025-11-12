@@ -46,6 +46,7 @@ function getClass(type: string){
 .app-alert {
   padding: 15px 20px;
   border-radius: 8px;
+  max-width: 400px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   display: flex;
   justify-content: space-between;
