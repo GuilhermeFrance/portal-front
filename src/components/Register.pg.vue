@@ -92,7 +92,7 @@ async function handleSubmit() {
     !NewClient.value.email ||
     !NewClient.value.password
   ) {
-    return (formError.value = "Preencha todos os campos obrigatórios.");
+    alertStore.showAlert("Preencha todos os campos obrigatórios.", 'warning', 4000);
   }
   const cleanedCpf = NewClient.value.cpf.replace(/[^\d]/g, "");
   if (cleanedCpf.length !== 11) {
@@ -101,7 +101,8 @@ async function handleSubmit() {
     return;
   }
   try {
-    await axios.post(API_CLIENT_URL, NewClient.value);
+    const response = await axios.post(API_CLIENT_URL, NewClient.value);
+    
     alertStore.showAlert("Usuário criado com sucesso!", "success", 4000);
     router.push("/login");
     
@@ -110,6 +111,9 @@ async function handleSubmit() {
     if(error.response?.status === 409){
       const { field, message } = error.response.data;
       fieldErrors.value[field] = message;
+    }else if(error.response?.status === 400){
+      alertStore.showAlert(error.response.data.message[0], 'error', 3000)
+      
     }
   }
 }

@@ -9,7 +9,6 @@ import type { UpdateUserDto } from "../interfaces/UpdateUserDto";
 import type { Role } from "../interfaces/RoleInterface";
 import { useAlertStore } from "../auth/stores/alertStore";
 
-
 const alertStore = useAlertStore();
 
 const props = defineProps({
@@ -46,7 +45,9 @@ watch(
   },
   { immediate: true }
 );
-
+function resetFormError() {
+  formError.value = null;
+}
 async function fetchRole() {
   try {
     const response = await axios.get<Type[]>(API_ROLES_URL);
@@ -58,29 +59,26 @@ async function fetchRole() {
 function handleClose() {
   emit("close");
 }
-function formatDate(dateTimeString: string | Date | undefined): string{
-  if(!dateTimeString){
-    return 'N/A'
+function formatDate(dateTimeString: string | Date | undefined): string {
+  if (!dateTimeString) {
+    return "N/A";
   }
   try {
-    const date = new Date(dateTimeString)
-    if(isNaN(date.getTime())){
-      return 'Data inválida'
+    const date = new Date(dateTimeString);
+    if (isNaN(date.getTime())) {
+      return "Data inválida";
     }
-    const datePart = date.toLocaleDateString('PT-BR')
-    return `${datePart}`
-    }
-   catch (e) {
-    return "Erro de formatatação"
+    const datePart = date.toLocaleDateString("PT-BR");
+    return `${datePart}`;
+  } catch (e) {
+    return "Erro de formatatação";
   }
 }
 async function handleSubmit() {
-  console.log("Estou funcionando")
+  console.log("Estou funcionando");
   formError.value = null;
 
   const userId = props.initialUser?.id;
-
-  
 
   if (!userId) {
     formError.value = "Erro: ID da solicitacao nao encontrado para edicao";
@@ -90,16 +88,14 @@ async function handleSubmit() {
   try {
     await axios.patch(`${API_USER_URL}/${userId}`, editedRequest.value);
     console.log("Solicitacao editada com sucesso");
-    alertStore.showAlert(`Alteração feita`, 'success', 150000)
+    alertStore.showAlert(`Alteração feita`, "success", 150000);
     emit("user-updated");
-  } catch (error) {
-    if(!editedRequest.value.email || 
-    !editedRequest.value.name 
-  ){
-    formError.value = "Preencha todos os campos obrigatórios!"
-  }else { formError.value = "Falha na atualização. Verifique os dados.";}
-    
-
+  } catch (error: any) {
+    if (!editedRequest.value.email || !editedRequest.value.name) {
+      formError.value = "Preencha todos os campos obrigatórios!";
+    } else {
+      formError.value = error.response?.data?.message[0];
+    }
   }
 }
 
@@ -120,7 +116,7 @@ onMounted(fetchRole);
         <h3>Solicitacao {{ initialUser?.id }}</h3>
         <button class="closeModal" @click="handleClose"><X /></button>
       </header>
-      <form @submit.prevent="handleSubmit">
+      <form @submit.prevent="handleSubmit" @input="resetFormError()">
         <div class="infos-box">
           <div class="infos">
             <label for="input"> Nome: </label>
@@ -140,7 +136,7 @@ onMounted(fetchRole);
               v-model="editedRequest.email"
             />
           </div>
-          
+
           <div class="infos">
             <label for="select">Cargo:</label>
             <select
@@ -158,14 +154,20 @@ onMounted(fetchRole);
           </div>
           <div class="infos">
             <label for="span"> Registrado em: </label>
-            <span class="info-box">{{ formatDate(initialUser?.createdAt) }}</span>
+            <span class="info-box">{{
+              formatDate(initialUser?.createdAt)
+            }}</span>
           </div>
           <div class="infos">
             <label for="span"> Última alteração: </label>
-            <span class="info-box">{{ formatDate(initialUser?.updatedAt) }}</span>
+            <span class="info-box">{{
+              formatDate(initialUser?.updatedAt)
+            }}</span>
           </div>
-          <div style="display: flex; justify-content: center;"> <span style="color: red; ">{{ formError }}</span></div>
-        </div>     
+          <div style="display: flex; justify-content: center">
+            <span style="color: red">{{ formError }}</span>
+          </div>
+        </div>
         <footer>
           <button type="submit" class="btn-save">Salvar</button>
           <button @click="handleClose" class="btn-cancel">Cancelar</button>

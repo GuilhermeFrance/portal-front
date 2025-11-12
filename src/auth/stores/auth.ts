@@ -21,6 +21,9 @@ export const useAuthStore = defineStore("auth",  () => {
   const API_URL_CLIENT = "http://localhost:3000/login";
   const API_URL_CURRIENT = "http://localhost:3000/clients";
   
+  const loginError = ref<string | null>(null)
+
+
   const userBadgeKey = computed(() => {
     return decodedPayload.value?.badges ?? null; 
   })
@@ -87,7 +90,7 @@ export const useAuthStore = defineStore("auth",  () => {
       await router.push({ name: "home" });
 
       console.log("Login feito com sucesso!");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erro na criação do funcionário", error);
 
       const backEndMessage =
@@ -205,5 +208,6 @@ export const useAuthStore = defineStore("auth",  () => {
     hasBadge,
     decodedPayload,
     fullName,
+    loginError,
   };
 });
