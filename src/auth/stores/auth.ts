@@ -76,7 +76,7 @@ export const useAuthStore = defineStore("auth",  () => {
 
       const response = await axios.post(API_URL_CLIENT, clientLogin.value);
       const authToken = response.data.access_token || response.data;
-
+      
       token.value = authToken;
       localStorage.setItem("auth_token", authToken);
       localStorage.setItem("user_email", clientLogin.value.email);
@@ -84,7 +84,7 @@ export const useAuthStore = defineStore("auth",  () => {
       await getCurrentUser();
 
       decodedPayload.value = parseJwt(token.value)
-      
+      console.log(decodedPayload.value)
       console.log(response);
       alertStore.showAlert(`Login feito com sucesso`, "success", 3000);
       await router.push({ name: "home" });
@@ -171,7 +171,7 @@ export const useAuthStore = defineStore("auth",  () => {
     console.log(decodedPayload.value)
     if (isTokenExpired(token.value)) {
       console.info("Token expirado, faça login novamente");
-      alert("Sessão expirado, faça login novamente")
+      
       alertStore.showAlert("Sessão expirada, faça login novamente.", 'warning', 3000)
       await logout();
       return;
