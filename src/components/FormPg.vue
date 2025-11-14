@@ -69,7 +69,9 @@ async function handleSubmit() {
     resetForm();
 
     alertStore.showAlert("Solicitação criada com sucesso", "success", 3000);
-  } catch (error: any) {
+  } catch (error: any) {  
+    const status = error.response?.status
+    
     const backEndMessage =
       axios.isAxiosError(error) && error.response?.data?.message
         ? error.response.data.message
@@ -78,7 +80,11 @@ async function handleSubmit() {
     alerts.value = Array.isArray(backEndMessage)
       ? backEndMessage.join(", ")
       : backEndMessage;
-    alertStore.showAlert(alerts.value, "warning", 8000);
+   if(status === 401){
+      alertStore.showAlert("Sessão expirada, faça login novamente", 'warning', 4000)
+    }else {
+  alertStore.showAlert(alerts.value, "warning", 8000);
+    }
     console.log("Erro na criação da solicitacao");
   }
 }
@@ -162,7 +168,8 @@ onMounted(fetchType);
 section {
   display: flex;
   justify-content: center;
-  height: 100vh;
+  align-items: center;
+  width: 100%;
 }
 form {
   display: flex;
@@ -193,7 +200,7 @@ option:checked {
 .form {
   padding: 30px;
   width: 700px;
-  height: 620px;
+  min-height: 620px;
   background-color: white;
   border-radius: 20px;
   box-shadow: 2px 2px 15px 2px rgba(112, 112, 112, 0.521);
