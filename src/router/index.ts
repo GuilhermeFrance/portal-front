@@ -9,12 +9,14 @@ import DashBoardLayout from "../components/DashBoardLayout.vue";
 import RegisterPage from "../pages/RegisterPage.vue";
 import NotFound from "../pages/NotFound.vue";
 import { useAuthStore } from "../auth/stores/auth";
+import AboutComponent from "../components/AboutComponent.vue";
 
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
+      
       path: "/login",
       name: "Login",
       component: LoginPage,
@@ -28,6 +30,15 @@ const router = createRouter({
       component: RegisterPage,
       meta: {
         title: "Cadastre-se",
+      },
+    },
+      {
+      
+      path: "/home",
+      name: "About",
+      component: AboutComponent,
+      meta: {
+        title: "Portal Control",
       },
     },
     {

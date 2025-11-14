@@ -526,7 +526,7 @@ section {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  height: 500px;
+  height: 472px;
   max-height: 600px;
   width: 1300px;
   background-color: white;

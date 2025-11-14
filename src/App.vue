@@ -8,8 +8,8 @@ import AppAlerts from './components/AppAlerts.vue';
 const route = useRoute()
 
 
-const PagesNoSide = ['Register', 'Login', 'NotFound']
-const PagesNoBackground = ['Login', 'Register', 'form-request'] // Adicione aqui as páginas que NÃO devem ter background
+const PagesNoSide = ['Register', 'Login', 'NotFound', 'About']
+const PagesNoBackground = ['Login', 'Register', 'form-request', 'About'] 
 
 const showSideBar = computed(() => {
   const currentRouteNAme = (route.name ?? '') as string;
