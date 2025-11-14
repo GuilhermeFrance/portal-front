@@ -30,6 +30,12 @@ const currentPage = ref(1);
 const itemsPerPage = ref(10);
 const totalItems = ref(0);
 const totalPages = ref(0);
+
+const currentAdmin = ref(1);
+const itemsPerAdminPage = ref(10);
+const totalAdminItems = ref(0);
+const totalAdminPages = ref(0);
+
 const search = ref("");
 const statuses = ref<string | null>(null);
 const status = ref<Status[]>([]);
@@ -40,6 +46,7 @@ const alertStore = useAlertStore();
 
 const debouncedFetch = debounce(() => {
   currentPage.value = 1;
+  currentAdmin.value = 1;
   fetchRequest();
   fetchCurrentRequest();
 }, 450);
@@ -66,6 +73,13 @@ function handleRequestUpdated() {
 function goToPage(page: number) {
   if (page >= 1 && page <= totalPages.value) {
     currentPage.value = page;
+    fetchCurrentRequest();
+  }
+}
+
+function goToAdminPage(page: number) {
+  if (page >= 1 && page <= totalAdminPages.value) {
+    currentAdmin.value = page;
     fetchRequest();
   }
 }
@@ -99,23 +113,23 @@ function limitDescription(text: string, maxLength: number): string {
 async function fetchRequest() {
   isLoading.value = true;
   console.log("Filtros enviados:", {
-    page: currentPage.value,
-    limit: itemsPerPage.value,
+    page: currentAdmin.value,
+    limit: itemsPerAdminPage.value,
     filter: search.value,
     statusKey: statuses.value,
   });
   try {
     const response = await axios.get(`${API_URL}`, {
       params: {
-        page: currentPage.value,
-        limit: itemsPerPage.value,
+        page: currentAdmin.value,
+        limit: itemsPerAdminPage.value,
         statusKey: statuses.value,
         filter: search.value,
       },
     });
     requests.value = response.data.data;
-    totalItems.value = response.data.total;
-    totalPages.value = response.data.lastPage;
+    totalAdminItems.value = response.data.total;
+    totalAdminPages.value = response.data.lastPage;
     console.log(response.data.data[0]);
   } catch (err) {
     console.log("Erro ao carregar os dados");
@@ -223,15 +237,14 @@ onMounted(() => {
           <div style="display: flex; align-items: center; gap: 8px">
             <div>
               <label for="input">Filtro:</label>
-            <div class="search-wrapper">
-              
-              <Search class="search-icon" /><input
-                class="app-filter"
-                type="text"
-                placeholder="Pesquisar..."
-                v-model="search"
-              />
-            </div>
+              <div class="search-wrapper">
+                <Search class="search-icon" /><input
+                  class="app-filter"
+                  type="text"
+                  placeholder="Pesquisar..."
+                  v-model="search"
+                />
+              </div>
             </div>
             <button
               @click="
@@ -243,13 +256,18 @@ onMounted(() => {
                 }
               "
               class="btn-add"
-              style="height: 44px; width: 50px; background: #0079ff; margin-top: 20px;"
+              style="
+                height: 44px;
+                width: 50px;
+                background: #0079ff;
+                margin-top: 20px;
+              "
             >
               <Eraser />
             </button>
           </div>
           <div>
-            <label  for="select">Trâmite: </label>
+            <label for="select">Trâmite: </label>
             <select
               v-model="statuses"
               style="
@@ -263,7 +281,7 @@ onMounted(() => {
                 font-family: 'Inter', sans-serif;
               "
             >
-              <option value="null" >TODOS OS STATUS</option>
+              <option value="null">TODOS OS STATUS</option>
               <option
                 v-for="stats in status"
                 :key="stats.key"
@@ -359,25 +377,25 @@ onMounted(() => {
             <div class="pagination-info" v-if="requests.length >= 1">
               <span style="font-weight: 200">
                 Pagina
-                <span style="font-weight: 400">{{ currentPage }}</span> de
-                <span>{{ totalPages }}</span></span
+                <span style="font-weight: 400">{{ currentAdmin }}</span> de
+                <span>{{ totalAdminPages }}</span></span
               >
               <span>
                 <span style="font-weight: 400"
-                  >({{ totalItems }} resultados)</span
+                  >({{ totalAdminItems }} resultados)</span
                 >
               </span>
             </div>
             <div class="pagination-btns" v-if="requests.length >= 1">
               <button
-                @click="goToPage(currentPage - 1)"
-                :disabled="currentPage === 1"
+                @click="goToAdminPage(currentAdmin - 1)"
+                :disabled="currentAdmin === 1"
               >
                 <ChevronLeft />
               </button>
               <button
-                @click="goToPage(currentPage + 1)"
-                :disabled="currentPage === totalPages"
+                @click="goToAdminPage(currentAdmin + 1)"
+                :disabled="currentAdmin === totalAdminPages"
               >
                 <ChevronRight />
               </button>
@@ -385,8 +403,6 @@ onMounted(() => {
           </div>
         </div>
       </div>
-
-     
 
       <div class="card" v-if="authStore.hasBadge('requester')">
         <div class="content-wrapper">
