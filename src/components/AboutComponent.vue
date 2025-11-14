@@ -8,12 +8,17 @@ const images = [
   "../assets/img-preview2.png",
   "../assets/img-preview3.png",
 ];
-function nextImage(){
-    currentImageIndex.value = (currentImageIndex.value + 1) % images.length
+function nextImage() {
+  currentImageIndex.value = (currentImageIndex.value + 1) % images.length;
 }
-function prevImage(){
-    currentImageIndex
-    
+function prevImage() {
+  currentImageIndex.value =
+    currentImageIndex.value === 0
+      ? images.length - 1
+      : currentImageIndex.value - 1;
+}
+function goToImage(index: number){
+    currentImageIndex.value = index;
 }
 </script>
 
@@ -51,7 +56,15 @@ function prevImage(){
         </div>
         <div class="rigth-side">
           <div class="img-layout">
-            <img src="../assets/img-preview.png" alt="" />
+            <div class="carousel-container">
+                <img 
+                v-for="(image, index) in images"
+                :key="index"
+                :src="image"
+                :alt="`Preview ${index + 1}`"
+                :class="['carousel-image', '{ active': index === currentImageIndex }]"/>
+            </div>
+            
           </div>
         </div>
       </div>
