@@ -1,24 +1,64 @@
 <script setup lang="ts">
-import { ChevronLeft, ChevronRight, Dices, FolderCode } from "lucide-vue-next";
+import {
+  Asterisk,
+  ChevronLeft,
+  ChevronRight,
+  Dices,
+  FolderCode,
+  Pyramid,
+} from "lucide-vue-next";
 import { ref, onMounted, onUnmounted } from "vue";
 import imgPreview1 from "../assets/img-preview.png";
 import imgPreview2 from "../assets/img-preview2.png";
 import imgPreview3 from "../assets/img-preview3.png";
 
-const autoPlayTimout = ref<number | undefined>(undefined);
+interface GuideStep {
+  icon: any;
+  title: string;
+  description: string;
+  code: string;
+}
+
+const AUTOPLAY_DELAY = 5000;
+const USER_INTERACTION_DELAY = 4000;
+const TRANSITION_DURATION = 400;
+
+const images = [imgPreview1, imgPreview2, imgPreview3];
+
+const guideSteps: GuideStep[] = [
+  {
+    icon: FolderCode,
+    title: "Clone os repositórios",
+    description:
+      "Adapte um .env para um banco que rodará<br>localmente e rode:",
+    code: "npm run dev",
+  },
+  {
+    icon: Pyramid,
+    title: "Rode o Prisma Studio",
+    description:
+      "Estabeleça conexão com Prisma<br>Studio para melhor visualização<br>de dados.",
+    code: "npx prisma studio",
+  },
+  {
+    icon: Dices,
+    title: "Comece a testar",
+    description: "Agora, basta rodar o frontend<br>e interagir com o site:",
+    code: "npx vite",
+  },
+];
+
+// Reactive state
+const autoPlayTimeout = ref<number | undefined>(undefined);
 const autoplayInterval = ref<number | undefined>(undefined);
 const currentImageIndex = ref(0);
 const isTransitioning = ref(false);
-
 const isUserInteracting = ref(false);
-const userInteractionDelay = 4000;
-
-const images = [imgPreview1, imgPreview2, imgPreview3];
 
 function startAutoplay() {
   autoplayInterval.value = setInterval(() => {
     nextImage();
-  }, 5000);
+  }, AUTOPLAY_DELAY);
 }
 
 function stopAutoplay() {
@@ -30,15 +70,15 @@ function stopAutoplay() {
 
 function restartAutoplayAfterDelay() {
   stopAutoplay();
-  if (autoPlayTimout.value) {
-    clearTimeout(autoPlayTimout.value);
+  if (autoPlayTimeout.value) {
+    clearTimeout(autoPlayTimeout.value);
   }
   isUserInteracting.value = true;
 
-  autoPlayTimout.value = setTimeout(() => {
+  autoPlayTimeout.value = setTimeout(() => {
     isUserInteracting.value = false;
     startAutoplay();
-  }, userInteractionDelay);
+  }, USER_INTERACTION_DELAY);
 }
 
 async function nextImageWithDelay() {
@@ -60,7 +100,7 @@ async function nextImage() {
 
   isTransitioning.value = true;
 
-  await new Promise((resolve) => setTimeout(resolve, 400));
+  await new Promise((resolve) => setTimeout(resolve, TRANSITION_DURATION));
 
   currentImageIndex.value = (currentImageIndex.value + 1) % images.length;
 
@@ -74,7 +114,7 @@ async function prevImage() {
 
   isTransitioning.value = true;
 
-  await new Promise((resolve) => setTimeout(resolve, 400));
+  await new Promise((resolve) => setTimeout(resolve, TRANSITION_DURATION));
 
   currentImageIndex.value =
     currentImageIndex.value === 0
@@ -91,7 +131,7 @@ async function goToImage(index: number) {
 
   isTransitioning.value = true;
 
-  await new Promise((resolve) => setTimeout(resolve, 400));
+  await new Promise((resolve) => setTimeout(resolve, TRANSITION_DURATION));
 
   currentImageIndex.value = index;
 
@@ -155,6 +195,7 @@ onUnmounted(() => clearInterval(autoplayInterval.value));
               color: rgb(0, 0, 0, 0.8);
               font-weight: 200;
               text-align: justify;
+              line-height: 1.5;
             "
             >O Portal Control é um projeto em desenvolvimento que reúne recursos
             essenciais do desenvolvimento web, como banco de dados em tempo
@@ -199,92 +240,95 @@ onUnmounted(() => clearInterval(autoplayInterval.value));
             </div>
           </div>
         </div>
-        <div class="right-side">
-          <span style="font-weight: 600">Tecnologias:</span>
-          <div class="tech-imgs">
-            <a href="https://vuejs.org/" target="_blank">
-              <img
-                class="tech-item"
-                src="../assets/vues.svg"
-                alt=""
-                title="Vue3"
-            /></a>
-            <a href="https://nestjs.com/" target="_blank"
-              ><img
-                class="tech-item"
-                src="../assets/nestjs.svg"
-                alt=""
-                title="NestJS"
-            /></a>
-            <a href="https://www.postgresql.org/" target="_blank"
-              ><img
-                class="tech-item"
-                src="../assets/psql.svg"
-                alt=""
-                title="PostgreSQL"
-            /></a>
-            <a
-              href="https://www.prisma.io/?via=anh&gad_source=1&gad_campaignid=23230812950&gbraid=0AAAABB9xcA9Cu43OOHsJ2AuDPIPUoUSl0&gclid=Cj0KCQiArOvIBhDLARIsAPwJXOYnmTFiSjfmfpQvOLl0cMaSxcOSkr8S7oZQJGcCvh60_8J-DIG5_aUaAiTjEALw_wcB"
-              target="_blank"
-            >
-              <img
-                class="tech-item"
-                src="../assets/prisma.svg"
-                alt=""
-                title="Prisma ORM"
-            /></a>
-            <a href="https://www.docker.com/" target="_blank"
-              ><img
-                class="tech-item"
-                src="../assets/docker.svg"
-                alt=""
-                title="Docker"
-            /></a>
-            <a href="https://casl.js.org/v6/en/" target="_blank"
-              ><img
-                class="tech-item"
-                src="../assets/casl.png"
-                alt=""
-                title="CASL Permissions"
-            /></a>
+        <div class="right-class-side">
+          
+          <div class="right-side">
+            <span style="font-weight: 600">Tecnologias:</span>
+            <div class="tech-imgs">
+              <a href="https://vuejs.org/" target="_blank">
+                <img
+                  class="tech-item"
+                  src="../assets/vues.svg"
+                  alt=""
+                  title="Vue3"
+              /></a>
+              <a href="https://nestjs.com/" target="_blank"
+                ><img
+                  class="tech-item"
+                  src="../assets/nestjs.svg"
+                  alt=""
+                  title="NestJS"
+              /></a>
+              <a href="https://www.postgresql.org/" target="_blank"
+                ><img
+                  class="tech-item"
+                  src="../assets/psql.svg"
+                  alt=""
+                  title="PostgreSQL"
+              /></a>
+              <a
+                href="https://www.prisma.io/?via=anh&gad_source=1&gad_campaignid=23230812950&gbraid=0AAAABB9xcA9Cu43OOHsJ2AuDPIPUoUSl0&gclid=Cj0KCQiArOvIBhDLARIsAPwJXOYnmTFiSjfmfpQvOLl0cMaSxcOSkr8S7oZQJGcCvh60_8J-DIG5_aUaAiTjEALw_wcB"
+                target="_blank"
+              >
+                <img
+                  class="tech-item"
+                  src="../assets/prisma.svg"
+                  alt=""
+                  title="Prisma ORM"
+              /></a>
+              <a href="https://www.docker.com/" target="_blank"
+                ><img
+                  class="tech-item"
+                  src="../assets/docker.svg"
+                  alt=""
+                  title="Docker"
+              /></a>
+              <a href="https://casl.js.org/v6/en/" target="_blank"
+                ><img
+                  class="tech-item"
+                  src="../assets/casl.png"
+                  alt=""
+                  title="CASL Permissions"
+              /></a>
+            </div>
+            
+          </div>
+          <div class="processing-feature">
+            <span style="display: flex; align-items: center; gap: 10px;"> <div class="rec"></div>Em processo atualmente:</span>
+            <div class="processing-item">
+              <span class="item-p"> <Asterisk/> Dashboard</span>
+              <span class="item-p"> <Asterisk/>  Alteração no campo endereço</span>
+            </div>
           </div>
         </div>
       </div>
       <div class="modal-steps">
         <div class="column-infos">
-          <div class="column-info">
-            <FolderCode class="icon-guide" />
-            <span class="text-guide"
-              >Clone os
-              <a
-                href="https://github.com/GuilhermeFrance?tab=repositories"
-                target="_blank"
-                style="text-decoration: none; color: white; font-weight: 700"
-                >repositórios</a
-              ></span
-            >
-            <span> Rode npm install</span>
-          </div>
-          <div class="column-info">
-            <Dices />
-            <span>Teste</span>
-            <span
-              >Lorem ipsum dolor sit amet consectetur adipisicing elit.
-              Distinctio praesentium commodi delectus cupiditate, aut sapiente
-              provident ipsum veniam, officia vel, et veritatis nihil
-              dignissimos sed accusantium rerum animi ullam expedita.</span
-            >
-          </div>
-          <div class="column-info">
-            <Dices />
-            <span>Teste</span>
-            <span
-              >Lorem ipsum dolor sit amet consectetur adipisicing elit.
-              Distinctio praesentium commodi delectus cupiditate, aut sapiente
-              provident ipsum veniam, officia vel, et veritatis nihil
-              dignissimos sed accusantium rerum animi ullam expedita.</span
-            >
-          </div>
+          <template v-for="(step, index) in guideSteps" :key="step.title">
+            <div class="column-info">
+              <component :is="step.icon" class="icon-guide" />
+              <div class="guide">
+                <span
+                  class="text-guide"
+                  v-html="
+                    step.title === 'Clone os repositórios'
+                      ? `Clone os <a href='https://github.com/GuilhermeFrance?tab=repositories' target='_blank' style='text-decoration: none; color: white; font-weight: 700'>repositórios</a>`
+                      : step.title === 'Rode o Prisma Studio'
+                      ? `Rode o <a style='font-weight: 700; text-decoration: none; color: white;' target='_blank' href='https://www.prisma.io/studio'>Prisma Studio</a>`
+                      : step.title.replace(
+                          'testar',
+                          '<span style=\'font-weight: 700;\'>testar</span>'
+                        )
+                  "
+                ></span>
+                <span v-html="step.description"></span>
+                <span class="code-text">{{ step.code }}</span>
+              </div>
+            </div>
+            <div v-if="index < guideSteps.length - 1" class="arrow-guide">
+              <ChevronRight />
+            </div>
+          </template>
         </div>
       </div>
     </div>
@@ -295,19 +339,19 @@ onUnmounted(() => clearInterval(autoplayInterval.value));
 .main {
   display: flex;
   flex-direction: column;
-  background-color: rgb(255, 255, 255);
+  background-color: #fafafa;
   scale: 1;
   justify-content: center;
   align-items: center;
   gap: 60px;
   align-content: center;
   height: 100vh;
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
 }
 .main-infos {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-
   width: 1700px;
   margin-top: 120px;
 }
@@ -324,12 +368,9 @@ onUnmounted(() => clearInterval(autoplayInterval.value));
   justify-content: center;
   width: 100%;
   z-index: 1000;
-
   align-items: center;
-
   background-color: rgb(255, 255, 255);
   height: 80px;
-  /* box-shadow: 2px 2px 2px rgb(235, 235, 235); */
   box-sizing: border-box;
 }
 .header-itens {
@@ -374,7 +415,7 @@ onUnmounted(() => clearInterval(autoplayInterval.value));
   height: 420px;
   border-radius: 15px;
   overflow: hidden;
-  box-shadow: 0 8px 32px rgba(0, 17, 255, 0.1);
+  box-shadow: 0px 12px 32px rgba(83, 83, 83, 0.1);
 }
 .carousel-container {
   position: relative;
@@ -440,7 +481,13 @@ onUnmounted(() => clearInterval(autoplayInterval.value));
   gap: 8px;
   z-index: 10;
 }
-
+.right-class-side {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 50px;
+}
 .right-side {
   display: flex;
   flex-direction: column;
@@ -450,11 +497,50 @@ onUnmounted(() => clearInterval(autoplayInterval.value));
   align-content: center;
   align-items: center;
   padding: 10px;
-  width: 200px;
-  height: 250px;
+  width: 300px;
+  height: 200px;
   border-radius: 30px;
   box-shadow: 0px 2px 32px 4px rgba(221, 221, 221, 0.5);
   background-color: #000000;
+}
+.rec{
+  width: 10px;
+  height: 10px;
+  background-color: rgb(0, 196, 0);
+  animation-name: RecAnimation;
+  animation-duration: 1.5s;
+  animation-iteration-count: infinite;
+  border-radius: 50%;
+  opacity: 100%;
+}
+@keyframes RecAnimation{
+  0% {opacity: 0%;}
+  50% {opacity: 100%;}
+  100% {opacity: 0%;}
+}
+.processing-feature {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+  width: 290px;
+  gap: 10px;
+  border-radius: 20px;
+  background-color: rgb(250, 250, 250);
+  border: 1px solid rgba(128, 128, 128, 0.062);
+  box-shadow: 2px 2px 32px 2px rgba(202, 202, 202, 0.281);
+  height: 140px;
+}
+.processing-item{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.item-p{
+  display: flex;
+  align-items: center;
+  color: rgb(59, 59, 59);
+  font-weight: 600;
 }
 .tech-item {
   width: 44px;
@@ -470,15 +556,20 @@ onUnmounted(() => clearInterval(autoplayInterval.value));
   border-radius: 6px;
   filter: contrast(1);
 }
-.tech-item:hover {
-  color: rgb(212, 212, 212);
-  font-weight: 600;
+.arrow-guide {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 171px;
+  color: white;
 }
+
 .tech-imgs {
   display: flex;
   flex-direction: row;
   justify-content: center;
-  max-width: 150px;
+  max-width: 200px;
   flex-wrap: wrap;
   gap: 10px;
 }
@@ -544,14 +635,27 @@ onUnmounted(() => clearInterval(autoplayInterval.value));
 }
 .column-infos {
   display: flex;
+  align-items: flex-start;
   gap: 120px;
 }
 .column-info {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   display: flex;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 10px;
   flex-direction: column;
-
-  width: 300px;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  height: 181px;
+  max-width: 300px;
   color: white;
+  transition: 0.3s ease;
+}
+.column-info:hover {
+  transform: translateY(-3px);
 }
 .icon-guide {
   width: 40px;
@@ -560,20 +664,145 @@ onUnmounted(() => clearInterval(autoplayInterval.value));
 .text-guide {
   font-size: 18px;
 }
+.guide {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  gap: 10px;
+  max-width: 260px;
+  word-wrap: break-word;
+  word-break: break-all;
+  overflow-wrap: break-word;
+}
+.code-text {
+  font-family: "Google Sans Code", sans-serif;
+  background-color: rgb(46, 46, 46);
+  padding: 10px;
+  padding-left: 20px;
+  border-radius: 8px;
+}
 .btn-letsgo {
   background-color: #3633ff;
   color: whitesmoke;
   text-align: center;
   text-decoration: none;
   border: 1px solid blue;
-  width: 120px;
-  padding: 12px;
+  font-size: 18px;
+  width: 130px;
+  padding: 14px;
   border-radius: 30px;
-  transition: 0.6s;
+  transition: all 0.4s ease;
 }
 .btn-letsgo:hover {
+  transform: translateY(-4px);
   color: white;
   font-weight: 600;
-  box-shadow: 0 8px 32px 2px rgba(0, 17, 255, 0.7);
+  box-shadow: 0 8px 32px 2px rgba(0, 17, 255, 0.322);
+}
+
+/* Getting Started Section */
+.getting-started {
+  background: linear-gradient(135deg, #3633ff 0%, #7a32ff 100%);
+  margin: 4rem 0;
+  padding: 4rem 2rem;
+  border-radius: 2rem;
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.steps-container {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.step-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 1rem;
+  padding: 2rem;
+  color: white;
+  flex: 1;
+  max-width: 300px;
+  transition: transform 0.3s ease;
+}
+
+.step-card:hover {
+  transform: translateY(-5px);
+}
+
+.step-icon {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 1rem;
+  color: #fff;
+}
+
+.step-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  margin-top: 0;
+}
+
+.step-title :deep(.repo-link) {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.5);
+  transition: border-color 0.3s ease;
+}
+
+.step-title :deep(.repo-link):hover {
+  border-color: #fff;
+}
+
+.step-description {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  opacity: 0.9;
+}
+
+.step-code {
+  background: rgba(0, 0, 0, 0.3);
+  color: #fff;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  font-family: "JetBrains Mono", "Fira Code", monospace;
+  font-size: 0.9rem;
+  display: block;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.step-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.8);
+  margin-top: 3rem;
+}
+
+.step-arrow svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .steps-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .step-arrow {
+    transform: rotate(90deg);
+    margin: 1rem 0;
+  }
 }
 </style>
