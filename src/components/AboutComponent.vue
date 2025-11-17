@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ChevronLeft, ChevronRight, Dices } from "lucide-vue-next";
+import { ChevronLeft, ChevronRight, Dices, FolderCode } from "lucide-vue-next";
 import { ref, onMounted, onUnmounted } from "vue";
 import imgPreview1 from "../assets/img-preview.png";
 import imgPreview2 from "../assets/img-preview2.png";
@@ -114,7 +114,15 @@ onUnmounted(() => clearInterval(autoplayInterval.value));
         <div class="auth-side">
           <RouterLink class="sigin-btn" to="/Login">Entrar</RouterLink>
           <RouterLink class="signup-btn" to="/signup">Registre-se</RouterLink>
-          <div style="display: flex; align-items: center; width: 120px; justify-content: flex-start; gap: 10px;">
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              width: 120px;
+              justify-content: flex-end;
+              gap: 10px;
+            "
+          >
             <a
               target="_blank"
               href="https://github.com/GuilhermeFrance?tab=repositories"
@@ -122,7 +130,7 @@ onUnmounted(() => clearInterval(autoplayInterval.value));
             /></a>
             <a
               target="_blank"
-              href="https://github.com/GuilhermeFrance?tab=repositories"
+              href="https://www.linkedin.com/in/guilherme-france-de-oliveira-santos-9435aa360/"
               ><img class="kedin-logo" src="../assets/kedin.png" alt=""
             /></a>
           </div>
@@ -135,20 +143,17 @@ onUnmounted(() => clearInterval(autoplayInterval.value));
           <span
             style="
               font-family: 'Inter', sans-serif;
-              font-size: 56px;
+              font-size: 50px;
               font-weight: 600;
             "
             >Simples, rápido e prático.</span
           >
-          <span style="font-size: 22px"
-            >Lorem ipsum dolor sit amet consectetur adipisicing elit. Possimus
-            deleniti saepe a consequuntur odio dignissimos accusamus voluptatum,
-            fugit nobis cumque aut molestias maiores assumenda, asperiores
-            adipisci. Harum nisi quis excepturi.</span
+          <span style="font-size: 20px; font-family: 'Inter', sans-serif; color: rgb(0, 0, 0, 0.8); font-weight: 200; text-align: justify;"
+            >O Portal Control é um projeto em desenvolvimento que reúne recursos essenciais do desenvolvimento web, como banco de dados em tempo real, autenticação e autorização, servindo como um repositório prático de aprendizado para quem deseja evoluir do nível básico ao intermediário.</span
           >
-          <RouterLink class="btn-letsgo" to="/signup">Vamos lá</RouterLink>
+          <RouterLink class="btn-letsgo" to="/signup">Vamos lá!</RouterLink>
         </div>
-        <div class="rigth-side">
+        <div class="center-side">
           <div class="img-layout">
             <div class="carousel-container">
               <img
@@ -183,17 +188,56 @@ onUnmounted(() => clearInterval(autoplayInterval.value));
             </div>
           </div>
         </div>
+        <div class="right-side">
+          <span style="font-weight: 600">Tecnologias:</span>
+          <div class="tech-imgs">
+            <a href="https://vuejs.org/" target="_blank">  <img
+              class="tech-item"
+              src="../assets/vues.svg"
+              alt=""
+              title="Vue3"
+            /></a>
+           <a href="https://nestjs.com/" target="_blank"><img
+              class="tech-item"
+              src="../assets/nestjs.svg"
+              alt=""
+              title="NestJS"
+            /></a>
+            <a href="https://www.postgresql.org/" target="_blank"><img
+              class="tech-item"
+              src="../assets/psql.svg"
+              alt=""
+              title="PostgreSQL"
+            /></a>
+            <a href="https://www.prisma.io/?via=anh&gad_source=1&gad_campaignid=23230812950&gbraid=0AAAABB9xcA9Cu43OOHsJ2AuDPIPUoUSl0&gclid=Cj0KCQiArOvIBhDLARIsAPwJXOYnmTFiSjfmfpQvOLl0cMaSxcOSkr8S7oZQJGcCvh60_8J-DIG5_aUaAiTjEALw_wcB" target="_blank"> <img
+              class="tech-item"
+              src="../assets/prisma.svg"
+              alt=""
+              title="Prisma ORM"
+            /></a>
+           <a href="https://www.docker.com/" target="_blank"><img
+              class="tech-item"
+              src="../assets/docker.svg"
+              alt=""
+              title="Docker"
+            /></a>
+            <a href="https://casl.js.org/v6/en/" target="_blank"><img
+              class="tech-item"
+              src="../assets/casl.png"
+              alt=""
+              title="CASL Permissions"
+            /></a>
+            
+          </div>
+        </div>
       </div>
       <div class="modal-steps">
         <div class="column-infos">
           <div class="column-info">
-            <Dices />
-            <span>Teste</span>
+            <FolderCode class="icon-guide" />
+            <span>Clone o <a href="" style="text-decoration: none; color: white; font-weight: 700;">repositório</a></span>
             <span
-              >Lorem ipsum dolor sit amet consectetur adipisicing elit.
-              Distinctio praesentium commodi delectus cupiditate, aut sapiente
-              provident ipsum veniam, officia vel, et veritatis nihil
-              dignissimos sed accusantium rerum animi ullam expedita.</span
+              ></span
             >
           </div>
           <div class="column-info">
@@ -227,7 +271,7 @@ onUnmounted(() => clearInterval(autoplayInterval.value));
   display: flex;
   flex-direction: column;
   background-color: rgb(255, 255, 255);
-
+  scale: 1;
   justify-content: center;
   align-items: center;
   gap: 60px;
@@ -237,14 +281,15 @@ onUnmounted(() => clearInterval(autoplayInterval.value));
 .main-infos {
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
-  gap: 180px;
+  justify-content: space-between;
+
   width: 1700px;
   margin-top: 120px;
 }
 .left-side {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   width: 400px;
   gap: 30px;
 }
@@ -352,13 +397,13 @@ onUnmounted(() => clearInterval(autoplayInterval.value));
   left: 15px;
 }
 .carousel-btn-prev:hover {
-  background-color: #0063bf;
+  background-color: #3633ff;
 }
 .carousel-btn-next {
   right: 15px;
 }
 .carousel-btn-next:hover {
-  background-color: #0063bf;
+  background-color: #3633ff;
 }
 
 .carousel-indicators {
@@ -369,6 +414,48 @@ onUnmounted(() => clearInterval(autoplayInterval.value));
   display: flex;
   gap: 8px;
   z-index: 10;
+}
+
+.right-side {
+  display: flex;
+  flex-direction: column;
+  color: white;
+  justify-content: flex-start;
+  gap: 20px;
+  align-content: center;
+  align-items: center;
+  padding: 10px;
+  width: 200px;
+  height: 250px;
+  border-radius: 30px;
+  box-shadow: 0px 2px 32px 4px rgba(221, 221, 221, 0.5);
+  background-color: #000000;
+}
+.tech-item {
+  width: 44px;
+  padding: 4px 6px;
+  border-radius: 6px;
+  filter: contrast(0);
+  transition: 0.4s;
+  cursor: pointer;
+}
+.tech-item:hover {
+  width: 44px;
+  padding: 4px 6px;
+  border-radius: 6px;
+  filter: contrast(1);
+}
+.tech-item:hover {
+  color: rgb(212, 212, 212);
+  font-weight: 600;
+}
+.tech-imgs {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  max-width: 150px;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .indicator {
@@ -440,6 +527,10 @@ onUnmounted(() => clearInterval(autoplayInterval.value));
 
   width: 300px;
   color: white;
+}
+.icon-guide{
+  width: 40px;
+  height: 30px;
 }
 .btn-letsgo {
   background-color: #3633ff;
