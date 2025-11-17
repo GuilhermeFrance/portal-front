@@ -44,7 +44,7 @@ const router = createRouter({
     },
     {
       path: "/",
-      redirect: { name: "Login" },
+      redirect: { name: "About" },
     },
     {
       path: "/app",

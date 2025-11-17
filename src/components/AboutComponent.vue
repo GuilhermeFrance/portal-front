@@ -5,7 +5,7 @@ import imgPreview1 from "../assets/img-preview.png";
 import imgPreview2 from "../assets/img-preview2.png";
 import imgPreview3 from "../assets/img-preview3.png";
 
-const autoPlayTimout = ref<number | undefined>(undefined)
+const autoPlayTimout = ref<number | undefined>(undefined);
 const autoplayInterval = ref<number | undefined>(undefined);
 const currentImageIndex = ref(0);
 const isTransitioning = ref(false);
@@ -22,39 +22,38 @@ function startAutoplay() {
 }
 
 function stopAutoplay() {
-if(autoplayInterval.value) {
-  clearInterval(autoplayInterval.value)
-  autoplayInterval.value = undefined
-}
+  if (autoplayInterval.value) {
+    clearInterval(autoplayInterval.value);
+    autoplayInterval.value = undefined;
+  }
 }
 
-function restartAutoplayAfterDelay(){
-  stopAutoplay()
-  if(autoPlayTimout.value) {
-    clearTimeout(autoPlayTimout.value)
+function restartAutoplayAfterDelay() {
+  stopAutoplay();
+  if (autoPlayTimout.value) {
+    clearTimeout(autoPlayTimout.value);
   }
   isUserInteracting.value = true;
 
   autoPlayTimout.value = setTimeout(() => {
-    isUserInteracting.value = false; 
-    startAutoplay()
-  }, userInteractionDelay)
+    isUserInteracting.value = false;
+    startAutoplay();
+  }, userInteractionDelay);
 }
 
-async function nextImageWithDelay(){
-  restartAutoplayAfterDelay()
-  return nextImage()
+async function nextImageWithDelay() {
+  restartAutoplayAfterDelay();
+  return nextImage();
 }
 
-async function prevImageWithDelay(){
-  restartAutoplayAfterDelay()
-  return prevImage()
+async function prevImageWithDelay() {
+  restartAutoplayAfterDelay();
+  return prevImage();
 }
-async function goToImageWithDelay(index: number){
-  restartAutoplayAfterDelay()
-  return goToImage(index)
+async function goToImageWithDelay(index: number) {
+  restartAutoplayAfterDelay();
+  return goToImage(index);
 }
-
 
 async function nextImage() {
   if (isTransitioning.value) return;
@@ -110,12 +109,23 @@ onUnmounted(() => clearInterval(autoplayInterval.value));
     <header class="header-about">
       <div class="header-itens">
         <div>
-          <img  src="../assets/logo-portal.png" style="width: 300px" alt="" />
+          <img src="../assets/logo-portal.png" style="width: 300px" alt="" />
         </div>
         <div class="auth-side">
           <RouterLink class="sigin-btn" to="/Login">Entrar</RouterLink>
           <RouterLink class="signup-btn" to="/signup">Registre-se</RouterLink>
-          <a target="_blank" href="https://github.com/GuilhermeFrance?tab=repositories"><img class="gith-logo"" src="../assets/github.svg" alt=""></a>
+          <div style="display: flex; align-items: center; width: 120px; justify-content: flex-start; gap: 10px;">
+            <a
+              target="_blank"
+              href="https://github.com/GuilhermeFrance?tab=repositories"
+              ><img class="gith-logo" src="../assets/github.svg" alt=""
+            /></a>
+            <a
+              target="_blank"
+              href="https://github.com/GuilhermeFrance?tab=repositories"
+              ><img class="kedin-logo" src="../assets/kedin.png" alt=""
+            /></a>
+          </div>
         </div>
       </div>
     </header>
@@ -147,17 +157,23 @@ onUnmounted(() => clearInterval(autoplayInterval.value));
                 :alt="`Preview ${currentImageIndex + 1}`"
                 :class="['carousel-image', { transitioning: isTransitioning }]"
               />
-              <button @click="prevImageWithDelay" class="carousel-btn carousel-btn-prev">
-                 <ChevronLeft />
+              <button
+                @click="prevImageWithDelay"
+                class="carousel-btn carousel-btn-prev"
+              >
+                <ChevronLeft />
               </button>
-              <button @click="nextImageWithDelay" class="carousel-btn carousel-btn-next">
-                 <ChevronRight />
+              <button
+                @click="nextImageWithDelay"
+                class="carousel-btn carousel-btn-next"
+              >
+                <ChevronRight />
               </button>
               <div class="carousel-indicators">
                 <button
                   v-for="(_, index) in images"
                   :key="index"
-                  @click="goToImageWithDelay(index) "
+                  @click="goToImageWithDelay(index)"
                   :class="[
                     'indicator',
                     { active: index === currentImageIndex },
@@ -267,12 +283,20 @@ onUnmounted(() => clearInterval(autoplayInterval.value));
   border-radius: 30px;
   height: 260px;
 }
-.gith-logo{
+.gith-logo {
   width: 40px;
   filter: contrast(0%);
   transition: 0.3s ease;
 }
-.gith-logo:hover{
+.gith-logo:hover {
+  filter: contrast(100%);
+}
+.kedin-logo {
+  width: 45px;
+  filter: contrast(0%);
+  transition: 0.3s ease;
+}
+.kedin-logo:hover {
   filter: contrast(100%);
 }
 .img-layout {
@@ -320,9 +344,8 @@ onUnmounted(() => clearInterval(autoplayInterval.value));
   opacity: 0;
   transition: 0.5s;
 }
-.img-layout:hover .carousel-btn{
+.img-layout:hover .carousel-btn {
   opacity: 1;
-
 }
 
 .carousel-btn-prev {
@@ -362,10 +385,11 @@ onUnmounted(() => clearInterval(autoplayInterval.value));
 }
 
 .auth-side {
-  width: 250px;
+  width: 340px;
   display: flex;
   height: 40px;
   justify-content: space-between;
+  align-items: center;
 }
 .header-div {
   display: flex;
@@ -428,7 +452,7 @@ onUnmounted(() => clearInterval(autoplayInterval.value));
   border-radius: 30px;
   transition: 0.6s;
 }
-.btn-letsgo:hover{
+.btn-letsgo:hover {
   color: white;
   font-weight: 600;
   box-shadow: 0 8px 32px 2px rgba(0, 17, 255, 0.7);
