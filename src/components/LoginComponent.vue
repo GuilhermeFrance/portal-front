@@ -37,7 +37,7 @@ async function handleSubmit() {
 
 async function redirect() {
   const q = route.query.redirect as string;
-  const r = typeof q === "string" && q.startsWith("/") ? q : "/";
+  const r = typeof q === "string" && q.startsWith("/inicio") ? q : "/inicio";
   await router.replace(r);
 }
 </script>

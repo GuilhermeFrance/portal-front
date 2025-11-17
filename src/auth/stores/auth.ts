@@ -87,7 +87,7 @@ export const useAuthStore = defineStore("auth",  () => {
       console.log(decodedPayload.value)
       console.log(response);
       alertStore.showAlert(`Login feito com sucesso`, "success", 3000);
-      await router.push({ name: "home" });
+      await router.push({ name: "inicio" });
 
       console.log("Login feito com sucesso!");
     } catch (error: any) {
@@ -153,7 +153,7 @@ export const useAuthStore = defineStore("auth",  () => {
       alerts.value = null;
 
       console.log("Logout realizado com sucesso!");
-      await router.push({ name: "Login" });
+      await router.push({ name: "About" });
     } catch (error) {
       console.error("Erro ao fazer logout", error);
     } finally {

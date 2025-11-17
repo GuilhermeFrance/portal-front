@@ -148,8 +148,19 @@ onUnmounted(() => clearInterval(autoplayInterval.value));
             "
             >Simples, rápido e prático.</span
           >
-          <span style="font-size: 20px; font-family: 'Inter', sans-serif; color: rgb(0, 0, 0, 0.8); font-weight: 200; text-align: justify;"
-            >O Portal Control é um projeto em desenvolvimento que reúne recursos essenciais do desenvolvimento web, como banco de dados em tempo real, autenticação e autorização, servindo como um repositório prático de aprendizado para quem deseja evoluir do nível básico ao intermediário.</span
+          <span
+            style="
+              font-size: 20px;
+              font-family: 'Inter', sans-serif;
+              color: rgb(0, 0, 0, 0.8);
+              font-weight: 200;
+              text-align: justify;
+            "
+            >O Portal Control é um projeto em desenvolvimento que reúne recursos
+            essenciais do desenvolvimento web, como banco de dados em tempo
+            real, autenticação e autorização, servindo como um repositório
+            prático de aprendizado para quem deseja evoluir do nível básico ao
+            intermediário.</span
           >
           <RouterLink class="btn-letsgo" to="/signup">Vamos lá!</RouterLink>
         </div>
@@ -191,43 +202,51 @@ onUnmounted(() => clearInterval(autoplayInterval.value));
         <div class="right-side">
           <span style="font-weight: 600">Tecnologias:</span>
           <div class="tech-imgs">
-            <a href="https://vuejs.org/" target="_blank">  <img
-              class="tech-item"
-              src="../assets/vues.svg"
-              alt=""
-              title="Vue3"
+            <a href="https://vuejs.org/" target="_blank">
+              <img
+                class="tech-item"
+                src="../assets/vues.svg"
+                alt=""
+                title="Vue3"
             /></a>
-           <a href="https://nestjs.com/" target="_blank"><img
-              class="tech-item"
-              src="../assets/nestjs.svg"
-              alt=""
-              title="NestJS"
+            <a href="https://nestjs.com/" target="_blank"
+              ><img
+                class="tech-item"
+                src="../assets/nestjs.svg"
+                alt=""
+                title="NestJS"
             /></a>
-            <a href="https://www.postgresql.org/" target="_blank"><img
-              class="tech-item"
-              src="../assets/psql.svg"
-              alt=""
-              title="PostgreSQL"
+            <a href="https://www.postgresql.org/" target="_blank"
+              ><img
+                class="tech-item"
+                src="../assets/psql.svg"
+                alt=""
+                title="PostgreSQL"
             /></a>
-            <a href="https://www.prisma.io/?via=anh&gad_source=1&gad_campaignid=23230812950&gbraid=0AAAABB9xcA9Cu43OOHsJ2AuDPIPUoUSl0&gclid=Cj0KCQiArOvIBhDLARIsAPwJXOYnmTFiSjfmfpQvOLl0cMaSxcOSkr8S7oZQJGcCvh60_8J-DIG5_aUaAiTjEALw_wcB" target="_blank"> <img
-              class="tech-item"
-              src="../assets/prisma.svg"
-              alt=""
-              title="Prisma ORM"
+            <a
+              href="https://www.prisma.io/?via=anh&gad_source=1&gad_campaignid=23230812950&gbraid=0AAAABB9xcA9Cu43OOHsJ2AuDPIPUoUSl0&gclid=Cj0KCQiArOvIBhDLARIsAPwJXOYnmTFiSjfmfpQvOLl0cMaSxcOSkr8S7oZQJGcCvh60_8J-DIG5_aUaAiTjEALw_wcB"
+              target="_blank"
+            >
+              <img
+                class="tech-item"
+                src="../assets/prisma.svg"
+                alt=""
+                title="Prisma ORM"
             /></a>
-           <a href="https://www.docker.com/" target="_blank"><img
-              class="tech-item"
-              src="../assets/docker.svg"
-              alt=""
-              title="Docker"
+            <a href="https://www.docker.com/" target="_blank"
+              ><img
+                class="tech-item"
+                src="../assets/docker.svg"
+                alt=""
+                title="Docker"
             /></a>
-            <a href="https://casl.js.org/v6/en/" target="_blank"><img
-              class="tech-item"
-              src="../assets/casl.png"
-              alt=""
-              title="CASL Permissions"
+            <a href="https://casl.js.org/v6/en/" target="_blank"
+              ><img
+                class="tech-item"
+                src="../assets/casl.png"
+                alt=""
+                title="CASL Permissions"
             /></a>
-            
           </div>
         </div>
       </div>
@@ -235,10 +254,16 @@ onUnmounted(() => clearInterval(autoplayInterval.value));
         <div class="column-infos">
           <div class="column-info">
             <FolderCode class="icon-guide" />
-            <span>Clone o <a href="" style="text-decoration: none; color: white; font-weight: 700;">repositório</a></span>
-            <span
+            <span class="text-guide"
+              >Clone os
+              <a
+                href="https://github.com/GuilhermeFrance?tab=repositories"
+                target="_blank"
+                style="text-decoration: none; color: white; font-weight: 700"
+                >repositórios</a
               ></span
             >
+            <span> Rode npm install</span>
           </div>
           <div class="column-info">
             <Dices />
@@ -528,9 +553,12 @@ onUnmounted(() => clearInterval(autoplayInterval.value));
   width: 300px;
   color: white;
 }
-.icon-guide{
+.icon-guide {
   width: 40px;
   height: 30px;
+}
+.text-guide {
+  font-size: 18px;
 }
 .btn-letsgo {
   background-color: #3633ff;

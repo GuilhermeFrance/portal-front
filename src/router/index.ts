@@ -57,7 +57,7 @@ const router = createRouter({
       children: [
         {
           path: "/inicio",
-          name: "home",
+          name: "inicio",
           component: HomePage,
           meta: {
             requiresAuth: true,
@@ -137,7 +137,7 @@ router.beforeEach(async (to) => {
     return {name: 'Login', query: {redirect: to.fullPath}}
   }
   if(authStore.token && to.name === 'Login'){
-    const redirect = (to.query.redirect as string) ?? { name: 'home'}
+    const redirect = (to.query.redirect as string) ?? { name: 'inicio'}
     return redirect;
   }
   const getBadgeAdmin = authStore.hasBadge('admin')

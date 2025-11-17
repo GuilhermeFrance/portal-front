@@ -54,15 +54,20 @@ function formatString(text: string | undefined, maxLength: number) {
           <div class="on-side"></div
         ></RouterLink>
       </div>
-      <div>
-        <RouterLink to="/perfil" class="side-item-last">
-          <div style="display: flex; align-items: center; gap: 10px">
-            <img class="side-bar-icon" :src="handleUrlImage()" />
-            <span>{{ authStore.currentUser?.firstName }}</span>
-          </div>
-          <LogOut class="logout-icon" @click.stop="handleLogout" />
-        </RouterLink>
+      <div class="side-item-last">
+    <!-- Área clicável para perfil -->
+    <RouterLink to="/perfil" class="profile-link">
+      <div style="display: flex; align-items: center; gap: 10px">
+        <img class="side-bar-icon" :src="handleUrlImage()" />
+        <span>{{ authStore.currentUser?.firstName }}</span>
       </div>
+    </RouterLink>
+    
+    <!-- Botão separado para logout -->
+    <button class="logout-btn" @click="handleLogout">
+      <LogOut class="logout-icon" />
+    </button>
+  </div>
     </div>
   </div>
 </template>
@@ -86,19 +91,27 @@ function formatString(text: string | undefined, maxLength: number) {
 }
 .side-item-last {
   display: flex;
-  color: black;
-  text-decoration: none;
   align-items: center;
-  flex-direction: row;
-  align-items: center;
-  gap: 12px;
   justify-content: space-between;
   padding-left: 20px;
+  padding-right: 20px;
   height: 50px;
-  border: 1px solid rgb(255, 255, 255);
-  padding-right: 0px;
-  transition: 0.3s;
   width: 276px;
+}
+
+.profile-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: black;
+  flex: 1; 
+}
+
+.logout-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
 }
 .side-item-last:hover {
   cursor: pointer;
