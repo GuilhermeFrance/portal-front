@@ -39,6 +39,7 @@ const router = createRouter({
       component: AboutComponent,
       meta: {
         title: "Portal Control",
+        requiresAuth: false,
       },
     },
     {
@@ -105,7 +106,8 @@ const router = createRouter({
           name: "NotFound",
           component: NotFound,
           meta: {
-            title: "404 - Pagina nao encontrada"
+            title: "404 - Pagina nao encontrada",
+            requiresAuth: false,
           }
         },
       ],
@@ -118,14 +120,20 @@ const router = createRouter({
 router.beforeEach(async (to) => {
   const title = to.meta.title as string;
   document.title = title ? title : "Portal";
-  
-  const authStore = useAuthStore();
-  await authStore.initializeAuth();
 
+  const authStore = useAuthStore();
+
+  const isPublicRoute = to.meta.requiresAuth === false;
   const requiresAuth = to.meta.requiresAuth === true;
   const requiresAdminBadge = to.meta.requiresAdminBadge === true;
 
   if(requiresAuth && !authStore.token){
+     await authStore.initializeAuth();
+  }
+    if (isPublicRoute) {
+    return; 
+  }
+   if(requiresAuth && !authStore.token){
     return {name: 'Login', query: {redirect: to.fullPath}}
   }
   if(authStore.token && to.name === 'Login'){

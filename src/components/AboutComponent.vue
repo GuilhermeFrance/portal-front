@@ -1,25 +1,108 @@
 <script setup lang="ts">
-import { Dices } from "lucide-vue-next";
-import { ref } from "vue";
+import { ChevronLeft, ChevronRight, Dices } from "lucide-vue-next";
+import { ref, onMounted, onUnmounted } from "vue";
+import imgPreview1 from "../assets/img-preview.png";
+import imgPreview2 from "../assets/img-preview2.png";
+import imgPreview3 from "../assets/img-preview3.png";
 
+const autoPlayTimout = ref<number | undefined>(undefined)
+const autoplayInterval = ref<number | undefined>(undefined);
 const currentImageIndex = ref(0);
-const images = [
-  "../assets/img-preview.png",
-  "../assets/img-preview2.png",
-  "../assets/img-preview3.png",
-];
-function nextImage() {
-  currentImageIndex.value = (currentImageIndex.value + 1) % images.length;
+const isTransitioning = ref(false);
+
+const isUserInteracting = ref(false);
+const userInteractionDelay = 4000;
+
+const images = [imgPreview1, imgPreview2, imgPreview3];
+
+function startAutoplay() {
+  autoplayInterval.value = setInterval(() => {
+    nextImage();
+  }, 5000);
 }
-function prevImage() {
+
+function stopAutoplay() {
+if(autoplayInterval.value) {
+  clearInterval(autoplayInterval.value)
+  autoplayInterval.value = undefined
+}
+}
+
+function restartAutoplayAfterDelay(){
+  stopAutoplay()
+  if(autoPlayTimout.value) {
+    clearTimeout(autoPlayTimout.value)
+  }
+  isUserInteracting.value = true;
+
+  autoPlayTimout.value = setTimeout(() => {
+    isUserInteracting.value = false; 
+    startAutoplay()
+  }, userInteractionDelay)
+}
+
+async function nextImageWithDelay(){
+  restartAutoplayAfterDelay()
+  return nextImage()
+}
+
+async function prevImageWithDelay(){
+  restartAutoplayAfterDelay()
+  return prevImage()
+}
+async function goToImageWithDelay(index: number){
+  restartAutoplayAfterDelay()
+  return goToImage(index)
+}
+
+
+async function nextImage() {
+  if (isTransitioning.value) return;
+
+  isTransitioning.value = true;
+
+  await new Promise((resolve) => setTimeout(resolve, 400));
+
+  currentImageIndex.value = (currentImageIndex.value + 1) % images.length;
+
+  setTimeout(() => {
+    isTransitioning.value = false;
+  }, 50);
+}
+
+async function prevImage() {
+  if (isTransitioning.value) return;
+
+  isTransitioning.value = true;
+
+  await new Promise((resolve) => setTimeout(resolve, 400));
+
   currentImageIndex.value =
     currentImageIndex.value === 0
       ? images.length - 1
       : currentImageIndex.value - 1;
+
+  setTimeout(() => {
+    isTransitioning.value = false;
+  }, 50);
 }
-function goToImage(index: number){
-    currentImageIndex.value = index;
+
+async function goToImage(index: number) {
+  if (isTransitioning.value) return;
+
+  isTransitioning.value = true;
+
+  await new Promise((resolve) => setTimeout(resolve, 400));
+
+  currentImageIndex.value = index;
+
+  setTimeout(() => {
+    isTransitioning.value = false;
+  }, 50);
 }
+
+onMounted(() => startAutoplay());
+onUnmounted(() => clearInterval(autoplayInterval.value));
 </script>
 
 <template>
@@ -27,11 +110,12 @@ function goToImage(index: number){
     <header class="header-about">
       <div class="header-itens">
         <div>
-          <img src="../assets/logo-portal.png" style="width: 200px" alt="" />
+          <img  src="../assets/logo-portal.png" style="width: 300px" alt="" />
         </div>
         <div class="auth-side">
           <RouterLink class="sigin-btn" to="/Login">Entrar</RouterLink>
           <RouterLink class="signup-btn" to="/signup">Registre-se</RouterLink>
+          <a target="_blank" href="https://github.com/GuilhermeFrance?tab=repositories"><img class="gith-logo"" src="../assets/github.svg" alt=""></a>
         </div>
       </div>
     </header>
@@ -57,14 +141,30 @@ function goToImage(index: number){
         <div class="rigth-side">
           <div class="img-layout">
             <div class="carousel-container">
-                <img 
-                v-for="(image, index) in images"
-                :key="index"
-                :src="image"
-                :alt="`Preview ${index + 1}`"
-                :class="['carousel-image', '{ active': index === currentImageIndex }]"/>
+              <img
+                :key="currentImageIndex"
+                :src="images[currentImageIndex]"
+                :alt="`Preview ${currentImageIndex + 1}`"
+                :class="['carousel-image', { transitioning: isTransitioning }]"
+              />
+              <button @click="prevImageWithDelay" class="carousel-btn carousel-btn-prev">
+                 <ChevronLeft />
+              </button>
+              <button @click="nextImageWithDelay" class="carousel-btn carousel-btn-next">
+                 <ChevronRight />
+              </button>
+              <div class="carousel-indicators">
+                <button
+                  v-for="(_, index) in images"
+                  :key="index"
+                  @click="goToImageWithDelay(index) "
+                  :class="[
+                    'indicator',
+                    { active: index === currentImageIndex },
+                  ]"
+                ></button>
+              </div>
             </div>
-            
           </div>
         </div>
       </div>
@@ -121,7 +221,8 @@ function goToImage(index: number){
 .main-infos {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: flex-start;
+  gap: 180px;
   width: 1700px;
   margin-top: 120px;
 }
@@ -166,13 +267,102 @@ function goToImage(index: number){
   border-radius: 30px;
   height: 260px;
 }
-.img-layout {
-  background-color: blue;
-  width: 500px;
-  height: 300px;
+.gith-logo{
+  width: 40px;
+  filter: contrast(0%);
+  transition: 0.3s ease;
 }
+.gith-logo:hover{
+  filter: contrast(100%);
+}
+.img-layout {
+  width: 700px;
+  height: 420px;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 17, 255, 0.1);
+}
+.carousel-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #f0f0f0;
+}
+
+.carousel-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: all 0.5s ease-in-out;
+  opacity: 1;
+  filter: blur(0px);
+}
+
+.carousel-image.transitioning {
+  opacity: 0;
+}
+
+.carousel-btn {
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(114, 114, 114, 0.5);
+  color: white;
+  border: none;
+  padding: 14px 14px;
+  font-size: 18px;
+  cursor: pointer;
+  border-radius: 50%;
+  z-index: 10;
+  opacity: 0;
+  transition: 0.5s;
+}
+.img-layout:hover .carousel-btn{
+  opacity: 1;
+
+}
+
+.carousel-btn-prev {
+  left: 15px;
+}
+.carousel-btn-prev:hover {
+  background-color: #0063bf;
+}
+.carousel-btn-next {
+  right: 15px;
+}
+.carousel-btn-next:hover {
+  background-color: #0063bf;
+}
+
+.carousel-indicators {
+  position: absolute;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 10;
+}
+
+.indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: none;
+  background-color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+}
+
+.indicator.active {
+  background-color: #3633ff;
+}
+
 .auth-side {
-  width: 200px;
+  width: 250px;
   display: flex;
   height: 40px;
   justify-content: space-between;
@@ -236,5 +426,11 @@ function goToImage(index: number){
   width: 120px;
   padding: 12px;
   border-radius: 30px;
+  transition: 0.6s;
+}
+.btn-letsgo:hover{
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 8px 32px 2px rgba(0, 17, 255, 0.7);
 }
 </style>
