@@ -173,7 +173,7 @@ onUnmounted(() => clearInterval(autoplayInterval.value));
             intermediário.</span
           >
           <div class="buttons">
-            <RouterLink class="btn-letsgo" to="/signup">Navegar</RouterLink>
+            <RouterLink class="btn-letsgo" to="/login">Navegar</RouterLink>
             <a
               class="btn-repo"
               href="https://github.com/GuilhermeFrance?tab=repositories"
@@ -374,7 +374,7 @@ onUnmounted(() => clearInterval(autoplayInterval.value));
       <div class="footer-box">
         <a
           target="_blank"
-          href="https://github.com/GuilhermeFrance?tab=repositories"
+          href="https://github.com/GuilhermeFrance"
           title="Github"
           ><img class="gith-logo" src="../assets/github.svg" alt=""
         /></a>
