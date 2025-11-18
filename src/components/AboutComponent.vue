@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import {
-  Asterisk,
   ChevronLeft,
   ChevronRight,
   Dices,
@@ -24,6 +23,10 @@ const USER_INTERACTION_DELAY = 4000;
 const TRANSITION_DURATION = 400;
 
 const images = [imgPreview1, imgPreview2, imgPreview3];
+
+// Scroll animation apenas para modal-steps
+const modalStepsRef = ref(null);
+const isModalStepsVisible = ref(false);
 
 const guideSteps: GuideStep[] = [
   {
@@ -140,8 +143,39 @@ async function goToImage(index: number) {
   }, 50);
 }
 
-onMounted(() => startAutoplay());
-onUnmounted(() => clearInterval(autoplayInterval.value));
+// Intersection Observer para animações on scroll
+let observer: IntersectionObserver | null = null;
+
+onMounted(() => {
+  startAutoplay();
+
+  // Configurar Intersection Observer
+  observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          if (entry.target === modalStepsRef.value) {
+            isModalStepsVisible.value = true;
+          }
+        }
+      });
+    },
+    {
+      threshold: 0.2, // 20% do elemento visível
+      rootMargin: "0px 0px -100px 0px", // Começa a animar 100px antes
+    }
+  );
+
+  // Observar modal-steps quando estiver pronto
+  setTimeout(() => {
+    if (modalStepsRef.value) observer?.observe(modalStepsRef.value);
+  }, 100);
+});
+
+onUnmounted(() => {
+  clearInterval(autoplayInterval.value);
+  if (observer) observer.disconnect();
+});
 </script>
 
 <template>
@@ -180,23 +214,8 @@ onUnmounted(() => clearInterval(autoplayInterval.value));
     <div class="main">
       <div class="main-infos">
         <div class="left-side">
-          <span
-            style="
-              font-family: 'Inter', sans-serif;
-              font-size: 50px;
-              font-weight: 600;
-            "
-            >Simples, rápido e prático.</span
-          >
-          <span
-            style="
-              font-size: 20px;
-              font-family: 'Inter', sans-serif;
-              color: rgb(0, 0, 0, 0.8);
-              font-weight: 200;
-              text-align: justify;
-              line-height: 1.5;
-            "
+          <span class="portal-title">Simples, rápido e prático.</span>
+          <span class="portal-desc"
             >O Portal Control é um projeto em desenvolvimento que reúne recursos
             essenciais do desenvolvimento web, como banco de dados em tempo
             real, autenticação e autorização, servindo como um repositório
@@ -240,69 +259,12 @@ onUnmounted(() => clearInterval(autoplayInterval.value));
             </div>
           </div>
         </div>
-        <div class="right-class-side">
-          
-          <div class="right-side">
-            <span style="font-weight: 600">Tecnologias:</span>
-            <div class="tech-imgs">
-              <a href="https://vuejs.org/" target="_blank">
-                <img
-                  class="tech-item"
-                  src="../assets/vues.svg"
-                  alt=""
-                  title="Vue3"
-              /></a>
-              <a href="https://nestjs.com/" target="_blank"
-                ><img
-                  class="tech-item"
-                  src="../assets/nestjs.svg"
-                  alt=""
-                  title="NestJS"
-              /></a>
-              <a href="https://www.postgresql.org/" target="_blank"
-                ><img
-                  class="tech-item"
-                  src="../assets/psql.svg"
-                  alt=""
-                  title="PostgreSQL"
-              /></a>
-              <a
-                href="https://www.prisma.io/?via=anh&gad_source=1&gad_campaignid=23230812950&gbraid=0AAAABB9xcA9Cu43OOHsJ2AuDPIPUoUSl0&gclid=Cj0KCQiArOvIBhDLARIsAPwJXOYnmTFiSjfmfpQvOLl0cMaSxcOSkr8S7oZQJGcCvh60_8J-DIG5_aUaAiTjEALw_wcB"
-                target="_blank"
-              >
-                <img
-                  class="tech-item"
-                  src="../assets/prisma.svg"
-                  alt=""
-                  title="Prisma ORM"
-              /></a>
-              <a href="https://www.docker.com/" target="_blank"
-                ><img
-                  class="tech-item"
-                  src="../assets/docker.svg"
-                  alt=""
-                  title="Docker"
-              /></a>
-              <a href="https://casl.js.org/v6/en/" target="_blank"
-                ><img
-                  class="tech-item"
-                  src="../assets/casl.png"
-                  alt=""
-                  title="CASL Permissions"
-              /></a>
-            </div>
-            
-          </div>
-          <div class="processing-feature">
-            <span style="display: flex; align-items: center; gap: 10px;"> <div class="rec"></div>Em processo atualmente:</span>
-            <div class="processing-item">
-              <span class="item-p"> <Asterisk/> Dashboard</span>
-              <span class="item-p"> <Asterisk/>  Alteração no campo endereço</span>
-            </div>
-          </div>
-        </div>
       </div>
-      <div class="modal-steps">
+
+      <div
+        ref="modalStepsRef"
+        :class="['modal-steps', { 'animate-in': isModalStepsVisible }]"
+      >
         <div class="column-infos">
           <template v-for="(step, index) in guideSteps" :key="step.title">
             <div class="column-info">
@@ -331,6 +293,113 @@ onUnmounted(() => clearInterval(autoplayInterval.value));
           </template>
         </div>
       </div>
+
+      <div class="right-class-side">
+        <div
+          class="technologies"
+          style="display: flex; flex-direction: column; gap: 30px"
+        >
+          <span
+            style="
+              font-family: 'Inter', sans-serif;
+              font-size: 50px;
+              font-weight: 600;
+            "
+            >Tecnologias:</span
+          >
+          <div class="right-side">
+            <div class="tech-imgs">
+              <div class="tech-items">
+                <a href="https://vuejs.org/" target="_blank">
+                  <img
+                    class="tech-item"
+                    src="../assets/vues.svg"
+                    alt=""
+                    title="Vue3"
+                /></a>
+                <div class="tech-infos">
+                  <span class="tech-title"> Vue3</span>
+                  <span class="tech-desc"> Interface reativa e moderna.</span>
+                </div>
+              </div>
+              <div class="tech-items">
+                <a href="https://nestjs.com/" target="_blank"
+                  ><img
+                    class="tech-item"
+                    src="../assets/nestjs.svg"
+                    alt=""
+                    title="NestJS"
+                /></a>
+                <div class="tech-infos">
+                  <span class="tech-title"> NestJS</span>
+                  <span class="tech-desc"> Backend robusto e escalável.</span>
+                </div>
+              </div>
+              <div class="tech-items">
+                <a href="https://www.postgresql.org/" target="_blank"
+                  ><img
+                    class="tech-item"
+                    src="../assets/psql.svg"
+                    alt=""
+                    title="PostgreSQL"
+                /></a>
+                <div class="tech-infos">
+                  <span class="tech-title"> PostgreSQL</span>
+                  <span class="tech-desc">
+                    Banco de dados relacional poderoso.</span
+                  >
+                </div>
+              </div>
+              <div class="tech-items">
+                <a
+                  href="https://www.prisma.io/?via=anh&gad_source=1&gad_campaignid=23230812950&gbraid=0AAAABB9xcA9Cu43OOHsJ2AuDPIPUoUSl0&gclid=Cj0KCQiArOvIBhDLARIsAPwJXOYnmTFiSjfmfpQvOLl0cMaSxcOSkr8S7oZQJGcCvh60_8J-DIG5_aUaAiTjEALw_wcB"
+                  target="_blank"
+                >
+                  <img
+                    class="tech-item"
+                    src="../assets/prisma.svg"
+                    alt=""
+                    title="Prisma ORM"
+                /></a>
+                <div class="tech-infos">
+                  <span class="tech-title"> Prisma ORM</span>
+                  <span class="tech-desc">ORM para acesso seguro a dados.</span>
+                </div>
+              </div>
+              <div class="tech-items">
+                <a href="https://www.docker.com/" target="_blank"
+                  ><img
+                    class="tech-item"
+                    src="../assets/docker.svg"
+                    alt=""
+                    title="Docker"
+                /></a>
+                <div class="tech-infos">
+                  <span class="tech-title"> Docker </span>
+                  <span class="tech-desc">
+                    Isolamento de ambiente e deploy.</span
+                  >
+                </div>
+              </div>
+              <div class="tech-items">
+                <a href="https://casl.js.org/v6/en/" target="_blank"
+                  ><img
+                    class="tech-item"
+                    src="../assets/casl.png"
+                    alt=""
+                    title="CASL Permissions"
+                /></a>
+                <div class="tech-infos">
+                  <span class="tech-title"> CASL</span>
+                  <span class="tech-desc">
+                    Gestão flexível de permissões (ACL).</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 </template>
@@ -345,23 +414,78 @@ onUnmounted(() => clearInterval(autoplayInterval.value));
   align-items: center;
   gap: 60px;
   align-content: center;
-  height: 100vh;
+  padding-top: 100px;
   font-family: "Inter", system-ui, -apple-system, sans-serif;
 }
 .main-infos {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  width: 1700px;
+  align-items: center;
+  gap: 80px;
+  max-width: 1400px;
+  width: 100%;
   margin-top: 120px;
+  padding: 0 2rem;
 }
 .left-side {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  width: 400px;
+  width: 500px;
   gap: 30px;
 }
+.portal-title {
+  font-family: "Inter", sans-serif;
+  transform: translateX(0);
+  font-size: 50px;
+  font-weight: 600;
+  animation-name: TextComes;
+  animation-duration: 1s;
+  animation-iteration-count: 1;
+  animation-timing-function: ease;
+  animation-delay: 0s;
+  opacity: 1;
+}
+.portal-desc {
+  font-size: 20px;
+  transform: translateX(0);
+  font-family: "Inter", sans-serif;
+  color: rgb(0, 0, 0, 0.8);
+  font-weight: 200;
+  text-align: justify;
+  line-height: 1.5;
+  animation-name: TextComes;
+  animation-duration: 1.2s;
+  animation-iteration-count: 1;
+  animation-timing-function: ease;
+  animation-delay: 0;
+  opacity: 1;
+}
+@keyframes TextComes {
+  0% {
+    opacity: 0;
+    transform: translateX(-200px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+.modal-steps:not(.animate-in) {
+  opacity: 0;
+  transform: translateY(50px);
+}
+
+.modal-steps {
+  transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.modal-steps.animate-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 .header-about {
   position: fixed;
   display: flex;
@@ -375,9 +499,11 @@ onUnmounted(() => clearInterval(autoplayInterval.value));
 }
 .header-itens {
   display: flex;
-  width: 1700px;
+  max-width: 1400px;
+  width: 100%;
   justify-content: space-between;
   align-items: center;
+  padding: 0 2rem;
 }
 .modal-steps {
   display: flex;
@@ -390,7 +516,9 @@ onUnmounted(() => clearInterval(autoplayInterval.value));
     rgb(0, 60, 191) 35%,
     rgb(122, 50, 255) 100%
   );
-  width: 1700px;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 2rem;
   border-radius: 30px;
   height: 260px;
 }
@@ -483,27 +611,31 @@ onUnmounted(() => clearInterval(autoplayInterval.value));
 }
 .right-class-side {
   display: flex;
-  flex-direction: column;
+  padding-top: 100px;
+  width: 1400px;
+  align-items: flex-start;
+  flex-direction: row;
   justify-content: flex-start;
   align-items: center;
   gap: 50px;
+  padding-bottom: 180px;
 }
 .right-side {
   display: flex;
   flex-direction: column;
-  color: white;
-  justify-content: flex-start;
-  gap: 20px;
+  color: rgb(0, 0, 0);
+  justify-content: center;
+  gap: 30px;
   align-content: center;
   align-items: center;
   padding: 10px;
-  width: 300px;
-  height: 200px;
+  width: 820px;
+  height: 400px;
   border-radius: 30px;
   box-shadow: 0px 2px 32px 4px rgba(221, 221, 221, 0.5);
-  background-color: #000000;
+  background-color: #ffffff;
 }
-.rec{
+.rec {
   width: 10px;
   height: 10px;
   background-color: rgb(0, 196, 0);
@@ -513,10 +645,16 @@ onUnmounted(() => clearInterval(autoplayInterval.value));
   border-radius: 50%;
   opacity: 100%;
 }
-@keyframes RecAnimation{
-  0% {opacity: 0%;}
-  50% {opacity: 100%;}
-  100% {opacity: 0%;}
+@keyframes RecAnimation {
+  0% {
+    opacity: 0%;
+  }
+  50% {
+    opacity: 100%;
+  }
+  100% {
+    opacity: 0%;
+  }
 }
 .processing-feature {
   display: flex;
@@ -531,22 +669,39 @@ onUnmounted(() => clearInterval(autoplayInterval.value));
   box-shadow: 2px 2px 32px 2px rgba(202, 202, 202, 0.281);
   height: 140px;
 }
-.processing-item{
+.processing-item {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
 }
-.item-p{
+.item-p {
   display: flex;
   align-items: center;
   color: rgb(59, 59, 59);
   font-weight: 600;
 }
+.tech-items {
+  display: flex;
+  font-family: "Inter", sans-serif;
+  align-items: center;
+  gap: 10px;
+  height: 70px;
+  padding: 14px;
+  border-radius: 10px;
+  transition: 0.3s ease;
+  border: 1px solid white;
+  width: 320px;
+}
+.tech-items:hover {
+  background-color: rgba(134, 134, 134, 0.1);
+  border: 1px solid rgb(199, 199, 199);
+  transform: translateY(-3px);
+}
 .tech-item {
   width: 44px;
   padding: 4px 6px;
   border-radius: 6px;
-  filter: contrast(0);
+
   transition: 0.4s;
   cursor: pointer;
 }
@@ -554,7 +709,19 @@ onUnmounted(() => clearInterval(autoplayInterval.value));
   width: 44px;
   padding: 4px 6px;
   border-radius: 6px;
-  filter: contrast(1);
+}
+.tech-infos {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.tech-title {
+  font-size: 15px;
+  font-weight: 700;
+}
+.tech-desc {
+  font-family: "Inter", sans-serif;
+  color: #5a5a5a;
 }
 .arrow-guide {
   display: flex;
@@ -569,9 +736,9 @@ onUnmounted(() => clearInterval(autoplayInterval.value));
   display: flex;
   flex-direction: row;
   justify-content: center;
-  max-width: 200px;
+  max-width: 800px;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 20px;
 }
 
 .indicator {
@@ -794,7 +961,56 @@ onUnmounted(() => clearInterval(autoplayInterval.value));
 }
 
 /* Responsive Design */
+@media (max-width: 1200px) {
+  .main-infos {
+    max-width: 1000px;
+    gap: 60px;
+  }
+
+  .header-itens {
+    max-width: 1000px;
+  }
+
+  .modal-steps {
+    max-width: 1000px;
+  }
+}
+
 @media (max-width: 768px) {
+  .main-infos {
+    flex-direction: column;
+    gap: 40px;
+    padding: 0 1rem;
+  }
+
+  .left-side {
+    width: 100%;
+    text-align: center;
+  }
+
+  .portal-title {
+    font-size: 36px;
+  }
+
+  .portal-desc {
+    font-size: 18px;
+  }
+
+  .header-itens {
+    padding: 0 1rem;
+  }
+
+  .modal-steps {
+    margin: 0 1rem;
+    height: auto;
+    padding: 2rem 1rem;
+  }
+
+  .column-infos {
+    flex-direction: column;
+    gap: 2rem;
+  }
+
   .steps-container {
     flex-direction: column;
     align-items: center;
@@ -803,6 +1019,21 @@ onUnmounted(() => clearInterval(autoplayInterval.value));
   .step-arrow {
     transform: rotate(90deg);
     margin: 1rem 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .portal-title {
+    font-size: 28px;
+  }
+
+  .portal-desc {
+    font-size: 16px;
+  }
+
+  .img-layout {
+    width: 100%;
+    height: 250px;
   }
 }
 </style>
