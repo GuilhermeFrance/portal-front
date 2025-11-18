@@ -4,6 +4,7 @@ import {
   ChevronRight,
   Dices,
   FolderCode,
+  Phone,
   Pyramid,
 } from "lucide-vue-next";
 import { ref, onMounted, onUnmounted } from "vue";
@@ -192,7 +193,7 @@ onUnmounted(() => {
             style="
               display: flex;
               align-items: center;
-              width: 120px;
+              width: 150px;
               justify-content: flex-end;
               gap: 10px;
             "
@@ -207,6 +208,10 @@ onUnmounted(() => {
               href="https://www.linkedin.com/in/guilherme-france-de-oliveira-santos-9435aa360/"
               ><img class="kedin-logo" src="../assets/kedin.png" alt=""
             /></a>
+            <div style="background-color: gray; color: white; width: 44px; height: 44px; display: flex; justify-content: center;
+            align-items: center; border-radius: 50px;" >
+              <Phone/>
+            </div>
           </div>
         </div>
       </div>
@@ -755,7 +760,7 @@ onUnmounted(() => {
 }
 
 .auth-side {
-  width: 340px;
+  width: 350px;
   display: flex;
   height: 40px;
   justify-content: space-between;
