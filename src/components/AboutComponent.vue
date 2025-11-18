@@ -2,6 +2,7 @@
 import {
   ChevronLeft,
   ChevronRight,
+  Cog,
   Dices,
   FolderCode,
   Phone,
@@ -25,16 +26,14 @@ const TRANSITION_DURATION = 400;
 
 const images = [imgPreview1, imgPreview2, imgPreview3];
 
-// Scroll animation apenas para modal-steps
-const modalStepsRef = ref(null);
-const isModalStepsVisible = ref(false);
+
 
 const guideSteps: GuideStep[] = [
   {
     icon: FolderCode,
     title: "Clone os repositórios",
     description:
-      "Adapte um .env para um banco que rodará<br>localmente e rode:",
+      "Adapte um .env para um banco<br> que rodará localmente e rode:",
     code: "npm run dev",
   },
   {
@@ -144,39 +143,9 @@ async function goToImage(index: number) {
   }, 50);
 }
 
-// Intersection Observer para animações on scroll
-let observer: IntersectionObserver | null = null;
+onMounted(() => startAutoplay());
 
-onMounted(() => {
-  startAutoplay();
-
-  // Configurar Intersection Observer
-  observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          if (entry.target === modalStepsRef.value) {
-            isModalStepsVisible.value = true;
-          }
-        }
-      });
-    },
-    {
-      threshold: 0.2, // 20% do elemento visível
-      rootMargin: "0px 0px -100px 0px", // Começa a animar 100px antes
-    }
-  );
-
-  // Observar modal-steps quando estiver pronto
-  setTimeout(() => {
-    if (modalStepsRef.value) observer?.observe(modalStepsRef.value);
-  }, 100);
-});
-
-onUnmounted(() => {
-  clearInterval(autoplayInterval.value);
-  if (observer) observer.disconnect();
-});
+onUnmounted(() => clearInterval(autoplayInterval.value));
 </script>
 
 <template>
@@ -189,30 +158,6 @@ onUnmounted(() => {
         <div class="auth-side">
           <RouterLink class="sigin-btn" to="/Login">Entrar</RouterLink>
           <RouterLink class="signup-btn" to="/signup">Registre-se</RouterLink>
-          <div
-            style="
-              display: flex;
-              align-items: center;
-              width: 150px;
-              justify-content: flex-end;
-              gap: 10px;
-            "
-          >
-            <a
-              target="_blank"
-              href="https://github.com/GuilhermeFrance?tab=repositories"
-              ><img class="gith-logo" src="../assets/github.svg" alt=""
-            /></a>
-            <a
-              target="_blank"
-              href="https://www.linkedin.com/in/guilherme-france-de-oliveira-santos-9435aa360/"
-              ><img class="kedin-logo" src="../assets/kedin.png" alt=""
-            /></a>
-            <div style="background-color: gray; color: white; width: 44px; height: 44px; display: flex; justify-content: center;
-            align-items: center; border-radius: 50px;" >
-              <Phone/>
-            </div>
-          </div>
         </div>
       </div>
     </header>
@@ -227,7 +172,15 @@ onUnmounted(() => {
             prático de aprendizado para quem deseja evoluir do nível básico ao
             intermediário.</span
           >
-          <RouterLink class="btn-letsgo" to="/signup">Vamos lá!</RouterLink>
+          <div class="buttons">
+            <RouterLink class="btn-letsgo" to="/signup">Navegar</RouterLink>
+            <a
+              class="btn-repo"
+              href="https://github.com/GuilhermeFrance?tab=repositories"
+              target="_blank"
+              >Repositórios</a
+            >
+          </div>
         </div>
         <div class="center-side">
           <div class="img-layout">
@@ -266,10 +219,7 @@ onUnmounted(() => {
         </div>
       </div>
 
-      <div
-        ref="modalStepsRef"
-        :class="['modal-steps', { 'animate-in': isModalStepsVisible }]"
-      >
+      <div class="modal-steps">
         <div class="column-infos">
           <template v-for="(step, index) in guideSteps" :key="step.title">
             <div class="column-info">
@@ -293,7 +243,7 @@ onUnmounted(() => {
               </div>
             </div>
             <div v-if="index < guideSteps.length - 1" class="arrow-guide">
-              <ChevronRight />
+              <ChevronRight style="width: 80px; height: 80px" />
             </div>
           </template>
         </div>
@@ -404,8 +354,46 @@ onUnmounted(() => {
             </div>
           </div>
         </div>
+        <div class="processing-feature">
+          <span style="display: flex; align-items: center; gap: 10px; color: white; font-weight: 300; font-size: 18px;"> <div class="rec"></div> Em estado de implementação/manutenção:</span>
+          <div style="display: flex; flex-direction: column; gap: 6px; height: 120px; justify-content: center;">
+          <div class="processing-item">
+            <Cog class="process-icon"/> Campos de endereço do usuário
+          </div>
+          <div class="processing-item">
+            <Cog class="process-icon"/> Tratamento de erros
+          </div>
+          <div class="processing-item">
+            <Cog class="process-icon"/> Imagem do usuário
+          </div>
+          </div>
+        </div>
       </div>
     </div>
+    <footer>
+      <div class="footer-box">
+        <a
+          target="_blank"
+          href="https://github.com/GuilhermeFrance?tab=repositories"
+          title="Github"
+          ><img class="gith-logo" src="../assets/github.svg" alt=""
+        /></a>
+        <a
+          target="_blank"
+          href="https://www.linkedin.com/in/guilherme-france-de-oliveira-santos-9435aa360/"
+          title="Linkedin"
+          ><img class="kedin-logo" src="../assets/kedin.png" alt=""
+        /></a>
+
+        <a
+          href="https://contato-psi-ruddy.vercel.app/"
+          target="_blank"
+          title="Contate-me"
+          style="text-decoration: none; color: black"
+          ><div class="contact"><Phone /></div
+        ></a>
+      </div>
+    </footer>
   </section>
 </template>
 
@@ -430,7 +418,7 @@ onUnmounted(() => {
   gap: 80px;
   max-width: 1400px;
   width: 100%;
-  margin-top: 120px;
+  margin-top: 60px;
   padding: 0 2rem;
 }
 .left-side {
@@ -452,6 +440,17 @@ onUnmounted(() => {
   animation-delay: 0s;
   opacity: 1;
 }
+.buttons {
+  display: flex;
+  gap: 24px;
+  transform: translateY(0);
+  animation-name: Opacity;
+  animation-duration: 2s;
+  animation-iteration-count: 1;
+  animation-delay: 0s;
+  animation-timing-function: ease;
+  opacity: 1;
+}
 .portal-desc {
   font-size: 20px;
   transform: translateX(0);
@@ -467,6 +466,8 @@ onUnmounted(() => {
   animation-delay: 0;
   opacity: 1;
 }
+
+/* Keyframes Animations */
 @keyframes TextComes {
   0% {
     opacity: 0;
@@ -477,18 +478,27 @@ onUnmounted(() => {
     transform: translateX(0);
   }
 }
-.modal-steps:not(.animate-in) {
-  opacity: 0;
-  transform: translateY(50px);
+
+@keyframes Opacity {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.modal-steps {
-  transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.modal-steps.animate-in {
-  opacity: 1;
-  transform: translateY(0);
+@keyframes ModalStepsAnimation {
+  0% {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .header-about {
@@ -526,14 +536,20 @@ onUnmounted(() => {
   margin: 0 2rem;
   border-radius: 30px;
   height: 260px;
+  animation-name: ModalStepsAnimation;
+  animation-duration: 1.5s;
+  animation-iteration-count: 1;
+  animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  animation-delay: 0.4s;
+  animation-fill-mode: both;
 }
 .gith-logo {
   width: 40px;
-  filter: contrast(0%);
+  filter: contrast(0%) invert(0);
   transition: 0.3s ease;
 }
 .gith-logo:hover {
-  filter: contrast(100%);
+  filter: contrast(100%) invert(1);
 }
 .kedin-logo {
   width: 45px;
@@ -543,12 +559,33 @@ onUnmounted(() => {
 .kedin-logo:hover {
   filter: contrast(100%);
 }
+.contact {
+  background-color: gray;
+  color: rgb(0, 0, 0);
+  width: 44px;
+  height: 44px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50px;
+  transition: 0.3s ease;
+}
+.contact:hover {
+  background-color: rgb(6, 218, 165);
+}
 .img-layout {
   width: 700px;
   height: 420px;
   border-radius: 15px;
   overflow: hidden;
+  transform: translateY(0);
   box-shadow: 0px 12px 32px rgba(83, 83, 83, 0.1);
+  animation-name: Opacity;
+  animation-duration: 2s;
+  animation-iteration-count: 1;
+  animation-delay: 0s;
+  animation-timing-function: ease;
+  opacity: 1;
 }
 .carousel-container {
   position: relative;
@@ -623,7 +660,7 @@ onUnmounted(() => {
   justify-content: flex-start;
   align-items: center;
   gap: 50px;
-  padding-bottom: 180px;
+  padding-bottom: 120px;
 }
 .right-side {
   display: flex;
@@ -643,7 +680,7 @@ onUnmounted(() => {
 .rec {
   width: 10px;
   height: 10px;
-  background-color: rgb(0, 196, 0);
+  background-color: rgb(2, 235, 2);
   animation-name: RecAnimation;
   animation-duration: 1.5s;
   animation-iteration-count: infinite;
@@ -666,17 +703,22 @@ onUnmounted(() => {
   flex-direction: column;
   align-items: center;
   padding: 10px;
-  width: 290px;
-  gap: 10px;
+  width: 500px;
+  gap: 40px;
   border-radius: 20px;
-  background-color: rgb(250, 250, 250);
+  background-color: rgb(65, 65, 65);
   border: 1px solid rgba(128, 128, 128, 0.062);
   box-shadow: 2px 2px 32px 2px rgba(202, 202, 202, 0.281);
-  height: 140px;
+  height: 240px;
 }
 .processing-item {
   display: flex;
-  flex-direction: column;
+  gap: 10px;
+  font-size: 19px;
+  font-weight: 200;
+  flex-direction: row;
+  align-items: center;
+  color: white;
   align-items: flex-start;
 }
 .item-p {
@@ -685,6 +727,19 @@ onUnmounted(() => {
   color: rgb(59, 59, 59);
   font-weight: 600;
 }
+.process-icon{
+  animation-name: Rotate;
+  animation-duration: 30s;
+  animation-iteration-count: infinite;
+  animation-delay: 0s;
+  transform: rotateZ(0);
+}
+
+@keyframes Rotate{
+  0% {transform: rotateZ(0);}
+  100% {transform: rotateZ(360deg);}
+}
+
 .tech-items {
   display: flex;
   font-family: "Inter", sans-serif;
@@ -732,8 +787,8 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 171px;
+  width: 36px;
+  height: 211px;
   color: white;
 }
 
@@ -763,7 +818,8 @@ onUnmounted(() => {
   width: 350px;
   display: flex;
   height: 40px;
-  justify-content: space-between;
+  gap: 14px;
+  justify-content: flex-end;
   align-items: center;
 }
 .header-div {
@@ -807,8 +863,9 @@ onUnmounted(() => {
 }
 .column-infos {
   display: flex;
+  justify-content: center;
   align-items: flex-start;
-  gap: 120px;
+  gap: 100px;
 }
 .column-info {
   background: rgba(255, 255, 255, 0.1);
@@ -852,6 +909,24 @@ onUnmounted(() => {
   padding: 10px;
   padding-left: 20px;
   border-radius: 8px;
+}
+.btn-repo {
+  background-color: #000000;
+  color: whitesmoke;
+  text-align: center;
+  text-decoration: none;
+  border: 1px solid rgb(0, 0, 0);
+  font-size: 18px;
+  width: 130px;
+  padding: 14px;
+  border-radius: 30px;
+  transition: all 0.4s ease;
+}
+.btn-repo:hover {
+  transform: translateY(-4px);
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 8px 32px 2px rgba(0, 2, 36, 0.322);
 }
 .btn-letsgo {
   background-color: #3633ff;
@@ -965,7 +1040,18 @@ onUnmounted(() => {
   height: 24px;
 }
 
-/* Responsive Design */
+footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 140px;
+  background-color: black;
+}
+
+.footer-box {
+  display: flex;
+  gap: 10px;
+}
 @media (max-width: 1200px) {
   .main-infos {
     max-width: 1000px;
