@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "axios": "^1.12.2",
+    "chart.js": "^4.5.1",
     "lucide": "^0.545.0",
     "nprogress": "^0.2.0",
     "pinia": "^3.0.3",
