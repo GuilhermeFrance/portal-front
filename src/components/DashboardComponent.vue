@@ -134,7 +134,7 @@ section {
   justify-content: center;
   height: 100vh;
   width: 100%;
-}
+} 
 .requestBtn{
   padding: 6px;
   background-color: rgb(47, 47, 233);
