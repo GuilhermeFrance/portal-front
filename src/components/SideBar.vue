@@ -43,6 +43,13 @@ function formatString(text: string | undefined, maxLength: number) {
           <div class="on-side"></div
         ></RouterLink>
         <RouterLink
+          to="/dashboard"
+          class="side-item"
+          v-if="authStore.hasBadge('admin') || authStore.hasBadge('manager')"
+          >Dashboard
+          <div class="on-side"></div
+        ></RouterLink>
+        <RouterLink
           to="/funcionarios"
           class="side-item"
           v-if="authStore.hasBadge('admin') || authStore.hasBadge('manager')"

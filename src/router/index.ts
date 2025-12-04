@@ -10,6 +10,7 @@ import RegisterPage from "../pages/RegisterPage.vue";
 import NotFound from "../pages/NotFound.vue";
 import { useAuthStore } from "../auth/stores/auth";
 import AboutComponent from "../components/AboutComponent.vue";
+import DashboardPage from "../pages/DashboardPage.vue";
 
 
 const router = createRouter({
@@ -81,6 +82,15 @@ const router = createRouter({
             requiresAdminBadge: true,
             requiresAuth: true,
             title: "Funcionários",
+          },
+        },
+         {
+          path: "/dashboard",
+          name: "dashboard",
+          component: DashboardPage,
+          meta: {
+            requiresAuth: true,
+            title: "Dashboard",
           },
         },
         {
