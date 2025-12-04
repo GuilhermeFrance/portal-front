@@ -157,7 +157,7 @@ const authStore = useAuthStore();
             >
               <div class="icon-request">
                 <RouterLink
-                  to="/funcionarios"
+                  to="/dashboard"
                   style="text-decoration: none; color: black"
                 >
                   <div class="card-router">
