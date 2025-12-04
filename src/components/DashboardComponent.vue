@@ -9,6 +9,7 @@ import {
 import { onMounted, ref, watch } from "vue";
 import axios from "axios";
 import type { DashboardRequest } from "../interfaces/DashboardRequest";
+import { RouterLink } from "vue-router";
 
 Chart.register(DoughnutController, ArcElement, Tooltip, Legend);
 
@@ -90,7 +91,11 @@ onMounted(() => {
 <template>
   <section>
     <div class="main-content">
-      <span class="title">Dashboard</span>
+      <div class="header">
+        <span class="title">Dashboard</span>
+        <RouterLink class="requestBtn" to="solicitacoes"> Solicitações </RouterLink>
+      </div>
+
       <div class="boxDashboard">
         <div class="dashboard">
           <canvas id="myChart"> </canvas>
@@ -99,14 +104,17 @@ onMounted(() => {
           <div class="type-card" v-for="request in Requests">
             <div class="title-status">
               <span>Status:</span>
-              <span :class="{
-                        isOpen: request.statusKey === 'aberto',
-                        Processing: request.statusKey === 'processando',
-                        Conclused: request.statusKey === 'concluido',
-                        Rejected: request.statusKey === 'rejeitado',
-                      }">{{ request.statusKey.toUpperCase() }}</span>
+              <span
+                :class="{
+                  isOpen: request.statusKey === 'aberto',
+                  Processing: request.statusKey === 'processando',
+                  Conclused: request.statusKey === 'concluido',
+                  Rejected: request.statusKey === 'rejeitado',
+                }"
+                >{{ request.statusKey.toUpperCase() }}</span
+              >
             </div>
-             <div class="title-status">
+            <div class="title-status">
               <span>Quantidade:</span>
               <span>{{ request._count }}</span>
             </div>
@@ -127,6 +135,23 @@ section {
   height: 100vh;
   width: 100%;
 }
+.requestBtn{
+  padding: 6px;
+  background-color: rgb(47, 47, 233);
+  text-decoration: none;
+  color: white;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: 0.3s ease
+  
+}
+
+.requestBtn:hover{
+  background-color: rgb(69, 151, 245);
+ 
+}
 
 .main-content {
   display: flex;
@@ -139,7 +164,11 @@ section {
   border-radius: 30px;
   box-shadow: 2px 2px 32px 2px rgba(66, 66, 66, 0.068);
 }
-
+.header{
+  display: flex;
+  justify-content: space-between;
+  width: 1060px;
+}
 .title {
   font-size: 40px;
   font-weight: 600;
@@ -182,10 +211,10 @@ section {
   border-radius: 20px;
   transition: 0.3s ease;
 }
-.type-card:hover{
+.type-card:hover {
   background-color: rgba(230, 230, 230, 0.541);
 }
-.title-status{
+.title-status {
   display: flex;
   gap: 10px;
   font-weight: 300;
