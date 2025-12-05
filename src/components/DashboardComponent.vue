@@ -45,7 +45,7 @@ function createChart() {
             label: " Quantidade ",
             data: Requests.value.map((item) => item._count),
             borderWidth: 1,
-            backgroundColor: ["#eaa468", "#6897ea", "#68ea76", "#ea6868"],
+            backgroundColor: ["#ea6868", "#6897ea", "#68ea76", "#eaa468"],
             borderColor: "#ffffff",
             hoverOffset: 4,
           },
